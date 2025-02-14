@@ -6,7 +6,7 @@ export default async function handleLastReviewsCommand(interaction, pool) {
     if (!member) return interaction.reply({ content: 'Выберите участника.', flags: MessageFlags.Ephemeral });
 
     const reviews = await pool.query(
-        'SELECT review_text, is_positive, timestamp FROM reviews WHERE target_user = $1 ORDER BY timestamp DESC',
+        'SELECT review_text, is_positive, "timestamp" FROM reviews WHERE target_user = $1 ORDER BY timestamp DESC',
         [member.id]
     );
 

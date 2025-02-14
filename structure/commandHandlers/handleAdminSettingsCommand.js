@@ -1,47 +1,16 @@
-import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from "discord.js";
-import {formatDate} from "../utils.js";
+import {ButtonStyle, MessageFlags} from "discord.js";
 import dotenv from 'dotenv';
 dotenv.config();
 
-export default async function (interaction, pool) {
-    const member = interaction.options.getUser('member');
-    if (!member) return interaction.reply({ content: 'Выберите участника.', flags: MessageFlags.Ephemeral });
+import subcommands from './subcommands/index.js';
+import {toCamelCase} from "../utils.js";
 
-    const userStats = await pool.query('SELECT * FROM users WHERE user_id = $1', [member.id]);
-    let userData = userStats.rows[0];
+export default async function (interaction, pool, guild) {
+    const subcommand = interaction.options.getSubcommand();
 
-    if (!userData) {
-        userData = { user_id: member.id, rating: 0, positive_reviews: 0, negative_reviews: 0 };
-        await pool.query('INSERT INTO users (user_id, rating, positive_reviews, negative_reviews) VALUES ($1, $2, $3, $4)',
-            [member.id, 0, 0, 0]);
+    if (subcommands[toCamelCase(subcommand)]) {
+        await subcommands[toCamelCase(subcommand)](interaction, pool, guild);
+    } else {
+        await interaction.reply({ content: '❌ Неизвестная команда.', flags: MessageFlags.Ephemeral });
     }
-
-    const lastReviews = await pool.query(
-        'SELECT is_positive, MAX(timestamp) AS last_review_time FROM reviews WHERE target_user = $1 GROUP BY is_positive',
-        [member.id]
-    );
-
-    let lastPositiveReview = 'Нет данных';
-    let lastNegativeReview = 'Нет данных';
-
-    lastReviews.rows.forEach(review => {
-        if (review.is_positive) lastPositiveReview = formatDate(review.last_review_time);
-        else lastNegativeReview = formatDate(review.last_review_time);
-    });
-
-    const message = `:point_right: **${member.username}**\n:chart_with_upwards_trend: Рейтинг: ${userData.rating}\n:white_check_mark: Положительные отзывы: ${userData.positive_reviews}\n:x: Отрицательные отзывы: ${userData.negative_reviews}\nПоследний положительный отзыв: ${lastPositiveReview}\nПоследний отрицательный отзыв: ${lastNegativeReview}`;
-
-    const upvoteButton = new ButtonBuilder()
-        .setCustomId(`upvote_${member.id}`)
-        .setLabel('↑')
-        .setStyle(ButtonStyle.Success);
-
-    const downvoteButton = new ButtonBuilder()
-        .setCustomId(`downvote_${member.id}`)
-        .setLabel('↓')
-        .setStyle(ButtonStyle.Danger);
-
-    const row = new ActionRowBuilder().addComponents(upvoteButton, downvoteButton);
-
-    await interaction.reply({ content: message, components: [row], flags: MessageFlags.Ephemeral });
 }
