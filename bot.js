@@ -1,4 +1,12 @@
-import {ButtonStyle, Client, GatewayIntentBits, InteractionType, MessageFlags, TextInputStyle} from 'discord.js';
+import {
+    ButtonStyle,
+    Client,
+    GatewayIntentBits,
+    InteractionType,
+    MessageFlags,
+    PermissionsBitField,
+    TextInputStyle
+} from 'discord.js';
 import dotenv from 'dotenv';
 import pkg from 'pg';
 import initializeDatabase from "./structure/dbInitialize.js";
@@ -11,6 +19,7 @@ import handleAdminSettingsCommand from "./structure/commandHandlers/handleAdminS
 import showReviewModal from "./structure/showReviewModal.js";
 import topSellers from "./structure/commandHandlers/topSellers.js";
 import worstSellers from "./structure/commandHandlers/worstSellers.js";
+import {sendPaginatedReviews} from "./structure/utils.js";
 
 const {Pool} = pkg;
 const pool = new Pool({connectionString: process.env.DATABASE_URL});
@@ -105,6 +114,28 @@ client.on('interactionCreate', async interaction => {
         }
 
         await showReviewModal(interaction, action, userId);
+    } else if (interaction.isButton() && (interaction.customId.startsWith('prev_reviews_') || interaction.customId.startsWith('next_reviews_'))) {
+        const [, userId, page] = interaction.customId.split('_');
+        await sendPaginatedReviews(interaction, pool, userId, parseInt(page));
+    } else if (interaction.customId.startsWith('delete_review_')) {
+        const member = await interaction.guild.members.fetch(interaction.user.id);
+        const isAdmin = member.permissions.has(PermissionsBitField.Flags.Administrator);
+
+        if (!isAdmin) {
+            return interaction.reply({
+                content: '❌ У вас нет прав на удаление отзывов!',
+                flags: MessageFlags.Ephemeral
+            });
+        }
+
+        const reviewId = interaction.customId.split('_')[2];
+
+        await pool.query('DELETE FROM reviews WHERE id = $1', [reviewId]);
+
+        await interaction.reply({
+            content: `✅ Отзыв успешно удалён!`,
+            flags: MessageFlags.Ephemeral
+        });
     }
 });
 

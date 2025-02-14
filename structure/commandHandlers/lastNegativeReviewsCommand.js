@@ -10,5 +10,5 @@ export default async function handleLastNegativeReviewsCommand(interaction, pool
         [member.id]
     );
 
-    await sendPaginatedReviews(interaction, reviews.rows, member, false);
+    await sendPaginatedReviews(interaction, reviews.rows, member, 1);
 }

@@ -1,3 +1,5 @@
+import {MessageFlags} from "discord.js";
+
 export default async function setCooldown(interaction, pool) {
     const minutes = interaction.options.getInteger('minutes');
 
@@ -5,6 +7,6 @@ export default async function setCooldown(interaction, pool) {
 
     await interaction.reply({
         content: `✅ Кулдаун на голосование установлен: **${minutes} минут**.`,
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
     });
 }

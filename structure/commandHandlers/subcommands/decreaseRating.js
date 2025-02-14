@@ -1,3 +1,5 @@
+import {MessageFlags} from "discord.js";
+
 export default async function decreaseRating(interaction, pool) {
     const user = interaction.options.getUser('user');
     const points = interaction.options.getInteger('points');
@@ -6,6 +8,6 @@ export default async function decreaseRating(interaction, pool) {
 
     await interaction.reply({
         content: `❌ **${points}** баллов снято у **${user.username}**.`,
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
     });
 }

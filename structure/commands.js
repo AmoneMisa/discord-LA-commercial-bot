@@ -106,28 +106,25 @@ export default [
         )
         .addSubcommand(subcommand =>
             subcommand.setName('set_rank_criteria')
-                .setDescription('Установить критерии для ролей')
-                .addIntegerOption(option => option.setName('top_seller').setDescription('Рейтинг для "Топ-продавец"').setRequired(true))
-                .addIntegerOption(option => option.setName('great_seller').setDescription('Рейтинг для "Отличный продавец"').setRequired(true))
-                .addIntegerOption(option => option.setName('good_seller').setDescription('Рейтинг для "Хороший продавец"').setRequired(true))
-                .addIntegerOption(option => option.setName('seller').setDescription('Рейтинг для "Продавец"').setRequired(true))
+                .setDescription('Настроить критерии для ролей')
+                .addStringOption(option => option.setName('role_name').setDescription('Название роли').setRequired(true))
+                .addIntegerOption(option => option.setName('required_rating').setDescription('Необходимый рейтинг').setRequired(true))
+                .addIntegerOption(option => option.setName('min_reviews').setDescription('Минимум отзывов').setRequired(true))
+                .addIntegerOption(option => option.setName('min_positive_reviews').setDescription('Минимум положительных').setRequired(true))
+                .addIntegerOption(option => option.setName('min_negative_reviews').setDescription('Максимум отрицательных').setRequired(false))
         )
         .addSubcommand(subcommand =>
             subcommand.setName('set_rank_update_frequency')
                 .setDescription('Настроить частоту обновления ролей')
-                .addStringOption(option =>
-                    option.setName('frequency')
-                        .setDescription('Частота обновления')
-                        .setRequired(true)
-                        .addChoices(
-                            { name: '1 день', value: '1d' },
-                            { name: '3 дня', value: '3d' },
-                            { name: 'неделя', value: '1w' },
-                            { name: '2 недели', value: '2w' },
-                            { name: 'месяц', value: '1m' },
-                            { name: 'квартал', value: '3m' }
-                        )
-                )
+                .addStringOption(option => option.setName('frequency').setDescription('Частота').setRequired(true)
+                    .addChoices(
+                        { name: 'Каждый день', value: '1d' },
+                        { name: 'Раз в 3 дня', value: '3d' },
+                        { name: 'Раз в неделю', value: '1w' },
+                        { name: 'Раз в 2 недели', value: '2w' },
+                        { name: 'Раз в месяц', value: '1m' },
+                        { name: 'Раз в квартал', value: '3m' }
+                    ))
         ).addSubcommand(subcommand =>
         subcommand.setName('set_role_name')
             .setDescription('Изменить название существующей роли')

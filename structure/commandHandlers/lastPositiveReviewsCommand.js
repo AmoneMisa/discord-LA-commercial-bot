@@ -10,5 +10,5 @@ export default async function (interaction, pool) {
         [member.id]
     );
 
-    await sendPaginatedReviews(interaction, reviews.rows, member, true);
+    await sendPaginatedReviews(interaction, reviews.rows, member, 1);
 }

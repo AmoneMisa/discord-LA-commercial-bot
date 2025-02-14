@@ -1,4 +1,4 @@
-import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from "discord.js";
+import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags, PermissionsBitField} from "discord.js";
 
 export function formatDate(dateString) {
     if (!dateString) return 'Нет данных';
@@ -11,58 +11,68 @@ export function formatDate(dateString) {
     return `${day}/${month}/${year} ${hours}:${minutes}`;
 }
 
-export async function sendPaginatedReviews(interaction, reviews, member, isPositive = null) {
-    if (reviews.length === 0) {
-        return interaction.reply({ content: 'Нет отзывов.', flags: MessageFlags.Ephemeral });
+export async function sendPaginatedReviews(interaction, pool, userId, page = 1) {
+    const reviewsPerPage = 5;
+    const offset = (page - 1) * reviewsPerPage;
+    const member = await interaction.guild.members.fetch(interaction.user.id);
+    const isAdmin = member.permissions.has(PermissionsBitField.Flags.Administrator);
+
+    const reviews = await pool.query(
+        'SELECT id, reviewer_id, review_text, is_positive, timestamp FROM reviews WHERE target_user = $1 ORDER BY timestamp DESC LIMIT $2 OFFSET $3',
+        [userId, reviewsPerPage, offset]
+    );
+
+    if (reviews.rows.length === 0) {
+        return interaction.reply({
+            content: `❌ У пользователя <@${userId}> пока нет отзывов.`,
+            flags: MessageFlags.Ephemeral
+        });
     }
 
-    let page = 0;
-    const pageSize = 5;
-    const totalPages = Math.ceil(reviews.length / pageSize);
+    let message = `📋 **Отзывы о <@${userId}> (Страница ${page}):**\n\n`;
+    let buttons = new ActionRowBuilder();
 
-    const generateMessage = () => {
-        const start = page * pageSize;
-        const end = start + pageSize;
-        const reviewSlice = reviews.slice(start, end);
-        const reviewMessages = reviewSlice.map(review => `${review.is_positive !== undefined ? (review.is_positive ? '👍' : '👎') : ''} ${formatDate(review.timestamp)} - ${review.review_text}`).join('\n');
-        return `Отзывы пользователя **${member.username}**\n\n${reviewMessages}\n\nСтраница ${page + 1}/${totalPages}`;
-    };
+    reviews.rows.forEach((review, index) => {
+        message += `**${index + 1}.** <@${review.reviewer_id}>: ${review.is_positive ? '✅' : '❌'} "${review.review_text}" *(${formatDate(review.timestamp)})* \n`;
 
-    const updateMessage = async (msg) => {
-        await msg.edit({
-            content: generateMessage(),
-            components: [getPaginationButtons(page, totalPages)]
-        });
-    };
-
-    const getPaginationButtons = (currentPage, total) => {
-        return new ActionRowBuilder().addComponents(
-            new ButtonBuilder()
-                .setCustomId('prev_page')
-                .setLabel('⬅️ Назад')
-                .setStyle(ButtonStyle.Secondary)
-                .setDisabled(currentPage === 0),
-            new ButtonBuilder()
-                .setCustomId('next_page')
-                .setLabel('Вперёд ➡️')
-                .setStyle(ButtonStyle.Secondary)
-                .setDisabled(currentPage >= total - 1)
-        );
-    };
-
-    const msg = await interaction.reply({
-        content: generateMessage(),
-        components: [getPaginationButtons(page, totalPages)],
-        flags: MessageFlags.Ephemeral,
-        fetchReply: true
+        if (isAdmin) {
+            buttons.addComponents(
+                new ButtonBuilder()
+                    .setCustomId(`delete_review_${review.id}`)
+                    .setLabel(`Удалить ${index + 1}`)
+                    .setStyle(ButtonStyle.Danger)
+            );
+        }
     });
 
-    const collector = msg.createMessageComponentCollector({ time: 600000 });
-    collector.on('collect', async i => {
-        if (i.customId === 'prev_page') page--;
-        if (i.customId === 'next_page') page++;
-        await updateMessage(msg);
-        await i.deferUpdate();
+    // Добавляем кнопки для пагинации
+    const totalReviews = await pool.query('SELECT COUNT(*) FROM reviews WHERE target_user = $1', [userId]);
+    const totalPages = Math.ceil(parseInt(totalReviews.rows[0].count) / reviewsPerPage);
+
+    let paginationButtons = new ActionRowBuilder();
+    if (page > 1) {
+        paginationButtons.addComponents(
+            new ButtonBuilder()
+                .setCustomId(`prev_reviews_${userId}_${page - 1}`)
+                .setLabel('⬅️ Назад')
+                .setStyle(ButtonStyle.Secondary)
+        );
+    }
+    if (page < totalPages) {
+        paginationButtons.addComponents(
+            new ButtonBuilder()
+                .setCustomId(`next_reviews_${userId}_${page + 1}`)
+                .setLabel('➡️ Вперёд')
+                .setStyle(ButtonStyle.Secondary)
+        );
+    }
+
+    await interaction.reply({
+        content: message,
+        components: paginationButtons.components.length > 0
+            ? isAdmin ? [buttons, paginationButtons] : [paginationButtons]
+            : isAdmin ? [buttons] : [],
+        flags: MessageFlags.Ephemeral
     });
 }
 
