@@ -38,14 +38,14 @@ export async function sendPaginatedReviews(interaction, pool, userId, page = 1) 
         if (isAdmin) {
             buttons.addComponents(
                 new ButtonBuilder()
-                    .setCustomId(`delete_review_${review.id}`)
+                    .setCustomId(`delete_review_${review.id}_${userId}_${page}`)
                     .setLabel(`Удалить ${index + 1}`)
                     .setStyle(ButtonStyle.Danger)
             );
+            console.log(buttons)
         }
     });
 
-    // Добавляем кнопки для пагинации
     const totalReviews = await pool.query('SELECT COUNT(*) FROM reviews WHERE target_user = $1', [userId]);
     const totalPages = Math.ceil(parseInt(totalReviews.rows[0].count) / reviewsPerPage);
 

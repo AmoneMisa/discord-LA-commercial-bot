@@ -2,7 +2,15 @@ import { MessageFlags } from 'discord.js';
 
 export default async function worstSellers(interaction, pool) {
     const worstUsers = await pool.query(
-        'SELECT user_id, rating FROM users ORDER BY rating ASC LIMIT 5'
+        `SELECT user_id, rating, positive_reviews, negative_reviews
+         FROM users
+         WHERE user_id IN (
+             SELECT DISTINCT target_user 
+             FROM reviews 
+             WHERE timestamp >= NOW() - INTERVAL '14 days'
+         )
+         ORDER BY rating ASC, positive_reviews ASC, (positive_reviews + negative_reviews) DESC
+         LIMIT 5`
     );
 
     if (worstUsers.rows.length === 0) {

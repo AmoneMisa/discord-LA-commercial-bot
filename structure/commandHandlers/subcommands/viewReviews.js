@@ -1,5 +1,6 @@
 import { MessageFlags, ButtonBuilder, ButtonStyle, ActionRowBuilder } from 'discord.js';
 import { formatDate } from '../../utils.js';
+import updateRatings from "../../updateRatings.js";
 
 export default async function viewReviews(interaction, pool) {
     const member = interaction.options.getUser('user');
@@ -21,11 +22,13 @@ export default async function viewReviews(interaction, pool) {
 
         buttons.addComponents(
             new ButtonBuilder()
-                .setCustomId(`delete_review_${review.id}`)
+                .setCustomId(`delete_review_${review.id}_${member.id}_1`)
                 .setLabel(`Удалить ${index + 1}`)
                 .setStyle(ButtonStyle.Danger)
         );
     });
 
+    await updateRatings(pool);
+    
     await interaction.reply({ content: message, components: [buttons], flags: MessageFlags.Ephemeral });
 }
