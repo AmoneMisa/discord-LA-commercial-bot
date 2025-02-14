@@ -1,0 +1,13 @@
+{
+  "name": "discord-commercions-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "private": true,
+  "dependencies": {
+    "pg": "^8.13.3"
+  }
+}
