@@ -58,24 +58,12 @@ export default [
         )
         .addSubcommand(subcommand =>
             subcommand.setName('reset_stats')
-                .setDescription('Полностью обнулить статистику (с подтверждением)')
+                .setDescription('Полностью обнулить статистику')
         )
         .addSubcommand(subcommand =>
             subcommand.setName('reset_user_stats')
                 .setDescription('Обнулить статистику конкретного пользователя')
                 .addUserOption(option => option.setName('user').setDescription('Выберите пользователя').setRequired(true))
-        )
-        .addSubcommand(subcommand =>
-            subcommand.setName('add_rating')
-                .setDescription('Добавить рейтинг пользователю')
-                .addUserOption(option => option.setName('user').setDescription('Выберите пользователя').setRequired(true))
-                .addIntegerOption(option => option.setName('points').setDescription('Количество баллов').setRequired(true))
-        )
-        .addSubcommand(subcommand =>
-            subcommand.setName('decrease_rating')
-                .setDescription('Снизить рейтинг пользователю')
-                .addUserOption(option => option.setName('user').setDescription('Выберите пользователя').setRequired(true))
-                .addIntegerOption(option => option.setName('points').setDescription('Количество баллов').setRequired(true))
         )
         .addSubcommand(subcommand =>
             subcommand.setName('view_reviews')
@@ -150,5 +138,10 @@ export default [
             subcommand.setName('delete_role')
                 .setDescription('Удалить роль продавца')
                 .addStringOption(option => option.setName('name').setDescription('Название роли').setRequired(true))
+        )
+        .addSubcommand(subcommand =>
+            subcommand.setName('set_leaderboard_channel')
+                .setDescription('Установить id канала для списка лидеров')
+                .addStringOption(option => option.setName('id').setDescription('id канала').setRequired(true))
         )
 ];
