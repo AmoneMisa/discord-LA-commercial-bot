@@ -52,7 +52,6 @@ export default async function updateLeaderboard(client, pool) {
     }
 
     const newMessage = await channel.send({ embeds: [embed] });
-    console.log(newMessage.id);
     await setLeaderboardMessageId(pool, newMessage.id);
     console.log('✅ Таблица лидеров создана и сохранена!');
 }

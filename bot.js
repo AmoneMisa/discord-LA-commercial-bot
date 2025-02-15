@@ -43,6 +43,7 @@ client.once('ready', async () => {
     await registerCommands();
 
     schedule.scheduleJob('0 0 * * *', async () => {
+        await updateRatings(pool);
         await updateLeaderboard(client, pool);
     });
 
