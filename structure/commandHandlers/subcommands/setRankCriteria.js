@@ -2,10 +2,10 @@ import { MessageFlags } from 'discord.js';
 
 export default async function setRankCriteria(interaction, pool) {
     const roleName = interaction.options.getString('role_name');
-    const requiredRating = interaction.options.getInteger('required_rating');
-    const minReviews = interaction.options.getInteger('min_reviews');
-    const minPositiveReviews = interaction.options.getInteger('min_positive_reviews');
-    const minNegativeReviews = interaction.options.getInteger('min_negative_reviews') || 0;
+    const requiredRating = Math.min(interaction.options.getInteger('required_rating'), 100);
+    const minReviews = Math.min(interaction.options.getInteger('min_reviews'), 0);
+    const minPositiveReviews = Math.min(interaction.options.getInteger('min_positive_reviews'), 0);
+    const minNegativeReviews = Math.min(interaction.options.getInteger('min_negative_reviews'), 0);
 
     const role = await pool.query('SELECT * FROM roles WHERE role_name = $1', [roleName]);
 

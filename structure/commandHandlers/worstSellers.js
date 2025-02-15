@@ -7,9 +7,9 @@ export default async function worstSellers(interaction, pool) {
          WHERE user_id IN (
              SELECT DISTINCT target_user 
              FROM reviews 
-             WHERE timestamp >= NOW() - INTERVAL '14 days'
+             WHERE timestamp >= NOW() - INTERVAL '30 days'
          )
-         ORDER BY rating ASC, positive_reviews ASC, (positive_reviews + negative_reviews) DESC
+         ORDER BY rating ASC
          LIMIT 5`
     );
 

@@ -18,9 +18,6 @@ export default [
         .setDescription('Пять последних отзывов')
         .addUserOption(option => option.setName('member').setDescription('Выберите участника').setRequired(true)),
     new SlashCommandBuilder()
-        .setName('top_sellers')
-        .setDescription('Пять лучших продавцов'),
-    new SlashCommandBuilder()
         .setName('worst_sellers')
         .setDescription('Пять худших продавцов'),
     new SlashCommandBuilder()
@@ -29,7 +26,11 @@ export default [
         .addSubcommand(subcommand =>
             subcommand.setName('set_cooldown')
                 .setDescription('Установить кулдаун на голосование (в минутах)')
-                .addIntegerOption(option => option.setName('minutes').setDescription('Время в минутах').setRequired(true))
+                .addIntegerOption(option => option.setName('minutes').setMinValue(1).setDescription('Время в минутах').setRequired(true))
+        )
+        .addSubcommand(subcommand =>
+            subcommand.setName('remove_bots')
+                .setDescription('Удаляет всех ботов из базы данных')
         )
         .addSubcommand(subcommand =>
             subcommand.setName('toggle_self_voting')
@@ -84,22 +85,22 @@ export default [
             subcommand.setName('temp_block_receiver')
                 .setDescription('Временно заблокировать получение отзывов')
                 .addUserOption(option => option.setName('user').setDescription('Выберите пользователя').setRequired(true))
-                .addIntegerOption(option => option.setName('hours').setDescription('Количество часов').setRequired(true))
+                .addIntegerOption(option => option.setName('hours').setMinValue(1).setDescription('Количество часов').setRequired(true))
         )
         .addSubcommand(subcommand =>
             subcommand.setName('temp_block_reviewer')
                 .setDescription('Временно заблокировать возможность оставлять отзывы')
                 .addUserOption(option => option.setName('user').setDescription('Выберите пользователя').setRequired(true))
-                .addIntegerOption(option => option.setName('hours').setDescription('Количество часов').setRequired(true))
+                .addIntegerOption(option => option.setName('hours').setMinValue(1).setDescription('Количество часов').setRequired(true))
         )
         .addSubcommand(subcommand =>
             subcommand.setName('set_rank_criteria')
                 .setDescription('Настроить критерии для ролей')
                 .addStringOption(option => option.setName('role_name').setDescription('Название роли').setRequired(true))
-                .addIntegerOption(option => option.setName('required_rating').setDescription('Необходимый рейтинг').setRequired(true))
-                .addIntegerOption(option => option.setName('min_reviews').setDescription('Минимум отзывов').setRequired(true))
-                .addIntegerOption(option => option.setName('min_positive_reviews').setDescription('Минимум положительных').setRequired(true))
-                .addIntegerOption(option => option.setName('min_negative_reviews').setDescription('Максимум отрицательных').setRequired(false))
+                .addIntegerOption(option => option.setName('required_rating').setMaxValue(100).setMinValue(0).setDescription('Необходимый рейтинг').setRequired(true))
+                .addIntegerOption(option => option.setName('min_reviews').setMinValue(0).setDescription('Минимум отзывов').setRequired(true))
+                .addIntegerOption(option => option.setName('min_positive_reviews').setMinValue(0).setDescription('Минимум положительных').setRequired(true))
+                .addIntegerOption(option => option.setName('min_negative_reviews').setMinValue(0).setDescription('Максимум отрицательных').setRequired(false))
         )
         .addSubcommand(subcommand =>
             subcommand.setName('set_rank_update_frequency')
@@ -129,10 +130,10 @@ export default [
             subcommand.setName('create_role')
                 .setDescription('Создать новую роль для продавцов')
                 .addStringOption(option => option.setName('name').setDescription('Название роли').setRequired(true))
-                .addIntegerOption(option => option.setName('required_rating').setDescription('Минимальный рейтинг').setRequired(true))
-                .addIntegerOption(option => option.setName('min_reviews').setDescription('Минимум отзывов').setRequired(true))
-                .addIntegerOption(option => option.setName('min_positive_reviews').setDescription('Минимум положительных отзывов').setRequired(true))
-                .addIntegerOption(option => option.setName('min_negative_reviews').setDescription('Максимум негативных отзывов').setRequired(false))
+                .addIntegerOption(option => option.setName('required_rating').setMaxValue(100).setMinValue(0).setDescription('Минимальный рейтинг').setRequired(true))
+                .addIntegerOption(option => option.setName('min_reviews').setMinValue(0).setDescription('Минимум отзывов').setRequired(true))
+                .addIntegerOption(option => option.setName('min_positive_reviews').setMinValue(0).setDescription('Минимум положительных отзывов').setRequired(true))
+                .addIntegerOption(option => option.setName('min_negative_reviews').setMinValue(0).setDescription('Максимум негативных отзывов').setRequired(false))
         )
         .addSubcommand(subcommand =>
             subcommand.setName('delete_role')

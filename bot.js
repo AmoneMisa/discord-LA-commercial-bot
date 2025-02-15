@@ -17,12 +17,13 @@ import lastReviewsCommand from "./structure/commandHandlers/lastReviewsCommand.j
 import registerCommands from "./structure/registerCommands.js";
 import handleAdminSettingsCommand from "./structure/commandHandlers/handleAdminSettingsCommand.js";
 import showReviewModal from "./structure/showReviewModal.js";
-import topSellers from "./structure/commandHandlers/topSellers.js";
 import worstSellers from "./structure/commandHandlers/worstSellers.js";
 import {sendPaginatedReviews} from "./structure/utils.js";
 import updateRatings from "./structure/updateRatings.js";
 import updateLeaderboard from "./structure/commandHandlers/updateLeaderboard.js";
 import schedule from "node-schedule";
+import setRolesByRanks from "./structure/setRolesByRanks.js";
+import removeBots from "./structure/commandHandlers/subcommands/removeBots.js";
 
 const {Pool} = pkg;
 const pool = new Pool({connectionString: process.env.DATABASE_URL});
@@ -48,10 +49,24 @@ client.once('ready', async () => {
     });
 
     await updateRatings(pool);
+    await setRolesByRanks(pool, guild);
     await updateLeaderboard(client, pool);
 });
 
 client.on('interactionCreate', async interaction => {
+    const targetUser = interaction.options.getUser('user');
+
+    if (interaction.isCommand() && interaction.commandName === 'admin_settings' && interaction.options.getSubcommand() === 'remove_bots') {
+        removeBots(interaction, pool);
+    }
+
+    if (targetUser && targetUser.bot) {
+        return interaction.reply({
+            content: '🚫 Вы не можете использовать эту команду на боте!',
+            flags: MessageFlags.Ephemeral
+        });
+    }
+
     if (interaction.isCommand()) {
         if (interaction.commandName === 'info') {
             handleInfoCommand(interaction, pool);
@@ -61,11 +76,9 @@ client.on('interactionCreate', async interaction => {
             lastNegativeReviewsCommand(interaction, pool);
         } else if (interaction.commandName === 'last_reviews') {
             lastReviewsCommand(interaction, pool);
-        } else if (interaction.commandName === 'admin_settings') {
+        } else if (interaction.commandName === 'admin_settings' && interaction.options.getSubcommand() !== 'remove_bots') {
             const guild = interaction.guild;
             handleAdminSettingsCommand(interaction, pool, guild);
-        } else if (interaction.commandName === 'top_sellers') {
-            topSellers(interaction, pool);
         } else if (interaction.commandName === 'worst_sellers') {
             worstSellers(interaction, pool);
         }

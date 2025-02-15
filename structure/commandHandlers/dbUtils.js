@@ -23,9 +23,9 @@ export async function getTopSellers(pool) {
          WHERE user_id IN (
              SELECT DISTINCT target_user 
              FROM reviews 
-             WHERE timestamp >= NOW() - INTERVAL '14 days'
+             WHERE timestamp >= NOW() - INTERVAL '30 days'
          )
-         ORDER BY rating DESC, (positive_reviews + negative_reviews) DESC
+         ORDER BY rating DESC
          LIMIT 30`
     );
 

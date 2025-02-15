@@ -17,7 +17,7 @@ export default async function updateLeaderboard(client, pool) {
 
     const embed = new EmbedBuilder()
         .setColor('#FFD700')
-        .setTitle('🏆 Топ 30 продавцов за 14 дней')
+        .setTitle('🏆 Топ 30 продавцов за 30 дней')
         .setFields(
             {
                 name: 'Ранг',
