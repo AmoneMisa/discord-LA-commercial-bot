@@ -6,8 +6,6 @@ import blockReceiver from './blockReceiver.js';
 import removeUser from './removeUser.js';
 import resetStats from './resetStats.js';
 import resetUserStats from './resetUserStats.js';
-import addRating from './addRating.js';
-import decreaseRating from './decreaseRating.js';
 import viewReviews from './viewReviews.js';
 import unblockReceiver from './unblockReceiver.js';
 import unblockReviewer from './unblockReviewer.js';
@@ -18,6 +16,7 @@ import setRankUpdateFrequency from './setRankUpdateFrequency.js';
 import createRole from "./createRole.js";
 import setRoleName from "./setRoleName.js";
 import deleteRole from "./deleteRole.js";
+import setLeaderboardChannel from "./setLeaderboardChannel.js";
 
 export default {
     setCooldown,
@@ -28,8 +27,6 @@ export default {
     removeUser,
     resetStats,
     resetUserStats,
-    addRating,
-    decreaseRating,
     viewReviews,
     unblockReceiver,
     unblockReviewer,
@@ -39,5 +36,6 @@ export default {
     setRankUpdateFrequency,
     createRole,
     setRoleName,
-    deleteRole
+    deleteRole,
+    setLeaderboardChannel
 }

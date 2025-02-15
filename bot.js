@@ -21,6 +21,8 @@ import topSellers from "./structure/commandHandlers/topSellers.js";
 import worstSellers from "./structure/commandHandlers/worstSellers.js";
 import {sendPaginatedReviews} from "./structure/utils.js";
 import updateRatings from "./structure/updateRatings.js";
+import updateLeaderboard from "./structure/commandHandlers/updateLeaderboard.js";
+import schedule from "node-schedule";
 
 const {Pool} = pkg;
 const pool = new Pool({connectionString: process.env.DATABASE_URL});
@@ -36,6 +38,12 @@ client.once('ready', async () => {
         console.error('❌ Guild not found. Проверьте GUILD_ID в .env');
         return;
     }
+
+    schedule.scheduleJob('0 0 * * *', async () => {
+        await updateLeaderboard(client, pool);
+    });
+
+    await updateLeaderboard(client, pool);
 
     await initializeDatabase(pool, guild);
     await registerCommands();
