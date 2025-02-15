@@ -1,5 +1,6 @@
 import { EmbedBuilder } from 'discord.js';
-import getTopSellers, { getLeaderboardChannelId } from './dbUtils.js';
+import { getLeaderboardChannelId, getLeaderboardMessageId, setLeaderboardMessageId } from './dbUtils.js';
+import getTopSellers from './getTopSellers.js';
 
 export default async function updateLeaderboard(client, pool) {
     const channelId = await getLeaderboardChannelId(pool);
@@ -10,6 +11,7 @@ export default async function updateLeaderboard(client, pool) {
 
     const topSellers = await getTopSellers(pool);
     if (!topSellers.length) {
+        console.log('❌ Нет данных для обновления таблицы лидеров.');
         return;
     }
 
@@ -33,14 +35,20 @@ export default async function updateLeaderboard(client, pool) {
         .setFooter({ text: 'Обновляется ежедневно' });
 
     const channel = await client.channels.fetch(channelId);
-    const messages = await channel.messages.fetch({ limit: 10 });
-    const leaderboardMessage = messages.find(msg => msg.author.id === client.user.id && msg.embeds.length > 0);
+    let messageId = await getLeaderboardMessageId(pool);
 
-    if (leaderboardMessage) {
-        await leaderboardMessage.edit({ embeds: [embed] });
-    } else {
-        await channel.send({ embeds: [embed] });
+    if (messageId) {
+        try {
+            const message = await channel.messages.fetch(messageId);
+            await message.edit({ embeds: [embed] });
+            console.log('✅ Таблица лидеров обновлена!');
+            return;
+        } catch (error) {
+            console.log('⚠️ Не удалось найти сообщение с таблицей, создаём новое...');
+        }
     }
 
-    console.log('✅ Таблица лидеров обновлена!');
+    const newMessage = await channel.send({ embeds: [embed] });
+    await setLeaderboardMessageId(pool, newMessage.id);
+    console.log('✅ Таблица лидеров создана и сохранена!');
 }

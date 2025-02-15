@@ -1,7 +1,8 @@
 import { MessageFlags } from 'discord.js';
 import { setLeaderboardChannelId } from '../dbUtils.js';
+import updateLeaderboard from '../updateLeaderboard.js';
 
-export default async function setLeaderboardChannel(interaction, pool) {
+export default async function setLeaderboardChannel(interaction, pool, client) {
     if (!interaction.member.permissions.has('Administrator')) {
         return interaction.reply({
             content: '❌ У вас нет прав для этой команды!',
@@ -20,7 +21,9 @@ export default async function setLeaderboardChannel(interaction, pool) {
     await setLeaderboardChannelId(pool, channel.id);
 
     await interaction.reply({
-        content: `✅ Канал для таблицы лидеров установлен: <#${channel.id}>`,
+        content: `✅ Канал для таблицы лидеров установлен: <#${channel.id}>\nОбновляю таблицу...`,
         flags: MessageFlags.Ephemeral
     });
+
+    await updateLeaderboard(client, pool);
 }

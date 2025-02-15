@@ -103,9 +103,11 @@ export default async function initializeDatabase(pool, guild) {
     await pool.query(
         `CREATE TABLE IF NOT EXISTS settings (
         key TEXT PRIMARY KEY,
-        value TEXT);
+        value TEXT);`
+    )
 
-        INSERT INTO settings (key, value) VALUES ('leaderboard_channel_id', NULL)
+    await pool.query(
+        `INSERT INTO settings (key, value) VALUES ('leaderboard_channel_id', NULL)
         ON CONFLICT (key) DO NOTHING;`
     )
 

@@ -7,6 +7,16 @@ export async function setLeaderboardChannelId(pool, channelId) {
     await pool.query(`UPDATE settings SET value = $1 WHERE key = 'leaderboard_channel_id'`, [channelId]);
 }
 
+export async function getLeaderboardMessageId(pool) {
+    const result = await pool.query(`SELECT value FROM settings WHERE key = 'leaderboard_message_id'`);
+    return result.rows[0]?.value || null;
+}
+
+export async function setLeaderboardMessageId(pool, messageId) {
+    await pool.query(`UPDATE settings SET value = $1 WHERE key = 'leaderboard_message_id'`, [messageId]);
+}
+
+
 export default async function getTopSellers(pool) {
     const topUsers = await pool.query(
         `SELECT user_id, rating, positive_reviews, negative_reviews
