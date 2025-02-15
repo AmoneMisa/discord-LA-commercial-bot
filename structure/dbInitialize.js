@@ -182,16 +182,9 @@ export default async function initializeDatabase(pool, guild) {
     }
 
     await pool.query(`
-        CREATE TABLE IF NOT EXISTS settings
-        (
-            key
-            TEXT
-            PRIMARY
-            KEY,
-            value
-            TEXT
-            DEFAULT
-            ''
+        CREATE TABLE IF NOT EXISTS settings (
+        key TEXT PRIMARY KEY,
+        value TEXT DEFAULT ''
         );
     `);
 
