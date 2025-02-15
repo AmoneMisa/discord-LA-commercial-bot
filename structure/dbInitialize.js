@@ -193,5 +193,10 @@ export default async function initializeDatabase(pool, guild) {
         VALUES ('leaderboard_channel_id', '') ON CONFLICT (key) DO NOTHING;
     `);
 
+    await pool.query(`
+        INSERT INTO settings (key, value)
+        VALUES ('leaderboard_message_id', '') ON CONFLICT (key) DO NOTHING;
+    `);
+
     console.log("✅ Database was successfully initialized!");
 }
