@@ -9,6 +9,7 @@ export default async function updateLeaderboard(client, pool) {
     }
 
     const topSellers = await getTopSellers(pool);
+
     if (!topSellers.length) {
         console.log('❌ Нет данных для обновления таблицы лидеров.');
         return;

@@ -11,7 +11,15 @@ export default async function setLeaderboardChannel(interaction, pool, client) {
     }
 
     const channel = interaction.options.getChannel('channel');
-    if (!channel || channel.type !== 0) { // 0 = Text Channel
+
+    if (!channel) {
+        return interaction.reply({
+            content: '❌ Ошибка: Вы не указали канал!',
+            flags: MessageFlags.Ephemeral
+        });
+    }
+
+    if (channel.type !== 0) { // 0 = текстовый канал
         return interaction.reply({
             content: '❌ Укажите корректный текстовый канал!',
             flags: MessageFlags.Ephemeral

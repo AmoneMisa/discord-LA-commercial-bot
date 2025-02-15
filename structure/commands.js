@@ -141,7 +141,11 @@ export default [
         )
         .addSubcommand(subcommand =>
             subcommand.setName('set_leaderboard_channel')
-                .setDescription('Установить id канала для списка лидеров')
-                .addStringOption(option => option.setName('id').setDescription('id канала').setRequired(true))
+                .setDescription('Устанавливает канал для таблицы лидеров')
+                .addChannelOption(option =>
+                    option.setName('channel')
+                        .setDescription('Выберите текстовый канал')
+                        .setRequired(true)
+                )
         )
 ];
