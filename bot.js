@@ -39,14 +39,14 @@ client.once('ready', async () => {
         return;
     }
 
+    await initializeDatabase(pool, guild);
+    await registerCommands();
+
     schedule.scheduleJob('0 0 * * *', async () => {
         await updateLeaderboard(client, pool);
     });
 
     await updateLeaderboard(client, pool);
-
-    await initializeDatabase(pool, guild);
-    await registerCommands();
 });
 
 client.on('interactionCreate', async interaction => {
