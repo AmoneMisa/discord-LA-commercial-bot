@@ -3,7 +3,7 @@ import { getLeaderboardChannelId, getLeaderboardMessageId, setLeaderboardMessage
 
 export default async function updateLeaderboard(client, pool) {
     const channelId = await getLeaderboardChannelId(pool);
-    if (!channelId) {
+    if (!channelId || channelId === '') {
         console.log('❌ Канал для таблицы лидеров не установлен.');
         return;
     }
