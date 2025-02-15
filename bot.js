@@ -47,6 +47,7 @@ client.once('ready', async () => {
         await updateLeaderboard(client, pool);
     });
 
+    await updateRatings(pool);
     await updateLeaderboard(client, pool);
 });
 
