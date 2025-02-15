@@ -16,7 +16,6 @@ export async function setLeaderboardMessageId(pool, messageId) {
     await pool.query(`UPDATE settings SET value = $1 WHERE key = 'leaderboard_message_id'`, [messageId]);
 }
 
-
 export async function getTopSellers(pool) {
     const topUsers = await pool.query(
         `SELECT user_id, rating, positive_reviews, negative_reviews

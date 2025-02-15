@@ -15,23 +15,26 @@ export default async function updateLeaderboard(client, pool) {
         return;
     }
 
-    let leaderboardText = '```Rank  | User           | Rating | 👍 | 👎 \n';
-    leaderboardText += '------------------------------------------\n';
-
-    topSellers.forEach((user, index) => {
-        const username = `<@${user.user_id}>`.padEnd(14);
-        const rating = `${user.rating.toFixed(2)}%`.padStart(6);
-        const positive = `${user.positive_reviews}`.padStart(3);
-        const negative = `${user.negative_reviews}`.padStart(3);
-        leaderboardText += `${(index + 1).toString().padEnd(4)} | ${username} | ${rating} | ${positive} | ${negative}\n`;
-    });
-
-    leaderboardText += '```';
-
     const embed = new EmbedBuilder()
         .setColor('#FFD700')
         .setTitle('🏆 Топ 30 продавцов за 14 дней')
-        .setDescription(leaderboardText)
+        .setFields(
+            {
+                name: 'Ранг',
+                value: topSellers.map((user, index) => (index + 1).toString() + '` `\n').join('').repeat(15),
+                inline: true,
+            },
+            {
+                name: 'User',
+                value: topSellers.map((user, index) =>  `<@${user.user_id}>` + '` `\n').join('').repeat(15),
+                inline: true
+            },
+            {
+                name: 'Rating',
+                value: topSellers.map((user, index) => `${user.rating.toFixed(2)}% (👍 ${user.positive_reviews} / 👎 ${user.negative_reviews})` + '` `\n').join('').repeat(15),
+                inline: true
+            }
+        )
         .setFooter({ text: 'Обновляется ежедневно' });
 
     const channel = await client.channels.fetch(channelId);
