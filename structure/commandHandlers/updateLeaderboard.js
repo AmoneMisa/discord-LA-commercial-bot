@@ -1,6 +1,5 @@
 import { EmbedBuilder } from 'discord.js';
-import { getLeaderboardChannelId, getLeaderboardMessageId, setLeaderboardMessageId } from './dbUtils.js';
-import getTopSellers from './getTopSellers.js';
+import { getLeaderboardChannelId, getLeaderboardMessageId, setLeaderboardMessageId, getTopSellers } from './dbUtils.js';
 
 export default async function updateLeaderboard(client, pool) {
     const channelId = await getLeaderboardChannelId(pool);

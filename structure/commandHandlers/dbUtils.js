@@ -17,7 +17,7 @@ export async function setLeaderboardMessageId(pool, messageId) {
 }
 
 
-export default async function getTopSellers(pool) {
+export async function getTopSellers(pool) {
     const topUsers = await pool.query(
         `SELECT user_id, rating, positive_reviews, negative_reviews
          FROM users
