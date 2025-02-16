@@ -45,3 +45,9 @@ export async function getRaidName(pool, id) {
                                    WHERE id = $1`, [result.rows[0].raid_id]);
     return result.rows[0].raid_name;
 }
+
+export async function getSubscriptions(pool, buyerId, sellerId, raidId) {
+    let result = await pool.query(`SELECT buyer_id AND seller_id AND raid_id FROM subscriptions WHERE buyer_id = $1 AND seller_id = $2 AND raid_id = $3`, [buyerId, sellerId, raidId]);
+
+    return result.rows;
+}

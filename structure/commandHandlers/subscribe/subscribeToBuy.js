@@ -1,4 +1,5 @@
 import {MessageFlags} from "discord.js";
+import {getSubscriptions} from "../dbUtils.js";
 
 export default async function subscribeToBuy(interaction, pool) {
     const seller = interaction.options.getUser('user');
@@ -7,7 +8,7 @@ export default async function subscribeToBuy(interaction, pool) {
 
     const blockedBuyer = await pool.query('SELECT * FROM blocked_reviewers WHERE user_id = $1', [buyer]);
     if (blockedBuyer.rowCount > 0) {
-        return interaction.reply({
+        return await interaction.reply({
             content: '🚫 Вам запрещено подписываться на продавцов.',
             flags: MessageFlags.Ephemeral
         });
@@ -18,6 +19,13 @@ export default async function subscribeToBuy(interaction, pool) {
         const result = await pool.query('SELECT id FROM available_raids WHERE raid_id = $1', [raidData.rows[0].id]);
 
         for (const availableRaid of result.rows) {
+            if (await getSubscriptions(buyer, seller.id, availableRaid.id).length > 0) {
+                await interaction.reply({
+                    content: '🚫 Вы не можете подписаться на одного и того же продавца повторно, на один и тот же рейд.',
+                    flags: MessageFlags.Ephemeral
+                });
+                continue ;
+            }
 
             await pool.query(`
                 INSERT INTO subscriptions (buyer_id, seller_id, raid_id)
