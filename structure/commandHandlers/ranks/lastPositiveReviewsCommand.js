@@ -1,4 +1,4 @@
-import {sendPaginatedReviews} from "../utils.js";
+import {sendPaginatedReviews} from "../../utils.js";
 import {MessageFlags} from "discord.js";
 
 export default async function (interaction, pool) {

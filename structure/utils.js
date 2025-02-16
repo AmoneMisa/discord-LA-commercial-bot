@@ -42,7 +42,6 @@ export async function sendPaginatedReviews(interaction, pool, userId, page = 1) 
                     .setLabel(`Удалить ${index + 1}`)
                     .setStyle(ButtonStyle.Danger)
             );
-            console.log(buttons)
         }
     });
 
@@ -78,4 +77,31 @@ export async function sendPaginatedReviews(interaction, pool, userId, page = 1) 
 
 export function toCamelCase(str) {
     return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+}
+
+export async function sendPaginatedList(interaction, rows, pool, page = 1) {
+    const totalPages = Math.ceil(rows.length / 5);
+    const startIndex = (page - 1) * 5;
+    const paginatedRows = rows.slice(startIndex, startIndex + 5);
+
+    let content = `📜 **Ваши фавориты (Страница ${page}/${totalPages})**\n\n`;
+    for (const row of paginatedRows) {
+        const seller = await interaction.client.users.fetch(row.seller_id);
+        content += `👤 **${seller.username}** - 🏆 **Рейтинг: ${row.rating || 0}**\n⚔ **Рейды:** ${row.raid_name}\n\n`;
+    }
+
+    const actionRow = new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+            .setCustomId(`prev_page_${page - 1}`)
+            .setLabel('⬅ Назад')
+            .setStyle(ButtonStyle.Primary)
+            .setDisabled(page === 1),
+        new ButtonBuilder()
+            .setCustomId(`next_page_${page + 1}`)
+            .setLabel('Вперед ➡')
+            .setStyle(ButtonStyle.Primary)
+            .setDisabled(page === totalPages)
+    );
+
+    await interaction.reply({ content, components: [actionRow], flags: MessageFlags.Ephemeral });
 }

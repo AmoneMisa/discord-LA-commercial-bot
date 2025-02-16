@@ -17,6 +17,10 @@ export default async function (pool, guild) {
 
         const member = await guild.members.fetch(user.user_id).catch(() => null);
         if (member && bestRole) {
+            if (member.user.bot) {
+                continue;
+            }
+
             let roleToAssign = guild.roles.cache.get(bestRole.role_id);
             if (roleToAssign) {
                 for (const role of roles.rows) {

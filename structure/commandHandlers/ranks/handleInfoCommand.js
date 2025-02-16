@@ -1,5 +1,5 @@
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from "discord.js";
-import {formatDate} from "../utils.js";
+import {formatDate} from "../../utils.js";
 import dotenv from 'dotenv';
 dotenv.config();
 
