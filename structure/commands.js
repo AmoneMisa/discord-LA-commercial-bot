@@ -24,10 +24,10 @@ export default [
         .setName('admin_settings_ranks')
         .setDescription('Административные настройки рейтинга')
         .addSubcommand(subcommand =>
-        subcommand.setName('set_cooldown')
-            .setDescription('Установить кулдаун на голосование (в минутах)')
-            .addIntegerOption(option => option.setName('minutes').setMinValue(1).setDescription('Время в минутах').setRequired(true))
-    ).addSubcommand(subcommand =>
+            subcommand.setName('set_cooldown')
+                .setDescription('Установить кулдаун на голосование (в минутах)')
+                .addIntegerOption(option => option.setName('minutes').setMinValue(1).setDescription('Время в минутах').setRequired(true))
+        ).addSubcommand(subcommand =>
         subcommand.setName('toggle_self_voting')
             .setDescription('Разрешить или запретить голосование за себя')
             .addBooleanOption(option => option.setName('enabled').setDescription('true - разрешить, false - запретить').setRequired(true))
@@ -142,50 +142,50 @@ export default [
             subcommand.setName('remove_bots')
                 .setDescription('Удаляет всех ботов из базы данных')
         ).addSubcommand(subcommand =>
-            subcommand.setName('set_leaderboard_channel')
-                .setDescription('Устанавливает канал для таблицы лидеров')
-                .addChannelOption(option =>
-                    option.setName('channel')
-                        .setDescription('Выберите текстовый канал')
-                        .setRequired(true)
-                )
-        ),
+        subcommand.setName('set_leaderboard_channel')
+            .setDescription('Устанавливает канал для таблицы лидеров')
+            .addChannelOption(option =>
+                option.setName('channel')
+                    .setDescription('Выберите текстовый канал')
+                    .setRequired(true)
+            )
+    ),
     new SlashCommandBuilder()
         .setName('admin_settings_subscription')
         .setDescription('Управление правилами подписок')
         .addSubcommand(subcommand =>
-        subcommand.setName('block_subscription')
-            .setDescription('Запрещает пользователю подписываться на других')
+            subcommand.setName('block_subscription')
+                .setDescription('Запрещает пользователю подписываться на других')
+                .addUserOption(option =>
+                    option.setName('user')
+                        .setDescription('Выберите пользователя')
+                        .setRequired(true)
+                )
+        ).addSubcommand(subcommand =>
+        subcommand.setName('temp_block_subscription')
+            .setDescription('Временно запрещает пользователю подписываться (в часах)')
             .addUserOption(option =>
                 option.setName('user')
                     .setDescription('Выберите пользователя')
                     .setRequired(true)
             )
-            ).addSubcommand(subcommand =>
-            subcommand.setName('temp_block_subscription')
-                .setDescription('Временно запрещает пользователю подписываться (в часах)')
-                .addUserOption(option =>
-                    option.setName('user')
-                        .setDescription('Выберите пользователя')
-                        .setRequired(true)
-                )
-                .addIntegerOption(option =>
-                    option.setName('hours')
-                        .setDescription('Количество часов')
-                        .setRequired(true)
-                )
-        ).addSubcommand(subcommand =>
-            subcommand.setName('unblock_subscription')
-                .setDescription('Разрешает пользователю снова подписываться')
-                .addUserOption(option =>
-                    option.setName('user')
-                        .setDescription('Выберите пользователя')
-                        .setRequired(true)
-                )
-        ).addSubcommand(subcommand =>
+            .addIntegerOption(option =>
+                option.setName('hours')
+                    .setDescription('Количество часов')
+                    .setRequired(true)
+            )
+    ).addSubcommand(subcommand =>
+        subcommand.setName('unblock_subscription')
+            .setDescription('Разрешает пользователю снова подписываться')
+            .addUserOption(option =>
+                option.setName('user')
+                    .setDescription('Выберите пользователя')
+                    .setRequired(true)
+            )
+    ).addSubcommand(subcommand =>
         subcommand.setName('edit_raids')
             .setDescription('Редактирование списка доступных рейдов')
-        ).addSubcommand(subcommand =>
+    ).addSubcommand(subcommand =>
         subcommand.setName('set_raid_role')
             .setDescription('Настроить соответствие между рейдом и ролью')
             .addStringOption(option =>
@@ -232,6 +232,14 @@ export default [
             )
         ).addSubcommand(subcommand =>
         subcommand.setName('list')
-            .setDescription('Просмотр списка ваших фаворитов')
+            .setDescription('Просмотр списка ваших фаворитов'))
+        .addSubcommand(subcommand =>
+        subcommand.setName('unsubscribe')
+            .setDescription('Отписка от фаворита')
+            .addUserOption(option =>
+            option.setName('user')
+                .setDescription('Выберите продавца')
+                .setRequired(true)
+        )
     )
 ];

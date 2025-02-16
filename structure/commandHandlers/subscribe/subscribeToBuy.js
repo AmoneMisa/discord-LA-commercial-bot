@@ -28,7 +28,7 @@ export default async function subscribeToBuy(interaction, pool) {
     }
 
     return interaction.reply({
-        content: `✅ Вы подписались на уведомления от **${seller.username}** по рейдам: ${raids.join(', ')}.`,
+        content: `✅ Вы подписались на уведомления от **<@${seller.id}>** по рейдам: ${raids.join(', ')}.`,
         flags: MessageFlags.Ephemeral
     });
 }

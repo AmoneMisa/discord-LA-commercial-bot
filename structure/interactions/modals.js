@@ -5,18 +5,18 @@ import handleSellerAnswerToBuyerModal from "../commandHandlers/subscribe/handleS
 
 export default async function(interaction, pool, client) {
     if (interaction.fields.fields.get('review_text') && interaction.fields.getTextInputValue('review_text')) {
-        sendReview(interaction, pool);
+        await sendReview(interaction, pool);
     }
 
     if (interaction.fields.fields.get('buyer_nickname') && interaction.fields.getTextInputValue('buyer_nickname')) {
-        notifySeller(interaction, pool, client);
+        await notifySeller(interaction, pool, client);
     }
 
     if (interaction.customId === 'create_raid_modal') {
-        handleCreateRaidModal(interaction, pool);
+        await handleCreateRaidModal(interaction, pool);
     }
 
     if (interaction.customId.startsWith('raid_buy_answer_')) {
-        handleSellerAnswerToBuyerModal(interaction, pool, client);
+        await handleSellerAnswerToBuyerModal(interaction, pool, client);
     }
 }

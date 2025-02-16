@@ -50,7 +50,7 @@ export default async function messageSubscriptionHandler(message, pool, client) 
                 const raidName = await getRaidName(pool, raidId);
 
                 await user.send({
-                    content: `🔔 Игрок **${message.author.username}** набирает группу на **${raidName}**! [Перейти к сообщению](${message.url})`,
+                    content: `🔔 Игрок **<@${message.author.id}>** набирает группу на **${raidName}**! [Перейти к сообщению](${message.url})`,
                     components: [row]
                 }).then((message) => {
                     setTimeout(() => {

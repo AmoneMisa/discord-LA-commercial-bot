@@ -23,7 +23,7 @@ export default async function (interaction, pool, client) {
 
             await interaction.showModal(modal);
         } else {
-            await buyer.send(`Продавец: <@${interaction.user.id}> отклонил ваш запрос на покупку рейда: ${raidName}`);
+            await buyer.send({content: `Продавец: <@${interaction.user.id}> отклонил ваш запрос на покупку рейда: ${raidName}`});
         }
     } catch (e) {
         console.error('Ошибка при отправке ответа покупателю', e);

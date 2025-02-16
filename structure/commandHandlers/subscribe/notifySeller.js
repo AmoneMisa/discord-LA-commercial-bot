@@ -3,7 +3,7 @@ import {getRaidName} from "../dbUtils.js";
 
 export default async function notifySeller(interaction, pool, client) {
     try {
-        const [ , , sellerId, raidId] = interaction.customId.split('_');
+        const [, , sellerId, raidId] = interaction.customId.split('_');
         const seller = await client.users.fetch(sellerId);
         const raidName = await getRaidName(pool, raidId);
 
@@ -21,19 +21,25 @@ export default async function notifySeller(interaction, pool, client) {
                         .setStyle(ButtonStyle.Danger)
                 );
 
-            await seller.send({content: `💰 **Запрос на покупку рейда!**
+            await seller.send({
+                content: `💰 **Запрос на покупку рейда!**
             **Покупатель:** <@${interaction.user.id}>
             **Персонаж:** ${interaction.fields.getTextInputValue('buyer_nickname')}
-            **Рейд:** ${raidName}`, components: [row]}).then((message) => {
+            **Рейд:** ${raidName}`, components: [row]
+            }).then((message) => {
                 setTimeout(() => {
-                    message.edit({content: `Время для ответа истекло`, components: [], flags: MessageFlags.Ephemeral});
-                }, 1000 * 60 * 5)
+                    message.edit({
+                        content: `Время для ответа истекло`,
+                        components: [],
+                        flags: MessageFlags.Ephemeral
+                    });
+                }, 1000 * 60 * 5);
             });
 
-            await interaction.reply({ content: `✅ Ваш запрос отправлен продавцу!`, flags: MessageFlags.Ephemeral });
+            await interaction.reply({content: `✅ Ваш запрос отправлен продавцу!`, flags: MessageFlags.Ephemeral});
         }
     } catch (error) {
         console.error('Ошибка при отправке уведомления продавцу:', error);
-        await interaction.reply({ content: '❌ Ошибка при отправке запроса продавцу.', flags: MessageFlags.Ephemeral });
+        await interaction.reply({content: '❌ Ошибка при отправке запроса продавцу.', flags: MessageFlags.Ephemeral});
     }
 }

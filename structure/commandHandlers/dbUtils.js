@@ -39,8 +39,9 @@ export async function getTopSellers(pool) {
 }
 
 export async function getRaidName(pool, id) {
-    let result = await pool.query(`SELECT raid_name
+    let result = await pool.query(`SELECT raid_id FROM available_raids WHERE id = $1`, [id]);
+    result = await pool.query(`SELECT raid_name
                                    FROM raids
-                                   WHERE id = $1`, [id]);
+                                   WHERE id = $1`, [result.rows[0].raid_id]);
     return result.rows[0].raid_name;
 }
