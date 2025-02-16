@@ -1,6 +1,6 @@
 import sendReview from "../commandHandlers/ranks/sendReview.js";
 import handleCreateRaidModal from "../commandHandlers/subscribe/handleCreateRaidModal.js";
-import notifySeller from "../commandHandlers/subscribe/notifySeller.js";
+import notifySellerMessageSend from "../commandHandlers/subscribe/notifySellerMessageSend.js";
 import handleSellerAnswerToBuyerModal from "../commandHandlers/subscribe/handleSellerAnswerToBuyerModal.js";
 
 export default async function(interaction, pool, client) {
@@ -9,7 +9,7 @@ export default async function(interaction, pool, client) {
     }
 
     if (interaction.fields.fields.get('buyer_nickname') && interaction.fields.getTextInputValue('buyer_nickname')) {
-        await notifySeller(interaction, pool, client);
+        await notifySellerMessageSend(interaction, pool, client);
     }
 
     if (interaction.customId === 'create_raid_modal') {

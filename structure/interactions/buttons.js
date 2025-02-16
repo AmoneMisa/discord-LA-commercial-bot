@@ -4,7 +4,7 @@ import {sendPaginatedReviews} from "../utils.js";
 import deleteReview from "../commandHandlers/ranks/deleteReview.js";
 import handleEditRaidsButtons from "../commandHandlers/subscribe/handleEditRaidsButtons.js";
 import handleBuyButtons from "../commandHandlers/subscribe/handleBuyButtons.js";
-import sellerAnswerToBuyer from "../commandHandlers/subscribe/sellerAnswerToBuyer.js";
+import sellerAnswerToBuyer from "../commandHandlers/subscribe/sellerAnswerToBuyerModal.js";
 
 export default async function (interaction, pool, client) {
     if (interaction.customId.startsWith('upvote_') || interaction.customId.startsWith('downvote_')) {

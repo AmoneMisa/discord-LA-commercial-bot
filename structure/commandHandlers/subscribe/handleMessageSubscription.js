@@ -1,7 +1,7 @@
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from 'discord.js';
 import {getRaidName} from "../dbUtils.js";
 
-export default async function messageSubscriptionHandler(message, pool, client) {
+export default async function handleMessageSubscription(message, pool, client) {
     if (!message.guild || message.author.bot) {
         return;
     }
@@ -51,7 +51,7 @@ export default async function messageSubscriptionHandler(message, pool, client) 
 
                 await user.send({
                     content: `🔔 Игрок **<@${message.author.id}>** набирает группу на **${raidName}**! [Перейти к сообщению](${message.url})`,
-                    components: [row]
+                    components: [row], flags: MessageFlags.Ephemeral
                 }).then((message) => {
                     setTimeout(() => {
                         message.edit({content: `Время для ответа истекло`, components: [], flags: MessageFlags.Ephemeral});

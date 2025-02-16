@@ -1,4 +1,4 @@
-import {ActionRowBuilder, ButtonStyle, ModalBuilder, TextInputBuilder, TextInputStyle} from "discord.js";
+import {ActionRowBuilder, ButtonStyle, MessageFlags, ModalBuilder, TextInputBuilder, TextInputStyle} from "discord.js";
 import {getRaidName} from "../dbUtils.js";
 
 export default async function (interaction, pool, client) {
@@ -24,6 +24,12 @@ export default async function (interaction, pool, client) {
             await interaction.showModal(modal);
         } else {
             await buyer.send({content: `Продавец: <@${interaction.user.id}> отклонил ваш запрос на покупку рейда: ${raidName}`});
+            await client.channels.fetch(interaction.message.channelId);
+            await interaction.message.edit({
+                content: '❌ Ваш отказ отправлен покупателю',
+                components: [],
+                flags: MessageFlags.Ephemeral
+            });
         }
     } catch (e) {
         console.error('Ошибка при отправке ответа покупателю', e);

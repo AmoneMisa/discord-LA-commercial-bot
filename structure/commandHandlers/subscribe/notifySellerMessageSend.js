@@ -1,7 +1,7 @@
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from "discord.js";
 import {getRaidName} from "../dbUtils.js";
 
-export default async function notifySeller(interaction, pool, client) {
+export default async function notifySellerMessageSend(interaction, pool, client) {
     try {
         const [, , sellerId, raidId] = interaction.customId.split('_');
         const seller = await client.users.fetch(sellerId);
@@ -21,11 +21,11 @@ export default async function notifySeller(interaction, pool, client) {
                         .setStyle(ButtonStyle.Danger)
                 );
 
-            await seller.send({
+            seller.send({
                 content: `💰 **Запрос на покупку рейда!**
             **Покупатель:** <@${interaction.user.id}>
             **Персонаж:** ${interaction.fields.getTextInputValue('buyer_nickname')}
-            **Рейд:** ${raidName}`, components: [row]
+            **Рейд:** ${raidName}`, components: [row], flags: MessageFlags.Ephemeral
             }).then((message) => {
                 setTimeout(() => {
                     message.edit({
@@ -36,7 +36,12 @@ export default async function notifySeller(interaction, pool, client) {
                 }, 1000 * 60 * 5);
             });
 
-            await interaction.reply({content: `✅ Ваш запрос отправлен продавцу!`, flags: MessageFlags.Ephemeral});
+            await client.channels.fetch(interaction.message.channelId);
+            await interaction.message.edit({
+                content: '✅ Ваш запрос отправлен продавцу!',
+                components: [],
+                flags: MessageFlags.Ephemeral
+            });
         }
     } catch (error) {
         console.error('Ошибка при отправке уведомления продавцу:', error);
