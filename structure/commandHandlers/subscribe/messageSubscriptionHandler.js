@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
+import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from 'discord.js';
 import {getRaidName} from "../dbUtils.js";
 
 export default async function messageSubscriptionHandler(message, pool, client) {
@@ -52,11 +52,11 @@ export default async function messageSubscriptionHandler(message, pool, client) 
                 await user.send({
                     content: `🔔 Игрок **${message.author.username}** набирает группу на **${raidName}**! [Перейти к сообщению](${message.url})`,
                     components: [row]
+                }).then((message) => {
+                    setTimeout(() => {
+                        message.edit({content: `Время для ответа истекло`, components: [], flags: MessageFlags.Ephemeral});
+                    }, 1000 * 60 * 5)
                 });
-
-                setTimeout(async () => {
-                    await user.send('⏳ Время для реакции истекло, кнопки больше недоступны.');
-                }, 5 * 60 * 1000);
             }
         }
     }

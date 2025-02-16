@@ -24,7 +24,11 @@ export default async function notifySeller(interaction, pool, client) {
             await seller.send({content: `💰 **Запрос на покупку рейда!**
             **Покупатель:** <@${interaction.user.id}>
             **Персонаж:** ${interaction.fields.getTextInputValue('buyer_nickname')}
-            **Рейд:** ${raidName}`, components: [row]});
+            **Рейд:** ${raidName}`, components: [row]}).then((message) => {
+                setTimeout(() => {
+                    message.edit({content: `Время для ответа истекло`, components: [], flags: MessageFlags.Ephemeral});
+                }, 1000 * 60 * 5)
+            });
 
             await interaction.reply({ content: `✅ Ваш запрос отправлен продавцу!`, flags: MessageFlags.Ephemeral });
         }
