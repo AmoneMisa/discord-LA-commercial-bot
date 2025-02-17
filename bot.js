@@ -20,6 +20,8 @@ import {schedulersList} from "./structure/shedullers/scheduleUpdates.js";
 import buttons from "./structure/interactions/buttons.js";
 import modals from "./structure/interactions/modals.js";
 import commands from "./structure/interactions/commands.js";
+import autocomplete from "./structure/interactions/autocomplete.js";
+import {addUserIfNotExists} from "./structure/commandHandlers/dbUtils.js";
 
 const {Pool} = pkg;
 const pool = new Pool({connectionString: process.env.DATABASE_URL});
@@ -48,8 +50,9 @@ client.once('ready', async () => {
 client.on('interactionCreate', async interaction => {
     try {
         const targetUser = interaction?.options?.getUser('member');
+        await addUserIfNotExists(pool, interaction.user);
 
-        if (interaction.isCommand() && interaction.commandName === 'admin_settings' && interaction.options.getSubcommand() === 'remove_bots') {
+        if (interaction.isCommand() && interaction.commandName === 'adm_settings' && interaction.options.getSubcommand() === 'remove_bots') {
             await removeBots(interaction, pool);
         }
 
@@ -62,10 +65,18 @@ client.on('interactionCreate', async interaction => {
 
         if (interaction.isCommand()) {
             await commands(interaction, pool);
-        } else if (interaction.isButton()) {
+        }
+
+        if (interaction.isButton()) {
             await buttons(interaction, pool, client);
-        } else if (interaction.isModalSubmit()) {
+        }
+
+        if (interaction.isModalSubmit()) {
             await modals(interaction, pool, client);
+        }
+
+        if (interaction.isAutocomplete()) {
+            await autocomplete(interaction, pool);
         }
     } catch (e) {
         console.error('interactionCreate:',e);

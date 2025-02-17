@@ -1,4 +1,8 @@
 import {SlashCommandBuilder, PermissionFlagsBits} from "discord.js";
+import pkg from "pg";
+
+const {Pool} = pkg;
+const pool = new Pool({connectionString: process.env.DATABASE_URL});
 
 export default [
     new SlashCommandBuilder()
@@ -21,7 +25,7 @@ export default [
         .setName('worst_sellers')
         .setDescription('Пять худших продавцов'),
     new SlashCommandBuilder()
-        .setName('admin_settings_ranks')
+        .setName('adm_ranks')
         .setDescription('Административные настройки рейтинга')
         .addSubcommand(subcommand =>
             subcommand.setName('set_cooldown')
@@ -136,7 +140,7 @@ export default [
                 .addStringOption(option => option.setName('name').setDescription('Название роли').setRequired(true))
         ),
     new SlashCommandBuilder()
-        .setName('admin_settings')
+        .setName('adm_settings')
         .setDescription('Настройки администратора')
         .addSubcommand(subcommand =>
             subcommand.setName('remove_bots')
@@ -151,7 +155,7 @@ export default [
             )
     ),
     new SlashCommandBuilder()
-        .setName('admin_settings_subscription')
+        .setName('adm_subscription')
         .setDescription('Управление правилами подписок')
         .addSubcommand(subcommand =>
             subcommand.setName('block_subscription')
@@ -199,7 +203,7 @@ export default [
                     .setRequired(true)
             )
     ).addSubcommand(subcommand =>
-        subcommand.setName('set_buss_category')
+        subcommand.setName('set_bus_category')
             .setDescription('Установить категорию для отслеживания рейдов')
             .addChannelOption(option =>
                 option.setName('category')
@@ -207,6 +211,9 @@ export default [
                     .setRequired(true)
             )
     ),
+    new SlashCommandBuilder()
+        .setName('auction_house')
+        .setDescription('Аукционный дом'),
     new SlashCommandBuilder()
         .setName('subscribe')
         .setDescription('Управление подписками')
@@ -234,12 +241,93 @@ export default [
         subcommand.setName('list')
             .setDescription('Просмотр списка ваших фаворитов'))
         .addSubcommand(subcommand =>
-        subcommand.setName('unsubscribe')
-            .setDescription('Отписка от фаворита')
-            .addUserOption(option =>
-            option.setName('user')
-                .setDescription('Выберите продавца')
+            subcommand.setName('unsubscribe')
+                .setDescription('Отписка от фаворита')
+                .addUserOption(option =>
+                    option.setName('user')
+                        .setDescription('Выберите продавца')
+                        .setRequired(true)
+                )
+        ),
+    new SlashCommandBuilder()
+        .setName('inventory')
+        .setDescription('Инвентарь')
+        .addSubcommand(subcommand =>
+            subcommand.setName('wtt')
+                .setDescription('Добавить предмет на обмен')
+                .addStringOption(option => option
+                    .setName('offer_item')
+                    .setDescription('Предлагаемый предмет')
+                    .setRequired(true)
+                    .setAutocomplete(true)
+                ).addStringOption(option =>
+                option.setName('request_item')
+                    .setDescription('Желаемый предмет')
+                    .setRequired(true)
+                    .setAutocomplete(true))
+                .addIntegerOption(option =>
+                    option.setName('offer_amount').setMinValue(1).setDescription('Количество').setMaxValue(9999).setRequired(true))
+                .addIntegerOption(option =>
+                    option.setName('request_amount').setMinValue(1).setMaxValue(9999).setDescription('Количество желаемого').setRequired(true))
+                .addStringOption(option =>
+                    option.setName('server').setDescription('Сервер').setRequired(true)
+                        .addChoices(
+                            {name: 'Кратос', value: 'Кратос'},
+                            {name: 'Альдеран', value: 'Альдеран'},
+                            {name: 'Альдеран, Кратос', value: 'Альдеран, Кратос'}
+                        ))
+                .addIntegerOption(option =>
+                    option.setName('offer_level').setDescription('Уровень предмета').setRequired(false))
+                .addIntegerOption(option =>
+                    option.setName('request_level').setDescription('Уровень предмета').setRequired(false))
+        ).addSubcommand(subcommand =>
+        subcommand.setName('wtb')
+            .setDescription('Запрос на покупку предмета')
+            .addStringOption(option => option
+                .setName('request_item')
+                .setDescription('Желаемый предмет')
                 .setRequired(true)
-        )
+                .setAutocomplete(true))
+            .addIntegerOption(option =>
+                option.setName('request_amount').setMinValue(1).setDescription('Количество')
+                    .setMaxValue(9999).setRequired(true))
+            .addIntegerOption(option =>
+                option.setName('request_price').setMinValue(1)
+                    .setDescription('Предлагаемая стоимость (в тысячах)').setRequired(true))
+            .addBooleanOption(option =>
+                option.setName('negotiable').setDescription('Торг').setRequired(true))
+            .addStringOption(option =>
+                option.setName('server').setDescription('Сервер').setRequired(true)
+                    .addChoices(
+                        {name: 'Кратос', value: 'Кратос'},
+                        {name: 'Альдеран', value: 'Альдеран'},
+                        {name: 'Альдеран, Кратос', value: 'Альдеран, Кратос'}
+                    )).addIntegerOption(option =>
+            option.setName('request_level').setDescription('Уровень предмета').setRequired(false))
+    ).addSubcommand(subcommand =>
+        subcommand.setName('wts')
+            .setDescription('Добавить предмет на продажу')
+            .addStringOption(option =>
+                option.setName('offer_item')
+                    .setDescription('Продаваемый предмет')
+                    .setRequired(true)
+                    .setAutocomplete(true))
+            .addIntegerOption(option =>
+                option.setName('offer_amount').setMinValue(1).setDescription('Количество').setMaxValue(9999).setRequired(true))
+            .addIntegerOption(option =>
+                option.setName('offer_price').setMinValue(1).setDescription('Стоимость (в тысячах)').setRequired(true))
+            .addBooleanOption(option =>
+                option.setName('negotiable').setDescription('Торг').setRequired(true))
+            .addStringOption(option =>
+                option.setName('server').setDescription('Сервер').setRequired(true)
+                    .addChoices(
+                        {name: 'Кратос', value: 'Кратос'},
+                        {name: 'Альдеран', value: 'Альдеран'},
+                        {name: 'Альдеран, Кратос', value: 'Альдеран, Кратос'}
+                    )).addIntegerOption(option =>
+            option.setName('offer_level').setDescription('Уровень предмета').setRequired(false))
+    ).addSubcommand(subcommand =>
+        subcommand.setName('list')
+            .setDescription('Список лотов')
     )
 ];

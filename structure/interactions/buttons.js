@@ -5,6 +5,8 @@ import deleteReview from "../commandHandlers/ranks/deleteReview.js";
 import handleEditRaidsButtons from "../commandHandlers/subscribe/handleEditRaidsButtons.js";
 import handleBuyButtons from "../commandHandlers/subscribe/handleBuyButtons.js";
 import sellerAnswerToBuyer from "../commandHandlers/subscribe/sellerAnswerToBuyerModal.js";
+import handleRemoveLotButtons from "../commandHandlers/tradeSystem/handleRemoveLotButtons.js";
+import handleExtendLot from "../commandHandlers/tradeSystem/handleExtendLot.js";
 
 export default async function (interaction, pool, client) {
     if (interaction.customId.startsWith('upvote_') || interaction.customId.startsWith('downvote_')) {
@@ -85,5 +87,13 @@ export default async function (interaction, pool, client) {
 
     if (interaction.customId.startsWith('seller_answer_') || interaction.customId.startsWith('seller_reject_')) {
         sellerAnswerToBuyer(interaction, pool, client);
+    }
+
+    if (interaction.customId.startsWith('remove_lot_')) {
+        handleRemoveLotButtons(interaction, pool);
+    }
+
+    if (interaction.customId.startsWith('extend_lot_')) {
+        handleExtendLot(interaction, pool);
     }
 }

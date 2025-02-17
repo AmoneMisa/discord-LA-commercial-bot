@@ -1,4 +1,5 @@
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags, PermissionsBitField} from "discord.js";
+import {getItemName} from "./commandHandlers/dbUtils.js";
 
 export function formatDate(dateString) {
     if (!dateString) return 'Нет данных';
@@ -104,4 +105,26 @@ export async function sendPaginatedList(interaction, rows, pool, page = 1) {
     );
 
     await interaction.reply({ content, components: [actionRow], flags: MessageFlags.Ephemeral });
+}
+
+export async function createLotItemMessage(pool, type, options) {
+    if (type !== "WTT" && type !== "WTS" && type !== "WTB") {
+        console.error("Переданный тип некорректный", type);
+        return;
+    }
+
+    if (type === "WTT") {
+        const {item_offer, item_request, type, amount_offer, amount_request, offer_level, request_level, expires_at} = options;
+        return `${type} | Предложено: ${await getItemName(pool, item_offer)}, к-во: ${amount_offer}, уровень: ${offer_level ? offer_level : 'нет уровня'}\nЗапрошено: ${await getItemName(pool, item_request)}, к-во: ${amount_request}, уровень: ${request_level ? request_level : 'нет уровня'}.\n⏳ Предложение до: ${expires_at.toLocaleString()}`;
+    }
+
+    if (type === "WTS") {
+        const {item_request, type, amount_request, request_level, price, expires_at} = options;
+        return `${type} | Запрошено: ${await getItemName(pool, item_request)}, к-во: ${amount_request}, уровень: ${request_level ? request_level : 'нет уровня'}, стоимость: ${price}к золота.\n⏳ Предложение до: ${expires_at.toLocaleString()}`;
+    }
+
+    if (type === "WTB") {
+        const {item_offer, type, amount_offer, offer_level, price, expires_at} = options;
+        return `${type} | Предложено: ${await getItemName(pool, item_offer)}, к-во: ${amount_offer}, уровень: ${offer_level ? offer_level : 'нет уровня'}, стоимость: ${price}к золота.\n⏳ Предложение до: ${expires_at.toLocaleString()}`;
+    }
 }
