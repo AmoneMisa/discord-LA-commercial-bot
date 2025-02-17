@@ -15,7 +15,6 @@ import updateRatings from "./structure/updateRatings.js";
 import updateLeaderboard from "./structure/commandHandlers/updateLeaderboard.js";
 import setRolesByRanks from "./structure/setRolesByRanks.js";
 import removeBots from "./structure/commandHandlers/adminCommands/removeBots.js";
-import messageSubscriptionHandler from "./structure/commandHandlers/subscribe/messageSubscriptionHandler.js";
 import {schedulersList} from "./structure/shedullers/scheduleUpdates.js";
 import buttons from "./structure/interactions/buttons.js";
 import modals from "./structure/interactions/modals.js";
@@ -69,14 +68,6 @@ client.on('interactionCreate', async interaction => {
         }
     } catch (e) {
         console.error('interactionCreate:',e);
-    }
-});
-
-client.on(Events.MessageCreate, async message => {
-    try {
-        await messageSubscriptionHandler(message, pool, client);
-    } catch (e) {
-        console.error('messageCreate:', e);
     }
 });
 
