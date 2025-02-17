@@ -1,4 +1,4 @@
-import { MessageFlags } from 'discord.js';
+import {MessageFlags} from 'discord.js';
 
 export default async function blockReceiver(interaction, pool) {
     const user = interaction.options.getUser('user');
