@@ -4,6 +4,9 @@ import lastNegativeReviewsCommand from "../commandHandlers/ranks/lastNegativeRev
 import lastReviewsCommand from "../commandHandlers/ranks/lastReviewsCommand.js";
 import handleAdminSettingsCommand from "../commandHandlers/handleAdminSettingsCommand.js";
 import worstSellers from "../commandHandlers/ranks/worstSellers.js";
+import subscribeToBuy from "../commandHandlers/subscribe/subscribeToBuy.js";
+import subscribeList from "../commandHandlers/subscribe/subscribeList.js";
+import unSubscribeToBuy from "../commandHandlers/subscribe/unSubscribeToBuy.js";
 
 export default async function (interaction, pool) {
     if (interaction.commandName === 'info') {
@@ -31,5 +34,19 @@ export default async function (interaction, pool) {
 
     if (interaction.commandName === 'worst_sellers') {
         await worstSellers(interaction, pool);
+    }
+
+    if (interaction.commandName === 'subscribe') {
+        if (interaction.options.getSubcommand() === 'to_buy') {
+            await subscribeToBuy(interaction, pool);
+        }
+
+        if (interaction.options.getSubcommand() === 'list') {
+            await subscribeList(interaction, pool);
+        }
+
+        if (interaction.options.getSubcommand() === 'unsubscribe') {
+            await unSubscribeToBuy(interaction, pool);
+        }
     }
 }

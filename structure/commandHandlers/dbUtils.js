@@ -37,3 +37,17 @@ export async function getTopSellers(pool) {
 
     return topUsers.rows;
 }
+
+export async function getRaidName(pool, id) {
+    let result = await pool.query(`SELECT raid_id FROM available_raids WHERE id = $1`, [id]);
+    result = await pool.query(`SELECT raid_name
+                                   FROM raids
+                                   WHERE id = $1`, [result.rows[0].raid_id]);
+    return result.rows[0].raid_name;
+}
+
+export async function getSubscriptions(pool, buyerId, sellerId, raidId) {
+    let result = await pool.query(`SELECT buyer_id AND seller_id AND raid_id FROM subscriptions WHERE buyer_id = $1 AND seller_id = $2 AND raid_id = $3`, [buyerId, sellerId, raidId]);
+
+    return result.rows;
+}

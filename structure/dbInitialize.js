@@ -6,11 +6,10 @@ export default async function initializeDatabase(pool, guild) {
     let result;
 
     await pool.query(`
-        CREATE TABLE IF NOT EXISTS users
-        (
-            user_id          VARCHAR PRIMARY KEY,
-            rating           INTEGER DEFAULT 0,
-            positive_reviews INTEGER DEFAULT 0,
+        CREATE TABLE IF NOT EXISTS users (
+            user_id SERIAL PRIMARY KEY,
+            rating INTEGER DEFAULT 0,
+            positive_reviews INTEGER DEFAULT 0, 
             negative_reviews INTEGER DEFAULT 0
         );
     `);
@@ -18,81 +17,73 @@ export default async function initializeDatabase(pool, guild) {
     await pool.query(`
         CREATE TABLE IF NOT EXISTS reviews
         (
-            id          SERIAL PRIMARY KEY,
-            target_user VARCHAR REFERENCES users (user_id),
-            reviewer_id VARCHAR REFERENCES users (user_id),
+            id SERIAL PRIMARY KEY,
+            target_user VARCHAR REFERENCES users ( user_id ),
+            reviewer_id VARCHAR NOT NULL,
             is_positive BOOLEAN NOT NULL,
             review_text TEXT,
-            "timestamp" TIMESTAMP DEFAULT NOW()
-        );
+            "timestamp" TIMESTAMP DEFAULT NOW ()
+            );
     `);
 
     await pool.query(`
-        CREATE TABLE IF NOT EXISTS blocked_reviewers
-        (
-            user_id      VARCHAR REFERENCES users (user_id) PRIMARY KEY,
+        CREATE TABLE IF NOT EXISTS blocked_reviewers (
+            user_id SERIAL PRIMARY KEY,
             unblock_time TIMESTAMP
         );
     `);
 
     await pool.query(`
-        CREATE TABLE IF NOT EXISTS blocked_receivers
-        (
-            user_id      VARCHAR REFERENCES users (user_id) PRIMARY KEY,
+        CREATE TABLE IF NOT EXISTS blocked_receivers(
+            user_id SERIAL PRIMARY KEY,
             unblock_time TIMESTAMP
         );
     `);
 
     await pool.query(`
-        CREATE TABLE IF NOT EXISTS settings
-        (
-            key   VARCHAR PRIMARY KEY,
+        CREATE TABLE IF NOT EXISTS settings (
+            key VARCHAR PRIMARY KEY,
             value VARCHAR DEFAULT ''
         );
     `);
 
     await pool.query(`
-        CREATE TABLE IF NOT EXISTS rank_criteria
-        (
-            id           SERIAL PRIMARY KEY,
-            top_seller   INTEGER DEFAULT 100,
+        CREATE TABLE IF NOT EXISTS rank_criteria (
+            id SERIAL PRIMARY KEY,
+            top_seller INTEGER DEFAULT 100,
             great_seller INTEGER DEFAULT 75,
-            good_seller  INTEGER DEFAULT 50,
-            seller       INTEGER DEFAULT 25
+            good_seller INTEGER DEFAULT 50,
+            seller INTEGER DEFAULT 25
         );
     `);
 
-    result = await pool.query(`SELECT COUNT(*)
-                               FROM settings`);
+    result = await pool.query(`SELECT COUNT(*) FROM settings`);
 
     if (!result.rows[0].count || +result.rows[0].count < 1) {
         await pool.query(`
-            INSERT INTO settings ("key", "value")
-            VALUES ('cooldown_minutes', '20'),
-                   ('cooldown_enabled', 'true'),
-                   ('allow_self_voting', 'false'),
-                   ('rank_update_frequency', '1d'),
-                   ('leaderboard_channel_id', ''),
-                   ('leaderboard_message_id', '')
-            ON CONFLICT ("key") DO NOTHING;
+        INSERT INTO settings ("key", "value")
+        VALUES ('cooldown_minutes', '20'),
+               ('cooldown_enabled', 'true'),
+               ('allow_self_voting', 'false'),
+               ('rank_update_frequency', '1d'),
+               ('leaderboard_channel_id', ''),
+               ('leaderboard_message_id', '') ON CONFLICT ("key") DO NOTHING;
         `);
     }
 
     await pool.query(`
-        CREATE TABLE IF NOT EXISTS roles
-        (
-            id                   SERIAL PRIMARY KEY,
-            role_name            VARCHAR UNIQUE NOT NULL,
-            role_id              VARCHAR UNIQUE,
-            required_rating      INTEGER DEFAULT 0,
-            min_reviews          INTEGER DEFAULT 0,
+        CREATE TABLE IF NOT EXISTS roles (
+            id SERIAL PRIMARY KEY,
+            role_name VARCHAR UNIQUE NOT NULL,
+            role_id VARCHAR UNIQUE,
+            required_rating INTEGER DEFAULT 0,
+            min_reviews INTEGER DEFAULT 0,
             min_positive_reviews INTEGER DEFAULT 0,
             min_negative_reviews INTEGER DEFAULT 0
         );
     `);
 
-    result = await pool.query(`SELECT COUNT(*)
-                               FROM roles`);
+    result = await pool.query(`SELECT COUNT(*) FROM roles`);
 
     if (!result.rows[0].count || +result.rows[0].count < 1) {
         const defaultRoles = [
@@ -122,6 +113,49 @@ export default async function initializeDatabase(pool, guild) {
             }
         }
     }
+
+    await pool.query(`CREATE TABLE IF NOT EXISTS raids (
+          id SERIAL PRIMARY KEY,
+          raid_name VARCHAR NOT NULL
+    );`);
+
+    await pool.query(`CREATE TABLE IF NOT EXISTS raid_roles (
+         id SERIAL PRIMARY KEY,
+         role_name VARCHAR NOT NULL,
+         role_id VARCHAR UNIQUE NOT NULL
+    );`);
+
+    await pool.query(`CREATE TABLE IF NOT EXISTS available_raids (
+        id SERIAL PRIMARY KEY,
+        raid_id INT REFERENCES raids ( id ),
+        role_id VARCHAR REFERENCES raid_roles ( role_id )
+        );`);
+
+    await pool.query(`CREATE TABLE IF NOT EXISTS subscriptions (
+    id SERIAL PRIMARY KEY,
+    buyer_id VARCHAR REFERENCES users ( user_id ),
+    seller_id VARCHAR REFERENCES users ( user_id ),
+    raid_id INT REFERENCES available_raids ( id )
+    );`);
+
+    result = await pool.query(`SELECT COUNT(*) FROM raids`);
+
+    if (!result.rows[0].count || +result.rows[0].count < 1) {
+        await pool.query(`
+        INSERT INTO raids (raid_name)
+        VALUES ('Ехидна'),
+        ('Бехемос'),
+        ('Камен 1.0'),
+        ('Эгир (нормал)'),
+        ('Эгир (хард)'),
+        ('Аврельсуд (нормал)'),
+        ('Аврельсуд (хард)'),
+        ('Камен 2.0 (нормал)'),
+        ('Камен 2.0 (хард)');
+    `);
+    }
+
+    await pool.query(`INSERT INTO settings (key, value) VALUES ('buss_category', '') ON CONFLICT (key) DO NOTHING;`);
 
     console.log("✅ Database was successfully initialized!");
 }

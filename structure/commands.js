@@ -142,12 +142,104 @@ export default [
             subcommand.setName('remove_bots')
                 .setDescription('Удаляет всех ботов из базы данных')
         ).addSubcommand(subcommand =>
-            subcommand.setName('set_leaderboard_channel')
-                .setDescription('Устанавливает канал для таблицы лидеров')
-                .addChannelOption(option =>
-                    option.setName('channel')
-                        .setDescription('Выберите текстовый канал')
+        subcommand.setName('set_leaderboard_channel')
+            .setDescription('Устанавливает канал для таблицы лидеров')
+            .addChannelOption(option =>
+                option.setName('channel')
+                    .setDescription('Выберите текстовый канал')
+                    .setRequired(true)
+            )
+    ),
+    new SlashCommandBuilder()
+        .setName('admin_settings_subscription')
+        .setDescription('Управление правилами подписок')
+        .addSubcommand(subcommand =>
+            subcommand.setName('block_subscription')
+                .setDescription('Запрещает пользователю подписываться на других')
+                .addUserOption(option =>
+                    option.setName('user')
+                        .setDescription('Выберите пользователя')
                         .setRequired(true)
                 )
+        ).addSubcommand(subcommand =>
+        subcommand.setName('temp_block_subscription')
+            .setDescription('Временно запрещает пользователю подписываться (в часах)')
+            .addUserOption(option =>
+                option.setName('user')
+                    .setDescription('Выберите пользователя')
+                    .setRequired(true)
+            )
+            .addIntegerOption(option =>
+                option.setName('hours')
+                    .setDescription('Количество часов')
+                    .setRequired(true)
+            )
+    ).addSubcommand(subcommand =>
+        subcommand.setName('unblock_subscription')
+            .setDescription('Разрешает пользователю снова подписываться')
+            .addUserOption(option =>
+                option.setName('user')
+                    .setDescription('Выберите пользователя')
+                    .setRequired(true)
+            )
+    ).addSubcommand(subcommand =>
+        subcommand.setName('edit_raids')
+            .setDescription('Редактирование списка доступных рейдов')
+    ).addSubcommand(subcommand =>
+        subcommand.setName('set_raid_role')
+            .setDescription('Настроить соответствие между рейдом и ролью')
+            .addStringOption(option =>
+                option.setName('raid')
+                    .setDescription('Название рейда')
+                    .setRequired(true)
+            )
+            .addRoleOption(option =>
+                option.setName('role')
+                    .setDescription('Роль, соответствующая рейду')
+                    .setRequired(true)
+            )
+    ).addSubcommand(subcommand =>
+        subcommand.setName('set_buss_category')
+            .setDescription('Установить категорию для отслеживания рейдов')
+            .addChannelOption(option =>
+                option.setName('category')
+                    .setDescription('Категория, в которой продают рейды')
+                    .setRequired(true)
+            )
+    ),
+    new SlashCommandBuilder()
+        .setName('subscribe')
+        .setDescription('Управление подписками')
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('to_buy')
+                .setDescription('Подписка на уведомления о рейдах от конкретного продавца')
+                .addUserOption(option =>
+                    option.setName('user')
+                        .setDescription('Выберите продавца')
+                        .setRequired(true)
+                ).addStringOption(option =>
+                option.setName('raids')
+                    .setDescription('Выберите рейды')
+                    .setRequired(true)
+                    .addChoices(
+                        {name: 'Камен 1.0', value: 'Камен 1.0'},
+                        {name: 'Бехемос', value: 'Бехемос'},
+                        {name: 'Ехидна', value: 'Ехидна'},
+                        {name: 'Эгир', value: 'Эгир'},
+                        {name: 'Аврельсуд', value: 'Аврельсуд'}
+                    )
+            )
+        ).addSubcommand(subcommand =>
+        subcommand.setName('list')
+            .setDescription('Просмотр списка ваших фаворитов'))
+        .addSubcommand(subcommand =>
+        subcommand.setName('unsubscribe')
+            .setDescription('Отписка от фаворита')
+            .addUserOption(option =>
+            option.setName('user')
+                .setDescription('Выберите продавца')
+                .setRequired(true)
         )
+    )
 ];

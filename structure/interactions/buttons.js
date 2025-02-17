@@ -2,6 +2,9 @@ import {MessageFlags} from "discord.js";
 import showReviewModal from "../commandHandlers/ranks/showReviewModal.js";
 import {sendPaginatedReviews} from "../utils.js";
 import deleteReview from "../commandHandlers/ranks/deleteReview.js";
+import handleEditRaidsButtons from "../commandHandlers/subscribe/handleEditRaidsButtons.js";
+import handleBuyButtons from "../commandHandlers/subscribe/handleBuyButtons.js";
+import sellerAnswerToBuyer from "../commandHandlers/subscribe/sellerAnswerToBuyerModal.js";
 
 export default async function (interaction, pool, client) {
     if (interaction.customId.startsWith('upvote_') || interaction.customId.startsWith('downvote_')) {
@@ -70,5 +73,17 @@ export default async function (interaction, pool, client) {
 
     if (interaction.customId.startsWith('delete_review_')) {
         deleteReview(interaction, pool);
+    }
+
+    if (interaction.customId === 'create_raid' || interaction.customId.startsWith('delete_raid')) {
+        handleEditRaidsButtons(interaction, pool);
+    }
+
+    if (interaction.customId.startsWith('raid_buy')) {
+        handleBuyButtons(interaction);
+    }
+
+    if (interaction.customId.startsWith('seller_answer_') || interaction.customId.startsWith('seller_reject_')) {
+        sellerAnswerToBuyer(interaction, pool, client);
     }
 }
