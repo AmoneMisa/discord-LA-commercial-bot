@@ -21,7 +21,7 @@ export default async function (pool, guild) {
                 continue;
             }
 
-            let roleToAssign = guild.roles.cache.get(bestRole.role_id);
+            let roleToAssign = guild.roles.resolve(bestRole.role_id);
 
             if (!roleToAssign) {
                 continue;
@@ -33,6 +33,7 @@ export default async function (pool, guild) {
 
             for (const role of roles.rows) {
                 let existingRole = guild.roles.cache.get(role.role_id);
+
                 if (existingRole && member.roles.cache.has(existingRole.id)) {
                     await member.roles.remove(existingRole).catch(() => null);
                 }
