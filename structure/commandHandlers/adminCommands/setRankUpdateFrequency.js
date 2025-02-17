@@ -1,5 +1,5 @@
 import { MessageFlags } from 'discord.js';
-import {scheduleRankUpdates} from "../../sheduleUpdates.js";
+import {scheduleRankUpdates} from "../../shedullers/scheduleUpdates.js";
 
 export default async function setRankUpdateFrequency(interaction, pool) {
     const frequency = interaction.options.getString('frequency');

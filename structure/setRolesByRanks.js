@@ -17,17 +17,30 @@ export default async function (pool, guild) {
 
         const member = await guild.members.fetch(user.user_id).catch(() => null);
         if (member && bestRole) {
-            let roleToAssign = guild.roles.cache.get(bestRole.role_id);
-            if (roleToAssign) {
-                for (const role of roles.rows) {
-                    let existingRole = guild.roles.cache.get(role.role_id);
-                    if (existingRole && member.roles.cache.has(existingRole.id)) {
-                        await member.roles.remove(existingRole).catch(() => null);
-                    }
-                }
-                await member.roles.add(roleToAssign).catch(() => null);
-                console.log(`✅ Назначена роль ${bestRole.role_name} пользователю ${member.user.username}`);
+            if (member.user.bot) {
+                continue;
             }
+
+            let roleToAssign = guild.roles.cache.get(bestRole.role_id);
+
+            if (!roleToAssign) {
+                continue;
+            }
+
+            if (member.roles.cache.has(roleToAssign.id)) {
+                continue;
+            }
+
+            for (const role of roles.rows) {
+                let existingRole = guild.roles.cache.get(role.role_id);
+                if (existingRole && member.roles.cache.has(existingRole.id)) {
+                    await member.roles.remove(existingRole).catch(() => null);
+                }
+            }
+            await member.roles.add(roleToAssign).catch(() => null);
+            console.log(`✅ Назначена роль ${bestRole.role_name} пользователю ${member.user.username}`);
         }
     }
+
+    console.log(`✅ Обновление ролей окончено!`);
 }
