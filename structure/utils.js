@@ -11,20 +11,34 @@ export function formatDate(dateString) {
     return `${day}/${month}/${year} ${hours}:${minutes}`;
 }
 
-export async function sendPaginatedReviews(interaction, pool, userId, page = 1) {
+export async function sendPaginatedReviews(interaction, pool, userId, page = 1, isPositive) {
     const reviewsPerPage = 5;
     const offset = (page - 1) * reviewsPerPage;
     const member = await interaction.guild.members.fetch(interaction.user.id);
     const isAdmin = member.permissions.has(PermissionsBitField.Flags.Administrator);
 
-    const reviews = await pool.query(
-        'SELECT id, reviewer_id, review_text, is_positive, timestamp FROM reviews WHERE target_user = $1 ORDER BY timestamp DESC LIMIT $2 OFFSET $3',
-        [userId, reviewsPerPage, offset]
-    );
+    let reviews;
+
+    if (isPositive) {
+        reviews = await pool.query(
+            'SELECT review_text, "timestamp" FROM reviews WHERE target_user = $1 AND is_positive = true ORDER BY timestamp DESC',
+            [member.id]
+        );
+    } else if (!isPositive) {
+        reviews = await pool.query(
+            'SELECT review_text, "timestamp" FROM reviews WHERE target_user = $1 AND is_positive = false ORDER BY timestamp DESC',
+            [member.id]
+        );
+    } else {
+        reviews = await pool.query(
+            'SELECT id, reviewer_id, review_text, is_positive, timestamp FROM reviews WHERE target_user = $1 ORDER BY timestamp DESC LIMIT $2 OFFSET $3',
+            [userId, reviewsPerPage, offset]
+        );
+    }
 
     if (reviews.rows.length === 0) {
         return interaction.reply({
-            content: `❌ У пользователя <@${userId}> пока нет отзывов.`,
+            content: `❌ У пользователя ${userId} пока нет отзывов.`,
             flags: MessageFlags.Ephemeral
         });
     }
