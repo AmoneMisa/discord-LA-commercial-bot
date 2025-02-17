@@ -5,5 +5,5 @@ export default async function handleLastReviewsCommand(interaction, pool) {
     const member = interaction.options.getUser('member');
     if (!member) return interaction.reply({ content: 'Выберите участника.', flags: MessageFlags.Ephemeral });
 
-    await sendPaginatedReviews(interaction, pool, member, 1);
+    await sendPaginatedReviews(interaction, pool,1);
 }
