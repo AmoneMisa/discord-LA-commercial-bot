@@ -1,5 +1,5 @@
 import {MessageFlags} from "discord.js";
-import {getSubscriptions} from "../dbUtils.js";
+import {getSubscriptions} from "../../dbUtils.js";
 
 export default async function subscribeToBuy(interaction, pool) {
     const seller = interaction.options.getUser('user');

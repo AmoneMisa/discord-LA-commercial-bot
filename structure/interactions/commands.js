@@ -13,7 +13,7 @@ import wttHandler from "../commandHandlers/tradeSystem/wttHandler.js";
 import removeLotHandler from "../commandHandlers/tradeSystem/removeLotHandler.js";
 import auctionHouseHandler from "../commandHandlers/tradeSystem/auctionHouseHandler.js";
 
-export default async function (interaction, pool) {
+export default async function (interaction, pool, client) {
     if (interaction.commandName === 'info') {
         await handleInfoCommand(interaction, pool);
     }
@@ -61,7 +61,7 @@ export default async function (interaction, pool) {
 
     if (interaction.commandName === 'inventory') {
         if (interaction.options.getSubcommand() === 'wtb') {
-            await wtbHandler(interaction, pool);
+            await wtbHandler(interaction, pool, client);
         }
 
         if (interaction.options.getSubcommand() === 'wts') {

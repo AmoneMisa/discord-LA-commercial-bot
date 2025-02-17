@@ -1,5 +1,5 @@
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from "discord.js";
-import {getRaidName} from "../dbUtils.js";
+import {getRaidName} from "../../dbUtils.js";
 
 export default async function notifySellerMessageSend(interaction, pool, client) {
     try {

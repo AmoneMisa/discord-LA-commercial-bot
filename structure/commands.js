@@ -256,20 +256,16 @@ export default [
             subcommand.setName('wtt')
                 .setDescription('Добавить предмет на обмен')
                 .addStringOption(option => option
-                    .setName('offer_item')
+                    .setName('item')
                     .setDescription('Предлагаемый предмет')
                     .setRequired(true)
                     .setAutocomplete(true)
-                ).addStringOption(option =>
-                option.setName('request_item')
-                    .setDescription('Желаемый предмет')
-                    .setRequired(true)
-                    .setAutocomplete(true))
+                )
         ).addSubcommand(subcommand =>
         subcommand.setName('wtb')
             .setDescription('Запрос на покупку предмета')
             .addStringOption(option => option
-                .setName('request_item')
+                .setName('item')
                 .setDescription('Желаемый предмет')
                 .setRequired(true)
                 .setAutocomplete(true))
@@ -277,7 +273,7 @@ export default [
         subcommand.setName('wts')
             .setDescription('Добавить предмет на продажу')
             .addStringOption(option =>
-                option.setName('offer_item')
+                option.setName('item')
                     .setDescription('Продаваемый предмет')
                     .setRequired(true)
                     .setAutocomplete(true))

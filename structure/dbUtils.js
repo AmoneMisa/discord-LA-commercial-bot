@@ -103,3 +103,7 @@ export async function addUserIfNotExists(pool, user) {
         console.log(`✅ Пользователь ${user.username}#${user.discriminator} добавлен в базу.`);
     }
 }
+
+export async function getActiveLotsCount(pool, userId) {
+    return await pool.query(`SELECT COUNT(*) FROM inventory WHERE user_id = $1`, [userId]);
+}

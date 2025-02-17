@@ -1,4 +1,4 @@
-import {getItemsList} from "../commandHandlers/dbUtils.js";
+import {getItemsList} from "../dbUtils.js";
 
 export default async function (interaction, pool) {
     const focusedOption = interaction.options.getFocused(true);

@@ -21,7 +21,7 @@ import buttons from "./structure/interactions/buttons.js";
 import modals from "./structure/interactions/modals.js";
 import commands from "./structure/interactions/commands.js";
 import autocomplete from "./structure/interactions/autocomplete.js";
-import {addUserIfNotExists} from "./structure/commandHandlers/dbUtils.js";
+import {addUserIfNotExists} from "./structure/dbUtils.js";
 
 const {Pool} = pkg;
 const pool = new Pool({connectionString: process.env.DATABASE_URL});
@@ -64,19 +64,17 @@ client.on('interactionCreate', async interaction => {
         }
 
         if (interaction.isCommand()) {
-            await commands(interaction, pool);
-        }
-
-        if (interaction.isButton()) {
+            await commands(interaction, pool, client);
+        } else if (interaction.isButton()) {
             await buttons(interaction, pool, client);
-        }
-
-        if (interaction.isModalSubmit()) {
+        } else if (interaction.isModalSubmit()) {
             await modals(interaction, pool, client);
-        }
-
-        if (interaction.isAutocomplete()) {
+        } else if (interaction.isAutocomplete()) {
             await autocomplete(interaction, pool);
+        } else if (interaction.isMessageComponent()) {
+            // console.log(interaction);
+        } else {
+            throw new Error(`Unknown type of interaction: ${interaction.type}`);
         }
     } catch (e) {
         console.error('interactionCreate:',e);

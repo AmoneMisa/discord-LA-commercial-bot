@@ -1,5 +1,5 @@
 import {ActionRowBuilder, ButtonStyle, MessageFlags, ModalBuilder, TextInputBuilder, TextInputStyle} from "discord.js";
-import {getRaidName} from "../dbUtils.js";
+import {getRaidName} from "../../dbUtils.js";
 
 export default async function (interaction, pool, client) {
     try {

@@ -1,4 +1,4 @@
-import {getRaidName} from "../dbUtils.js";
+import {getRaidName} from "../../dbUtils.js";
 import {MessageFlags} from "discord.js";
 
 export default async function (interaction, pool, client) {

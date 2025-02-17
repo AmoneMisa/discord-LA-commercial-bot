@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags } from 'discord.js';
-import {getItemName} from "../dbUtils.js";
+import {getItemName} from "../../dbUtils.js";
 import {createLotItemMessage} from "../../utils.js";
 
 export default async function removeLotHandler(interaction, pool) {

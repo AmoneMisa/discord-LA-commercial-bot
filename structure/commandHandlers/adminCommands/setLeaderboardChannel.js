@@ -1,5 +1,5 @@
 import { MessageFlags } from 'discord.js';
-import { setLeaderboardChannelId } from '../dbUtils.js';
+import { setLeaderboardChannelId } from '../../dbUtils.js';
 import updateLeaderboard from '../updateLeaderboard.js';
 
 export default async function setLeaderboardChannel(interaction, pool, client) {
