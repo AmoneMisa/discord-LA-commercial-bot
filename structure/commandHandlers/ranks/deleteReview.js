@@ -44,5 +44,5 @@ export default async function (interaction, pool) {
 
     await pool.query('UPDATE users SET rating = positive_reviews - negative_reviews WHERE user_id = $1', [userId]);
 
-    await sendPaginatedReviews(interaction, pool, userId, parsedPage);
+    await sendPaginatedReviews(interaction, pool, parsedPage);
 }

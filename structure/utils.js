@@ -11,7 +11,7 @@ export function formatDate(dateString) {
     return `${day}/${month}/${year} ${hours}:${minutes}`;
 }
 
-export async function sendPaginatedReviews(interaction, pool, userId, page = 1, isPositive) {
+export async function sendPaginatedReviews(interaction, pool, page = 1, isPositive) {
     const reviewsPerPage = 5;
     const offset = (page - 1) * reviewsPerPage;
     const member = await interaction.guild.members.fetch(interaction.user.id);
@@ -21,29 +21,29 @@ export async function sendPaginatedReviews(interaction, pool, userId, page = 1, 
 
     if (isPositive) {
         reviews = await pool.query(
-            'SELECT review_text, "timestamp" FROM reviews WHERE target_user = $1 AND is_positive = true ORDER BY timestamp DESC',
-            [member.id]
+            'SELECT id, reviewer_id, review_text, is_positive, "timestamp" FROM reviews WHERE target_user = $1 AND is_positive = true ORDER BY timestamp DESC LIMIT $2 OFFSET $3',
+            [member.id, reviewsPerPage, offset]
         );
     } else if (!isPositive) {
         reviews = await pool.query(
-            'SELECT review_text, "timestamp" FROM reviews WHERE target_user = $1 AND is_positive = false ORDER BY timestamp DESC',
-            [member.id]
+            'SELECT id, reviewer_id, review_text, is_positive, "timestamp" FROM reviews WHERE target_user = $1 AND is_positive = false ORDER BY timestamp DESC LIMIT $2 OFFSET $3',
+            [member.id, reviewsPerPage, offset]
         );
     } else {
         reviews = await pool.query(
-            'SELECT id, reviewer_id, review_text, is_positive, timestamp FROM reviews WHERE target_user = $1 ORDER BY timestamp DESC LIMIT $2 OFFSET $3',
-            [userId, reviewsPerPage, offset]
+            'SELECT id, reviewer_id, review_text, is_positive, "timestamp" FROM reviews WHERE target_user = $1 ORDER BY timestamp DESC LIMIT $2 OFFSET $3',
+            [member.id, reviewsPerPage, offset]
         );
     }
 
     if (reviews.rows.length === 0) {
         return interaction.reply({
-            content: `❌ У пользователя ${userId} пока нет отзывов.`,
+            content: `❌ У пользователя <@${member.id}> пока нет отзывов.`,
             flags: MessageFlags.Ephemeral
         });
     }
 
-    let message = `📋 **Отзывы о <@${userId}> (Страница ${page}):**\n\n`;
+    let message = `📋 **Отзывы о <@${member.id}> (Страница ${page}):**\n\n`;
     let buttons = new ActionRowBuilder();
 
     reviews.rows.forEach((review, index) => {
@@ -52,21 +52,21 @@ export async function sendPaginatedReviews(interaction, pool, userId, page = 1, 
         if (isAdmin) {
             buttons.addComponents(
                 new ButtonBuilder()
-                    .setCustomId(`delete_review_${review.id}_${userId}_${page}`)
+                    .setCustomId(`delete_review_${review.id}_${member.id}_${page}`)
                     .setLabel(`Удалить ${index + 1}`)
                     .setStyle(ButtonStyle.Danger)
             );
         }
     });
 
-    const totalReviews = await pool.query('SELECT COUNT(*) FROM reviews WHERE target_user = $1', [userId]);
+    const totalReviews = await pool.query('SELECT COUNT(*) FROM reviews WHERE target_user = $1', [member.id]);
     const totalPages = Math.ceil(parseInt(totalReviews.rows[0].count) / reviewsPerPage);
 
     let paginationButtons = new ActionRowBuilder();
     if (page > 1) {
         paginationButtons.addComponents(
             new ButtonBuilder()
-                .setCustomId(`prev_reviews_${userId}_${page - 1}`)
+                .setCustomId(`prev_reviews_${member.id}_${page - 1}`)
                 .setLabel('⬅️ Назад')
                 .setStyle(ButtonStyle.Secondary)
         );
@@ -74,7 +74,7 @@ export async function sendPaginatedReviews(interaction, pool, userId, page = 1, 
     if (page < totalPages) {
         paginationButtons.addComponents(
             new ButtonBuilder()
-                .setCustomId(`next_reviews_${userId}_${page + 1}`)
+                .setCustomId(`next_reviews_${member.id}_${page + 1}`)
                 .setLabel('➡️ Вперёд')
                 .setStyle(ButtonStyle.Secondary)
         );
