@@ -7,6 +7,11 @@ import worstSellers from "../commandHandlers/ranks/worstSellers.js";
 import subscribeToBuy from "../commandHandlers/subscribe/subscribeToBuy.js";
 import subscribeList from "../commandHandlers/subscribe/subscribeList.js";
 import unSubscribeToBuy from "../commandHandlers/subscribe/unSubscribeToBuy.js";
+import wtbHandler from "../commandHandlers/tradeSystem/wtbHandler.js";
+import wtsHandler from "../commandHandlers/tradeSystem/wtsHandler.js";
+import wttHandler from "../commandHandlers/tradeSystem/wttHandler.js";
+import removeLotHandler from "../commandHandlers/tradeSystem/removeLotHandler.js";
+import auctionHouseHandler from "../commandHandlers/tradeSystem/auctionHouseHandler.js";
 
 export default async function (interaction, pool) {
     if (interaction.commandName === 'info') {
@@ -25,15 +30,19 @@ export default async function (interaction, pool) {
         await lastReviewsCommand(interaction, pool);
     }
 
-    if ((interaction.commandName === 'admin_settings'
-            || interaction.commandName === 'admin_settings_subscription'
-            || interaction.commandName === 'admin_settings_ranks')
+    if ((interaction.commandName === 'adm_settings'
+            || interaction.commandName === 'adm_subscription'
+            || interaction.commandName === 'adm_ranks')
         && interaction.options.getSubcommand() !== 'remove_bots') {
         await handleAdminSettingsCommand(interaction, pool, interaction.guild);
     }
 
     if (interaction.commandName === 'worst_sellers') {
         await worstSellers(interaction, pool);
+    }
+
+    if (interaction.commandName === 'auction_house') {
+        await auctionHouseHandler(interaction, pool);
     }
 
     if (interaction.commandName === 'subscribe') {
@@ -47,6 +56,24 @@ export default async function (interaction, pool) {
 
         if (interaction.options.getSubcommand() === 'unsubscribe') {
             await unSubscribeToBuy(interaction, pool);
+        }
+    }
+
+    if (interaction.commandName === 'inventory') {
+        if (interaction.options.getSubcommand() === 'wtb') {
+            await wtbHandler(interaction, pool);
+        }
+
+        if (interaction.options.getSubcommand() === 'wts') {
+            await wtsHandler(interaction, pool);
+        }
+
+        if (interaction.options.getSubcommand() === 'wtt') {
+            await wttHandler(interaction, pool);
+        }
+
+        if (interaction.options.getSubcommand() === 'list') {
+            await removeLotHandler(interaction, pool);
         }
     }
 }

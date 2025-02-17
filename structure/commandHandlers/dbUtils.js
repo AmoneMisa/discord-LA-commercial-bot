@@ -51,3 +51,55 @@ export async function getSubscriptions(pool, buyerId, sellerId, raidId) {
 
     return result.rows;
 }
+
+export async function createNewWTSLot(pool, userId, type, itemOffer, price, negotiable, server, amountOffer) {
+    await pool.query(`INSERT INTO inventory (user_id, type, item_offer, price, negotiable, server, amount_offer)
+VALUES ($1, $2, $3, $4, $5, $6, $7);`, [userId, type, itemOffer, price, negotiable, server, amountOffer]);
+}
+
+export async function removeLot(pool) {
+    await pool.query(`DELETE FROM inventory WHERE expires_at <= NOW();`);
+}
+
+export async function addTradeRecord(pool, buyerId, sellerId, itemOffered, price, tradeType, server) {
+    await pool.query(`INSERT INTO trade_deals (buyer_id, seller_id, item_offered, price, trade_type, server) VALUES ($1, $2, $3, $4, $5, $6);`, buyerId, sellerId, itemOffered, price, tradeType, server);
+}
+
+export async function getItemsList(pool) {
+    let result = await pool.query(`SELECT *
+                                   FROM items`);
+    let items = [];
+
+    for (let item of result.rows) {
+        if (items.find(_item => _item.name === item.name)) {
+            continue;
+        }
+
+        items.push({id: item.id, name: item.name});
+    }
+
+    return items;
+}
+
+export async function getItemName(pool, id) {
+    let result = await pool.query(`SELECT *
+                                   FROM items WHERE id = $1`, [id]);
+    return result.rows[0].name;
+}
+
+export async function addUserIfNotExists(pool, user) {
+    if (!user || user.bot) {
+        return;
+    } // Игнорируем ботов
+
+    const checkUser = await pool.query('SELECT * FROM users WHERE user_id = $1', [user.id]);
+
+    if (checkUser.rowCount === 0) {
+        await pool.query(
+            `INSERT INTO users (user_id, rating, positive_reviews, negative_reviews)
+             VALUES ($1, 0, 0, 0)`,
+            [user.id]
+        );
+        console.log(`✅ Пользователь ${user.username}#${user.discriminator} добавлен в базу.`);
+    }
+}
