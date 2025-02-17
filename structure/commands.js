@@ -265,21 +265,6 @@ export default [
                     .setDescription('Желаемый предмет')
                     .setRequired(true)
                     .setAutocomplete(true))
-                .addIntegerOption(option =>
-                    option.setName('offer_amount').setMinValue(1).setDescription('Количество').setMaxValue(9999).setRequired(true))
-                .addIntegerOption(option =>
-                    option.setName('request_amount').setMinValue(1).setMaxValue(9999).setDescription('Количество желаемого').setRequired(true))
-                .addStringOption(option =>
-                    option.setName('server').setDescription('Сервер').setRequired(true)
-                        .addChoices(
-                            {name: 'Кратос', value: 'Кратос'},
-                            {name: 'Альдеран', value: 'Альдеран'},
-                            {name: 'Альдеран, Кратос', value: 'Альдеран, Кратос'}
-                        ))
-                .addIntegerOption(option =>
-                    option.setName('offer_level').setDescription('Уровень предмета').setRequired(false))
-                .addIntegerOption(option =>
-                    option.setName('request_level').setDescription('Уровень предмета').setRequired(false))
         ).addSubcommand(subcommand =>
         subcommand.setName('wtb')
             .setDescription('Запрос на покупку предмета')
@@ -288,22 +273,6 @@ export default [
                 .setDescription('Желаемый предмет')
                 .setRequired(true)
                 .setAutocomplete(true))
-            .addIntegerOption(option =>
-                option.setName('request_amount').setMinValue(1).setDescription('Количество')
-                    .setMaxValue(9999).setRequired(true))
-            .addIntegerOption(option =>
-                option.setName('request_price').setMinValue(1)
-                    .setDescription('Предлагаемая стоимость (в тысячах)').setRequired(true))
-            .addBooleanOption(option =>
-                option.setName('negotiable').setDescription('Торг').setRequired(true))
-            .addStringOption(option =>
-                option.setName('server').setDescription('Сервер').setRequired(true)
-                    .addChoices(
-                        {name: 'Кратос', value: 'Кратос'},
-                        {name: 'Альдеран', value: 'Альдеран'},
-                        {name: 'Альдеран, Кратос', value: 'Альдеран, Кратос'}
-                    )).addIntegerOption(option =>
-            option.setName('request_level').setDescription('Уровень предмета').setRequired(false))
     ).addSubcommand(subcommand =>
         subcommand.setName('wts')
             .setDescription('Добавить предмет на продажу')
@@ -312,20 +281,6 @@ export default [
                     .setDescription('Продаваемый предмет')
                     .setRequired(true)
                     .setAutocomplete(true))
-            .addIntegerOption(option =>
-                option.setName('offer_amount').setMinValue(1).setDescription('Количество').setMaxValue(9999).setRequired(true))
-            .addIntegerOption(option =>
-                option.setName('offer_price').setMinValue(1).setDescription('Стоимость (в тысячах)').setRequired(true))
-            .addBooleanOption(option =>
-                option.setName('negotiable').setDescription('Торг').setRequired(true))
-            .addStringOption(option =>
-                option.setName('server').setDescription('Сервер').setRequired(true)
-                    .addChoices(
-                        {name: 'Кратос', value: 'Кратос'},
-                        {name: 'Альдеран', value: 'Альдеран'},
-                        {name: 'Альдеран, Кратос', value: 'Альдеран, Кратос'}
-                    )).addIntegerOption(option =>
-            option.setName('offer_level').setDescription('Уровень предмета').setRequired(false))
     ).addSubcommand(subcommand =>
         subcommand.setName('list')
             .setDescription('Список лотов')

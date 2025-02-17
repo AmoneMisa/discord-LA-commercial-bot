@@ -193,7 +193,7 @@ export default async function initializeDatabase(pool, guild) {
 
     await pool.query(`CREATE TABLE IF NOT EXISTS trade_deals
                       (
-                          deal_id          SERIAL PRIMARY KEY,
+                          id          SERIAL PRIMARY KEY,
                           buyer_id         VARCHAR REFERENCES users (user_id),                                                          -- Покупатель / меняющийся
                           seller_id        VARCHAR REFERENCES users (user_id),
                           type             VARCHAR(3) CHECK (type IN ('WTT', 'WTS', 'WTB')),                                            -- Продавец / меняющийся
@@ -287,6 +287,9 @@ export default async function initializeDatabase(pool, guild) {
                           high_bonus  VARCHAR NOT NULL  -- Максимальный (High) бонус
                       );
     `);
+
+    let accessoryResult = `SELECT COUNT(*)
+                               FROM raids`;
 
     await pool.query(`INSERT INTO accessory_effects (category, effect_name, low_bonus, mid_bonus, high_bonus)
                       VALUES
