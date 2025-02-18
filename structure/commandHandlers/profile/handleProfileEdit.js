@@ -3,7 +3,7 @@ import {saveProfileToDB} from "../../../scrapping/parser.js";
 import {toCamelCase} from "../../utils.js";
 
 export default async function handleProfileEdit(interaction, pool) {
-    interaction.deferReply({flags: MessageFlags.Ephemeral});
+    await interaction.deferReply({flags: MessageFlags.Ephemeral});
 
     const userId = interaction.user.id;
     const field = interaction.options.getString('field');

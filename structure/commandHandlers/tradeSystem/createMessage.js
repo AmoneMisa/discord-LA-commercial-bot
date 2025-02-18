@@ -28,13 +28,28 @@ export async function createTradeMessage(interaction, pool, client) {
             return await interaction.reply({content: '❌ Неизвестный тип сделки.', flags: MessageFlags.Ephemeral});
     }
 
-    await interaction.reply({
+    let response = await interaction.reply({
         content: `📦 **${tradeType}**: Вы выбрали **${item.name}**\nУкажите параметры сделки:`,
         components,
-        flags: MessageFlags.Ephemeral
+        flags: MessageFlags.Ephemeral,
+        withResponse: true
     });
 
-    await tradeStringSelectMenuHandler(pool, client, activeTrades, tradeType, item);
+    const collectorFilter = i => i.user.id === interaction.user.id;
+
+    while (true) {
+        try {
+            const confirmation = await response.resource.message.awaitMessageComponent({ filter: collectorFilter, time: 60_000 });;
+            let result = await tradeStringSelectMenuHandler(pool, client, activeTrades, tradeType, item, confirmation);
+
+            if (result) {
+                break;
+            }
+        } catch (e) {
+            console.error(e);
+            break;
+        }
+    }
 }
 
 async function generateTradeFields(item, pool, tradeType) {
@@ -42,7 +57,7 @@ async function generateTradeFields(item, pool, tradeType) {
 
     if (['Ожерелье', 'Серьга', 'Кольцо'].includes(item.name)) {
         let effectOptions = await getEffectOptions(pool, 'accessory_effects', item.name);
-        effectOptions = [...new Set(effectOptions)];
+        effectOptions = [...new Set(effectOptions), {label:"Ничего", value: "ничего"}];
         components.push(new ActionRowBuilder().addComponents(
             new StringSelectMenuBuilder()
                 .setCustomId('trade_select_1_effect_1')

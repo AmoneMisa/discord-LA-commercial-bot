@@ -2,7 +2,7 @@ import {MessageFlags} from "discord.js";
 import {saveProfileToDB} from "../../../scrapping/parser.js";
 
 export default async function handleProfileFill(interaction, pool) {
-    interaction.deferReply({flags: MessageFlags.Ephemeral});
+    await interaction.deferReply({flags: MessageFlags.Ephemeral});
 
     const userId = interaction.user.id;
     const name = interaction.options.getString('name') || null;
@@ -23,7 +23,6 @@ export default async function handleProfileFill(interaction, pool) {
             flags: MessageFlags.Ephemeral
         });
     }
-
 
     try {
         if (mainNickname) {
