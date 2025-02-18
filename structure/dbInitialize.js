@@ -146,8 +146,8 @@ export default async function initializeDatabase(pool, guild) {
     await pool.query(`CREATE TABLE IF NOT EXISTS subscriptions
                       (
                           id        SERIAL PRIMARY KEY,
-                          buyer_id  VARCHAR REFERENCES users (user_id),
-                          seller_id VARCHAR REFERENCES users (user_id),
+                          buyer_id  VARCHAR REFERENCES users (user_id)  ON DELETE CASCADE,
+                          seller_id VARCHAR REFERENCES users (user_id)  ON DELETE CASCADE,
                           raid_id   INT REFERENCES available_raids (id)
                       );`);
 
@@ -176,7 +176,7 @@ export default async function initializeDatabase(pool, guild) {
     await pool.query(`CREATE TABLE IF NOT EXISTS inventory
                       (
                           id             SERIAL PRIMARY KEY,
-                          user_id        VARCHAR REFERENCES users (user_id),
+                          user_id        VARCHAR REFERENCES users (user_id)  ON DELETE CASCADE,
                           type           VARCHAR(3) CHECK (type IN ('WTT', 'WTS', 'WTB')),                          -- Тип сделки
                           item_offer     TEXT                                                   NOT NULL,           -- Предмет, который продаётся / обменивается
                           item_request   TEXT,                                                                      -- Только для WTT: предмет, который хотят получить
@@ -232,7 +232,7 @@ export default async function initializeDatabase(pool, guild) {
                       );`);
 
     result = await pool.query(`SELECT COUNT(*)
-              FROM items`);
+                               FROM items`);
 
     if (!result.rows || !result.rows[0].count || +result.rows[0].count < 1) {
         await pool.query(`INSERT INTO items (name, category)
@@ -254,7 +254,7 @@ export default async function initializeDatabase(pool, guild) {
     `);
 
     result = await pool.query(`SELECT COUNT(*)
-              FROM accessory_effects`);
+                               FROM accessory_effects`);
 
     if (!result.rows || !result.rows[0].count || +result.rows[0].count < 1) {
         await pool.query(`INSERT INTO accessory_effects (category, effect_name, low_bonus, mid_bonus, high_bonus)
@@ -283,6 +283,29 @@ export default async function initializeDatabase(pool, guild) {
                               ('Кольцо', 'Эффективность увеличения урона союзников', '2%', '4.5%', '7.5%');
         `);
     }
+
+    pool.query(`CREATE TABLE IF NOT EXISTS profiles
+                (
+                    id               SERIAL PRIMARY KEY,
+                    user_id          VARCHAR UNIQUE REFERENCES users (user_id) ON DELETE CASCADE,
+                    name             VARCHAR                                                              NULL,
+                    main_nickname    VARCHAR UNIQUE                                                       NOT NULL,
+                    role             VARCHAR(20) CHECK (role IN ('покупатель', 'продавец', 'нейтрал')) NULL,
+                    prime_start      TIME                                                              NULL,
+                    prime_end        TIME                                                              NULL,
+                    raid_experience  VARCHAR[],
+                    sales_experience VARCHAR                                                              NULL,
+                    achievements     VARCHAR[]
+                );`);
+
+    pool.query(`CREATE TABLE IF NOT EXISTS characters
+                (
+                    id         SERIAL PRIMARY KEY,
+                    profile_id INT REFERENCES profiles (id) ON DELETE CASCADE,
+                    class_name VARCHAR NOT NULL,
+                    char_name  VARCHAR UNIQUE NOT NULL,
+                    gear_score FLOAT  NOT NULL
+                );`);
 
     console.log("✅ Database was successfully initialized!");
 }

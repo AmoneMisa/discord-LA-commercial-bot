@@ -1,11 +1,10 @@
-import schedule from 'node-schedule';
 import setRolesByRanks from "../setRolesByRanks.js";
 import updateRatings from "../updateRatings.js";
 import updateLeaderboard from "../commandHandlers/updateLeaderboard.js";
+import cron from 'node-cron';
+import {saveProfileToDB} from "../../scrapping/parser.js";
 
 export async function scheduleRankUpdates(frequency, pool, guild) {
-    await schedule.gracefulShutdown(); // Очищаем старые задачи
-
     frequency = frequency || await pool.query('SELECT value FROM settings WHERE key = \'rank_update_frequency\'');
     let scheduleTime;
 
@@ -34,13 +33,19 @@ export async function scheduleRankUpdates(frequency, pool, guild) {
         }
     }
 
-    schedule.scheduleJob(scheduleTime, async () => {
+    cron.schedule(scheduleTime, async () => {
         setRolesByRanks(pool, guild);
     });
 }
 
 export function schedulersList(pool, client, guild) {
-    schedule.scheduleJob('0 0 * * *', async () => {
+    cron.schedule('0 0 * * *', async () => {
+        console.log('🔄 Обновление данных профилей из оружейной...');
+        const players = await pool.query('SELECT main_nickname FROM profiles');
+        for (const player of players.rows) {
+            await saveProfileToDB(player.nickname);
+        }
+
         await updateRatings(pool);
         await updateLeaderboard(client, pool);
         await scheduleRankUpdates(null, pool, guild);

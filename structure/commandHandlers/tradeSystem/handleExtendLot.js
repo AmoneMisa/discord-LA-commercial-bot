@@ -7,7 +7,7 @@ export default async function handleExtendLot(interaction, pool) {
     const lot = await pool.query("SELECT * FROM inventory WHERE id = $1 AND user_id = $2", [lotId, interaction.user.id]);
 
     if (lot.rows.length === 0) {
-        return interaction.reply({ content: "❌ Лот не найден или уже удалён.", ephemeral: true });
+        return interaction.reply({ content: "❌ Лот не найден или уже удалён.", flags: MessageFlags.Ephemeral });
     }
 
     // Продлеваем лот

@@ -12,6 +12,10 @@ import wtsHandler from "../commandHandlers/tradeSystem/wtsHandler.js";
 import wttHandler from "../commandHandlers/tradeSystem/wttHandler.js";
 import removeLotHandler from "../commandHandlers/tradeSystem/removeLotHandler.js";
 import auctionHouseHandler from "../commandHandlers/tradeSystem/auctionHouseHandler.js";
+import handleProfileSearch from "../commandHandlers/profile/handleProfileSearch.js";
+import handleProfileView from "../commandHandlers/profile/handleProfileView.js";
+import handleProfileEdit from "../commandHandlers/profile/handleProfileEdit.js";
+import handleProfileFill from "../commandHandlers/profile/handleProfileFill.js";
 
 export default async function (interaction, pool, client) {
     if (interaction.commandName === 'info') {
@@ -74,6 +78,20 @@ export default async function (interaction, pool, client) {
 
         if (interaction.options.getSubcommand() === 'list') {
             await removeLotHandler(interaction, pool);
+        }
+    }
+
+    if (interaction.commandName === 'profile') {
+        if (interaction.options.getSubcommand() === 'view') {
+            await handleProfileView(interaction, pool);
+        }
+
+        if (interaction.options.getSubcommand() === 'edit') {
+            await handleProfileEdit(interaction, pool);
+        }
+
+        if (interaction.options.getSubcommand() === 'fill') {
+            await handleProfileFill(interaction, pool);
         }
     }
 }

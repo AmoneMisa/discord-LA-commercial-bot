@@ -16,7 +16,7 @@ import updateLeaderboard from "./structure/commandHandlers/updateLeaderboard.js"
 import setRolesByRanks from "./structure/setRolesByRanks.js";
 import removeBots from "./structure/commandHandlers/adminCommands/removeBots.js";
 import handleMessageSubscription from "./structure/commandHandlers/subscribe/handleMessageSubscription.js";
-import {schedulersList} from "./structure/shedullers/scheduleUpdates.js";
+import {schedulersList} from "./structure/cron/scheduleUpdates.js";
 import buttons from "./structure/interactions/buttons.js";
 import modals from "./structure/interactions/modals.js";
 import commands from "./structure/interactions/commands.js";

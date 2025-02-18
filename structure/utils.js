@@ -149,3 +149,8 @@ export async function createLotItemMessage(pool, type, options) {
         return `${type} | Предложено: ${await getItemName(pool, item_offer)}, к-во: ${amount_offer}, уровень: ${offer_level ? offer_level : 'нет уровня'}, стоимость: ${price}к золота.\n⏳ Предложение до: ${expires_at.toLocaleString()}`;
     }
 }
+
+export async function delay(ms) {
+    const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
+    await delay(1000);
+}

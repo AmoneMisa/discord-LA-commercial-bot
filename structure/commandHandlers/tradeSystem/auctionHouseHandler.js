@@ -9,7 +9,7 @@ export default async function auctionHouseHandler(interaction, pool) {
     `, [offset]);
 
     if (lots.rows.length === 0) {
-        return interaction.reply({ content: "📭 Аукционный дом пуст.", ephemeral: true });
+        return interaction.reply({ content: "📭 Аукционный дом пуст.", flags: MessageFlags.Ephemeral });
     }
 
     let message = "🏪 **Аукционный дом** (Страница " + page + ")\n";
@@ -17,5 +17,5 @@ export default async function auctionHouseHandler(interaction, pool) {
         message += `**${index + 1}.** ${lot.item_offer} (${lot.amount}) - ${lot.price || "Обмен"} | ${lot.server}\n`;
     });
 
-    return interaction.reply({ content: message, ephemeral: true });
+    return interaction.reply({ content: message, flags: MessageFlags.Ephemeral });
 }

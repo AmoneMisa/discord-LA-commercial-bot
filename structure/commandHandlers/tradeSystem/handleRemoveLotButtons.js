@@ -7,7 +7,7 @@ export default async function handleRemoveLotButtons(interaction, pool) {
     const lot = await pool.query("SELECT * FROM inventory WHERE id = $1 AND user_id = $2", [lotId, interaction.user.id]);
 
     if (lot.rows.length === 0) {
-        return interaction.reply({ content: "❌ Этот лот уже удалён или не принадлежит вам.", ephemeral: true });
+        return interaction.reply({ content: "❌ Этот лот уже удалён или не принадлежит вам.", flags: MessageFlags.Ephemeral });
     }
 
     // Удаляем лот
