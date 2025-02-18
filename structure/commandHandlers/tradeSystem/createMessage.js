@@ -34,7 +34,7 @@ export async function createTradeMessage(interaction, pool, client) {
         flags: MessageFlags.Ephemeral
     });
 
-    await tradeStringSelectMenuHandler(pool, client, activeTrades, tradeType);
+    await tradeStringSelectMenuHandler(pool, client, activeTrades, tradeType, item);
 }
 
 async function generateTradeFields(item, pool, tradeType) {
@@ -45,19 +45,19 @@ async function generateTradeFields(item, pool, tradeType) {
         effectOptions = [...new Set(effectOptions)];
         components.push(new ActionRowBuilder().addComponents(
             new StringSelectMenuBuilder()
-                .setCustomId('trade_select_effect_1')
+                .setCustomId('trade_select_1_effect_1')
                 .setPlaceholder('Эффект 1')
                 .setOptions(effectOptions)
         ));
         components.push(new ActionRowBuilder().addComponents(
             new StringSelectMenuBuilder()
-                .setCustomId('trade_select_effect_2')
+                .setCustomId('trade_select_1_effect_2')
                 .setPlaceholder('Эффект 2')
                 .setOptions(effectOptions)
         ));
         components.push(new ActionRowBuilder().addComponents(
             new StringSelectMenuBuilder()
-                .setCustomId('trade_select_effect_3')
+                .setCustomId('trade_select_1_effect_3')
                 .setPlaceholder('Эффект 3')
                 .setOptions(effectOptions)
         ));
@@ -67,7 +67,7 @@ async function generateTradeFields(item, pool, tradeType) {
     if (item.category === 'Самоцвет') {
         components.push(new ActionRowBuilder().addComponents(
             new StringSelectMenuBuilder()
-                .setCustomId('trade_select_level')
+                .setCustomId('trade_select_1_level')
                 .setPlaceholder('Уровень самоцвета')
                 .addOptions({label: '5', value: '5'},
                     {label: '6', value: '6'},
@@ -82,7 +82,7 @@ async function generateTradeFields(item, pool, tradeType) {
     if (['buy', 'sell'].includes(tradeType)) {
         components.push(new ActionRowBuilder().addComponents(
             new StringSelectMenuBuilder()
-                .setCustomId('trade_select_negotiable')
+                .setCustomId('trade_select_1_negotiable')
                 .setPlaceholder('Возможен ли торг?')
                 .addOptions(
                     {label: 'Да', value: 'true'},
@@ -92,7 +92,7 @@ async function generateTradeFields(item, pool, tradeType) {
 
         components.push(new ActionRowBuilder().addComponents(
             new StringSelectMenuBuilder()
-                .setCustomId('trade_select_price')
+                .setCustomId('trade_select_1_price')
                 .setPlaceholder('Приблизительная стоимость')
                 .addOptions(
                     {label: '<20к', value: 'lt20'},
@@ -112,9 +112,9 @@ async function generateTradeFields(item, pool, tradeType) {
 }
 
 async function getEffectOptions(pool, table, category) {
-    const result = await pool.query(`SELECT effect_name, low_bonus, mid_bonus, high_bonus
+    const result = await pool.query(`SELECT category, effect_name, low_bonus, mid_bonus, high_bonus
                                      FROM ${table}`);
     return result.rows
-        .filter(effect => effect.category !== category && effect.category !== "Общие")
+        .filter(effect => effect.category === category || effect.category === "Общие")
         .map(effect => ({label: effect.effect_name, value: effect.effect_name}));
 }

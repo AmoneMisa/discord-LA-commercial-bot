@@ -1,6 +1,6 @@
 import {ActionRowBuilder, StringSelectMenuBuilder} from "discord.js";
 
-export default async function (pool, client, activeTrades, tradeType) {
+export default async function (pool, client, activeTrades, tradeType, item) {
     client.on('interactionCreate', async interaction => {
         if (interaction.isMessageComponent()) {
             if (interaction.customId.startsWith('trade_select_1_')) {
@@ -11,37 +11,33 @@ export default async function (pool, client, activeTrades, tradeType) {
                 activeTrades.set(userId, trade);
 
                 const requiredFields = ['trade_select_1_negotiable', 'trade_select_1_effect_1', 'trade_select_1_effect_2', 'trade_select_1_effect_3', 'trade_select_1_price'];
-                const allFilled = requiredFields.every(field => trade[field]);
-                let message = `Текущие выбранные параметры:\n\n**Тип сделки:** ${tradeType}\n**Предмет:** ${trade.item}\n**Цена:** ${trade.select_1_price}\n`;
+                let allFilled = requiredFields.every(field => trade[field]);
+                let message = `Текущие выбранные параметры:\n\n**Тип сделки:** ${tradeType}\n**Предмет:** ${item.name}\n**Цена:** ${trade.select_1_price}\n`;
 
-                if (trade.item.category === "Аксессуар") {
-                    if (trade.select_1_effect_1) {
-                        message += `${trade.select_1_effect_1}\n`;
-                    }
-
-                    if (trade.select_1_effect_2) {
-                        message += `${trade.select_1_effect_2}\n`;
-                    }
-
-                    if (trade.select_1_effect_3) {
-                        message += `${trade.select_1_effect_3}\n`;
-                    }
+                if (trade.trade_select_1_effect_1) {
+                    message += `${trade.trade_select_1_effect_1}\n`;
                 }
 
-                if (trade.item.category === "Самоцвет") {
-                    if (trade.select_1_level) {
-                        message += `Уровень: ${trade.select_1_level}\n`;
-                    }
+                if (trade.trade_select_1_effect_2) {
+                    message += `${trade.trade_select_1_effect_2}\n`;
                 }
 
-                message += `Торг: ${trade_select_1_negotiable ? 'Да' : 'Нет' }\n`;
+                if (trade.trade_select_1_effect_3) {
+                    message += `${trade.trade_select_1_effect_3}\n`;
+                }
+
+
+                if (trade.trade_select_1_level) {
+                    message += `Уровень: ${trade.trade_select_1_level}\n`;
+                }
+
+                message += `Торг: ${trade.trade_select_1_negotiable ? 'Да' : 'Нет'}\n`;
 
                 if (allFilled) {
                     await interaction.update({
                         content: message,
-                        components: createFields(pool, trade.item.category, trade)
+                        components: createFields(pool, item.category, trade)
                     });
-
                     // Дальше можно сохранить сделку в базу или предложить подтвердить сделку
                 } else {
                     // Если не все поля заполнены, просто обновляем выбор пользователя
@@ -60,7 +56,7 @@ export default async function (pool, client, activeTrades, tradeType) {
                 if (allFilled) {
                     await interaction.update({
                         content: "Поздравляем! Вы создали лот!",
-                        components: createFields(pool, trade.item.category, trade)
+                        components: createFields(pool, item.category, trade)
                     });
 
                     // Дальше можно сохранить сделку в базу или предложить подтвердить сделку
@@ -98,30 +94,30 @@ async function createFields(pool, category, trade) {
     ));
 
     if (category === 'Аксессуар') {
-        if (trade.select_1_effect_1) {
+        if (trade.trade_select_1_effect_1) {
             components.push(new ActionRowBuilder().addComponents(
                 new StringSelectMenuBuilder()
                     .setCustomId('trade_select_2_effect_amount_1')
-                    .setPlaceholder(trade.select_1_effect_1)
-                    .addOptions(await getEffectOptions(pool, trade.select_1_effect_1))
+                    .setPlaceholder(trade.trade_select_1_effect_1)
+                    .addOptions(await getEffectOptions(pool, trade.trade_select_1_effect_1))
             ));
         }
 
-        if (trade.select_1_effect_2) {
+        if (trade.trade_select_1_effect_2) {
             components.push(new ActionRowBuilder().addComponents(
                 new StringSelectMenuBuilder()
                     .setCustomId('trade_select_2_effect_amount_2')
                     .setPlaceholder(trade.select_1_effect_2)
-                    .addOptions(await getEffectOptions(pool, trade.select_1_effect_2))
+                    .addOptions(await getEffectOptions(pool, trade.trade_select_1_effect_2))
             ));
         }
 
-        if (trade.select_1_effect_3) {
+        if (trade.trade_select_1_effect_3) {
             components.push(new ActionRowBuilder().addComponents(
                 new StringSelectMenuBuilder()
                     .setCustomId('trade_select_2_effect_amount_3')
-                    .setPlaceholder(trade.select_1_effect_3)
-                    .addOptions(await getEffectOptions(pool, trade.select_1_effect_3))
+                    .setPlaceholder(trade.trade_select_1_effect_3)
+                    .addOptions(await getEffectOptions(pool, trade.trade_select_1_effect_3))
             ));
         }
     }
@@ -130,5 +126,7 @@ async function createFields(pool, category, trade) {
 }
 
 async function getEffectOptions(pool, effectName) {
-    return await pool.query(`SELECT low_bonus, mid_bonus, high_bonus FROM accesory_effects WHERE effect_name = $1`, effectName).rows;
+    return await pool.query(`SELECT low_bonus, mid_bonus, high_bonus
+                             FROM accesory_effects
+                             WHERE effect_name = $1`, effectName).rows;
 }
