@@ -110,20 +110,21 @@ export async function saveProfileToDB({
     if (!profileData) return;
 
     try {
-        let mainCharResult = await pool.query(`SELECT *
+        let mainCharResult = await pool.query(`SELECT COUNT(*)
                                                FROM profiles
                                                WHERE user_id = $1`, [userId]);
 
-        if (mainCharResult.rows > 0) {
+        if (mainCharResult.rows.length > 0) {
             await pool.query(`UPDATE profiles
-                              SET name             = $1,
-                                  main_nickname    = $2,
-                                  role             = $3,
-                                  prime_start      = $4,
-                                  prime_end        = $5,
-                                  raid_experience  = $6,
-                                  sales_experience = $7
-                              WHERE profile_id = $8`, [name, mainNickname, role, primeStart, primeEnd, raidExperience, salesExperience, userId]);
+                              SET name             = COALESCE($1, name),
+                                  main_nickname    = COALESCE($2, main_nickname),
+                                  role             = COALESCE($3, role),
+                                  prime_start      = COALESCE($4, prime_start),
+                                  prime_end        = COALESCE($5, prime_end),
+                                  raid_experience  = COALESCE($6, raid_experience),
+                                  sales_experience = COALESCE($7, sales_experience)
+                              WHERE user_id = $8`,
+                [name, mainNickname, role, primeStart, primeEnd, raidExperience, salesExperience, userId]);
         } else {
             await pool.query(`
                 INSERT INTO profiles (user_id, name, main_nickname, role, prime_start, prime_end, raid_experience,
@@ -140,11 +141,11 @@ export async function saveProfileToDB({
                                            FROM characters
                                            WHERE char_name = $1`, [char.name]);
 
-            if (result.rows > 0) {
+            if (result.rows.length > 0) {
                 await pool.query(`UPDATE characters
-                                  SET class_name = $1,
-                                      char_name  = $2,
-                                      gear_score = $3
+                                  SET class_name = COALESCE($1, class_name),
+                                      char_name  = COALESCE($2, char_name),
+                                      gear_score = COALESCE($3, gear_score)
                                   WHERE profile_id = $4`, [char.className, char.name, char.gearScore, profileId]);
             } else {
                 await pool.query(

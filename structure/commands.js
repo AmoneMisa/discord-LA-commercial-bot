@@ -1,8 +1,4 @@
 import {SlashCommandBuilder, PermissionFlagsBits} from "discord.js";
-import pkg from "pg";
-
-const {Pool} = pkg;
-const pool = new Pool({connectionString: process.env.DATABASE_URL});
 
 export default [
     new SlashCommandBuilder()
@@ -288,7 +284,7 @@ export default [
                 .setDescription('Заполнить анкету')
                 .addStringOption(option =>
                     option.setName('main_nickname')
-                        .setDescription('Ник основы в оружейной')
+                        .setDescription('Ник основы в оружейной, регистрозависимо')
                         .setRequired(true))
                 .addStringOption(option =>
                     option.setName('role')
@@ -343,10 +339,10 @@ export default [
                         .setRequired(true)
                         .addChoices(
                             {name: 'Имя', value: 'name'},
-                            {name: 'Ник в оружейной', value: 'main_nickname'},
-                            {name: 'Роль', value: 'role'},
-                            {name: 'Прайм с', value: 'prime_start'},
-                            {name: 'Прайм до', value: 'prime_end'},
+                            {name: 'Ник в оружейной (регистрозависимо)', value: 'main_nickname'},
+                            {name: 'Роль (нейтрал, продавец, покупатель)', value: 'role'},
+                            {name: 'Прайм с (формат 00:00)', value: 'prime_start'},
+                            {name: 'Прайм до (формат 00:00)', value: 'prime_end'},
                             {name: 'Опыт в рейдах', value: 'raid_experience'},
                             {name: 'Опыт в продажах', value: 'sales_experience'}
                         ))
@@ -355,7 +351,8 @@ export default [
                         .setDescription('Новое значение')
                         .setRequired(true))
         ).addSubcommand(subcommand =>
-            subcommand.setName('view').setDescription('Анкета пользователя').addUserOption(option =>
+            subcommand.setName('view').setDescription('Анкета пользователя')
+                .addUserOption(option =>
                 option.setName('user')
                     .setDescription('Выберите пользователя')
                     .setRequired(true)))

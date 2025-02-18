@@ -12,7 +12,6 @@ import wtsHandler from "../commandHandlers/tradeSystem/wtsHandler.js";
 import wttHandler from "../commandHandlers/tradeSystem/wttHandler.js";
 import removeLotHandler from "../commandHandlers/tradeSystem/removeLotHandler.js";
 import auctionHouseHandler from "../commandHandlers/tradeSystem/auctionHouseHandler.js";
-import handleProfileSearch from "../commandHandlers/profile/handleProfileSearch.js";
 import handleProfileView from "../commandHandlers/profile/handleProfileView.js";
 import handleProfileEdit from "../commandHandlers/profile/handleProfileEdit.js";
 import handleProfileFill from "../commandHandlers/profile/handleProfileFill.js";

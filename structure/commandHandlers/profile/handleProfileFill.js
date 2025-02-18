@@ -12,13 +12,12 @@ export default async function handleProfileFill(interaction, pool) {
     const primeEnd = interaction.options.getString('prime_end') || null;
     const raidExperience = interaction.options.getString('raid_experience')?.split(',') || [];
     const salesExperience = interaction.options.getString('sales_experience') || null;
-    console.log(interaction.options);
 
     let result = await pool.query(`SELECT COUNT(*)
                                    FROM profiles
                                    WHERE user_id = $1`, [userId]);
 
-    if (result.rows > 0) {
+    if (result.rows.length > 0) {
         return await interaction.editReply({
             content: 'У вас уже есть анкета. Чтобы изменить её, используйте команду /profile edit',
             flags: MessageFlags.Ephemeral
