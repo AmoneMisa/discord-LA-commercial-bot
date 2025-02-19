@@ -176,37 +176,70 @@ export default async function initializeDatabase(pool, guild) {
     await pool.query(`CREATE TABLE IF NOT EXISTS inventory
                       (
                           id             SERIAL PRIMARY KEY,
-                          user_id        VARCHAR REFERENCES users (user_id)  ON DELETE CASCADE,
-                          type           VARCHAR(3) CHECK (type IN ('WTT', 'WTS', 'WTB')),                          -- Тип сделки
+                          user_id        VARCHAR REFERENCES users (user_id) ON DELETE CASCADE,
+                          trade_type     VARCHAR(3) CHECK (trade_type IN ('WTT', 'WTS', 'WTB')),                    -- Тип сделки
                           item_offer     TEXT                                                   NOT NULL,           -- Предмет, который продаётся / обменивается
                           item_request   TEXT,                                                                      -- Только для WTT: предмет, который хотят получить
-                          amount_offer   INT CHECK (amount_offer >= 1 AND amount_offer <= 9999),                    -- Количество продаваемого / обмениваемого предмета
-                          amount_request INT CHECK (amount_request >= 1 AND amount_request <= 9999),
                           offer_level    INT CHECK (offer_level >= 1 AND offer_level <= 10)     NULL,               -- Количество продаваемого / обмениваемого предмета
                           request_level  INT CHECK (request_level >= 1 AND request_level <= 10) NULL,               -- Только для WTT
                           price          INT CHECK (price >= 0),                                                    -- Только для WTS и WTB
                           negotiable     BOOLEAN   DEFAULT FALSE,                                                   -- Можно ли торговаться
                           server         VARCHAR(20) CHECK (server IN ('Альдеран', 'Кратос', 'Альдеран и Кратос')), -- Сервер сделки
-                          expires_at     TIMESTAMP DEFAULT NOW() + INTERVAL '3 days',                               -- Дата истечения лота
+                          offer_rarity   VARCHAR(20) CHECK (offer_rarity IN ('Реликтовый', 'Древний')),             -- Сервер сделки
+                          request_rarity VARCHAR(20) CHECK (request_rarity IN ('Реликтовый', 'Древний')),           -- Сервер сделки
+                          expires_at     TIMESTAMP DEFAULT NOW() + INTERVAL '3 days',                               -- Сервер
                           notified       BOOLEAN   DEFAULT FALSE                                                    -- Было ли уведомление о снятии лота
+                      );`);
+
+    await pool.query(`CREATE TABLE IF NOT EXISTS inventory_characteristics (
+                          id           SERIAL PRIMARY KEY,
+                          inventory_id INT REFERENCES inventory (id) ON DELETE CASCADE, -- Связь с лотом
+                          effect_name  VARCHAR NOT NULL,                                -- Название эффекта
+                          effect_value VARCHAR NOT NULL,                                -- Значение эффекта
+                          CHECK (effect_name IN (SELECT effect_name
+                                                 FROM accessory_effects)),              -- Проверка по accessory_effects
+                          CHECK (effect_value IN (SELECT low_bonus
+                                                  FROM accessory_effects
+                                                  UNION
+                                                  SELECT mid_bonus
+                                                  FROM accessory_effects
+                                                  UNION
+                                                  SELECT high_bonus
+                                                  FROM accessory_effects))
                       );`);
 
     await pool.query(`CREATE TABLE IF NOT EXISTS trade_deals
                       (
-                          id               SERIAL PRIMARY KEY,
-                          buyer_id         VARCHAR REFERENCES users (user_id),                                                          -- Покупатель / меняющийся
-                          seller_id        VARCHAR REFERENCES users (user_id),
-                          type             VARCHAR(3) CHECK (type IN ('WTT', 'WTS', 'WTB')),                                            -- Продавец / меняющийся
-                          item_offered     TEXT                                                   NOT NULL,                             -- Предмет, который предложили
-                          item_requested   TEXT,                                                                                        -- Только для обмена (WTT)
-                          amount_offered   INT                                                    NOT NULL CHECK (amount_offered >= 1), -- Количество предложенного предмета
-                          amount_requested INT CHECK (amount_requested >= 1),
-                          offer_level      INT CHECK (offer_level >= 1 AND offer_level <= 10)     NULL,                                 -- Количество продаваемого / обмениваемого предмета
-                          request_level    INT CHECK (request_level >= 1 AND request_level <= 10) NULL,                                 -- Только для WTT
-                          price            INT CHECK (price >= 0),                                                                      -- Цена сделки (только WTS и WTB)
-                          trade_type       VARCHAR(3) CHECK (trade_type IN ('WTT', 'WTS', 'WTB')),                                      -- Тип сделки
-                          server           VARCHAR(20) CHECK (server IN ('Альдеран', 'Кратос', 'Альдеран и Кратос')),                   -- Сервер
-                          timestamp        TIMESTAMP DEFAULT NOW()                                                                      -- Дата совершения сделки
+                          id             SERIAL PRIMARY KEY,
+                          buyer_id       VARCHAR REFERENCES users (user_id),                                        -- Покупатель / меняющийся
+                          seller_id      VARCHAR REFERENCES users (user_id),                                        -- Продавец / меняющийся
+                          item_offered   VARCHAR                                                NOT NULL,           -- Предмет, который предложили
+                          item_requested VARCHAR,
+                          offer_level    INT CHECK (offer_level >= 1 AND offer_level <= 10)     NULL,               -- Количество продаваемого / обмениваемого предмета
+                          request_level  INT CHECK (request_level >= 1 AND request_level <= 10) NULL,               -- Только для WTT
+                          price          INT CHECK (price >= 0),                                                    -- Цена сделки (только WTS и WTB)
+                          trade_type     VARCHAR(3) CHECK (trade_type IN ('WTT', 'WTS', 'WTB')),                    -- Тип сделки
+                          server         VARCHAR(20) CHECK (server IN ('Альдеран', 'Кратос', 'Альдеран и Кратос')), -- Сервер
+                          offer_rarity   VARCHAR(20) CHECK (offer_rarity IN ('Реликтовый', 'Древний')),             -- Сервер сделки
+                          request_rarity VARCHAR(10) CHECK (request_rarity IN ('Реликтовый', 'Древний')),
+                          timestamp      TIMESTAMP DEFAULT NOW()                                                    -- Дата совершения сделки
+                      );`);
+
+    await pool.query(`CREATE TABLE IF NOT EXISTS trade_deals_characteristics (
+                          id           SERIAL PRIMARY KEY,
+                          trade_id INT REFERENCES trade_deals (id) ON DELETE CASCADE, -- Связь со сделкой
+                          effect_name  VARCHAR NOT NULL,                                -- Название эффекта
+                          effect_value VARCHAR NOT NULL,                                -- Значение эффекта
+                          CHECK (effect_name IN (SELECT effect_name
+                                                 FROM accessory_effects)),              -- Проверка по accessory_effects
+                          CHECK (effect_value IN (SELECT low_bonus
+                                                  FROM accessory_effects
+                                                  UNION
+                                                  SELECT mid_bonus
+                                                  FROM accessory_effects
+                                                  UNION
+                                                  SELECT high_bonus
+                                                  FROM accessory_effects))
                       );`);
     //
     // await pool.query(`CREATE INDEX idx_trade_deals_buyer ON trade_deals (buyer_id);
@@ -239,7 +272,8 @@ export default async function initializeDatabase(pool, guild) {
                           VALUES ('Серьга', 'Аксессуар'),
                                  ('Кольцо', 'Аксессуар'),
                                  ('Ожерелье', 'Аксессуар'),
-                                 ('Самоцвет ', 'Самоцвет')`);
+                                 ('Самоцвет (Урон)', 'Самоцвет'),
+                                 ('Самоцвет (КД)', 'Самоцвет')`);
     }
 
     await pool.query(`CREATE TABLE IF NOT EXISTS accessory_effects

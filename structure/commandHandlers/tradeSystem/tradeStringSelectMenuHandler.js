@@ -1,4 +1,5 @@
 import {ActionRowBuilder, MessageFlags, StringSelectMenuBuilder} from "discord.js";
+import {createNewWTBLot, createNewWTSLot, createNewWTTLot} from "../../dbUtils.js";
 
 const priceMap = {
     'lt20': '<20к',
@@ -39,11 +40,11 @@ export default async function (pool, client, activeTrades, tradeType, item, inte
             message += `${trade.trade_select_1_effect_1}\n`;
         }
 
-        if (trade.trade_select_1_effect_2 && trade.trade_select_1_effect_1 !== 'ничего') {
+        if (trade.trade_select_1_effect_2 && trade.trade_select_1_effect_2 !== 'ничего') {
             message += `${trade.trade_select_1_effect_2}\n`;
         }
 
-        if (trade.trade_select_1_effect_3 && trade.trade_select_1_effect_1 !== 'ничего') {
+        if (trade.trade_select_1_effect_3 && trade.trade_select_1_effect_3 !== 'ничего') {
             message += `${trade.trade_select_1_effect_3}\n`;
         }
 
@@ -66,32 +67,70 @@ export default async function (pool, client, activeTrades, tradeType, item, inte
     } else if (interaction.customId.startsWith('trade_select_2_')) {
         const userId = interaction.user.id;
         const trade = activeTrades.get(userId) || {};
+        let message = `Текущие выбранные параметры:\n\n**Тип сделки:** ${tradeType}\n**Предмет:** ${item.name}\n**Цена:** ${priceMap[trade.trade_select_1_price]}\n`;
 
         trade[interaction.customId] = interaction.values[0];
         activeTrades.set(userId, trade);
 
         const requiredFields = ['trade_select_2_server', 'trade_select_2_rarity'];
+        message += `**Сервер**: ${trade.trade_select_2_server}\n**Редкость**: ${trade.trade_select_2_rarity}\n`;
 
+        let characteristics = [];
         if (trade.trade_select_1_effect_1 && trade.trade_select_1_effect_1 !== 'ничего') {
+            message += `**Характеристика 1**: ${trade.trade_select_1_effect_1}: ${trade.trade_select_2_effect_amount_1}\n`;
             requiredFields.push('trade_select_2_effect_amount_1');
+            characteristics.push({effectName: trade.trade_select_1_effect_1, effectValue: trade.trade_select_2_effect_amount_1});
         }
 
         if (trade.trade_select_1_effect_2 && trade.trade_select_1_effect_2 !== 'ничего') {
+            message += `**Характеристика 2**: ${trade.trade_select_1_effect_2}: ${trade.trade_select_2_effect_amount_2}\n`;
             requiredFields.push('trade_select_2_effect_amount_2');
+            characteristics.push({effectName: trade.trade_select_1_effect_2, effectValue: trade.trade_select_2_effect_amount_2});
         }
 
         if (trade.trade_select_1_effect_3 && trade.trade_select_1_effect_3 !== 'ничего') {
+            message += `**Характеристика 3**: ${trade.trade_select_1_effect_3}: ${trade.trade_select_2_effect_amount_3}\n`;
             requiredFields.push('trade_select_2_effect_amount_3');
+            characteristics.push({effectName: trade.trade_select_1_effect_3, effectValue: trade.trade_select_2_effect_amount_3});
         }
 
         const allFilled = requiredFields.every(field => trade[field]);
 
         if (allFilled) {
-            let message = interaction.message.content;
-            console.log(message);
+            if (tradeType === "WTB") {
+                await createNewWTBLot(pool, userId,{
+                    type: tradeType.toUpperCase(),
+                    itemRequest: item.name,
+                    price: trade.trade_select_1_price,
+                    negotiable: trade.trade_select_1_negotiable,
+                    server: trade.trade_select_1_server,
+                    rarity: trade.trade_select_1_rarity,
+                    levelRequest: trade.trade_select_1_level || null
+                }, characteristics);
+            } else if (tradeType === "WTS") {
+                await createNewWTSLot(pool, userId,{
+                    type: tradeType.toUpperCase(),
+                    itemRequest: item.name,
+                    price: trade.trade_select_1_price,
+                    negotiable: trade.trade_select_1_negotiable,
+                    server: trade.trade_select_1_server,
+                    rarity: trade.trade_select_1_rarity,
+                    levelRequest: trade.trade_select_1_level || null
+                }, characteristics);
+            } else if (tradeType === "WTT") {
+                await createNewWTTLot(pool, userId,{
+                    type: tradeType.toUpperCase(),
+                    itemRequest: item.name,
+                    itemOffer: item.name,
+                    server: trade.trade_select_1_server,
+                    levelRequest: trade.trade_select_1_level || null,
+                    levelOffer: trade.trade_select_1_level || null,
+                    negotiable: trade.trade_select_1_negotiable
+                }, characteristics);
+            }
 
             await interaction.editReply({
-                content: `Поздравляем! Вы создали лот!\n\n${interaction.message.content}`,
+                content: `Поздравляем! Вы создали лот!\n\n${message}`,
                 components: []
             });
             return true;
