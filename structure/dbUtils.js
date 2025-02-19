@@ -108,11 +108,11 @@ export async function createNewWTBLot(pool, userId, {type, itemRequest, price, n
     }
 }
 
-export async function createNewWTTLot(pool, userId, {type, itemRequest, itemOffer, server, requestLevel, offerLevel, negotiable}, characteristics = []) {
+export async function createNewWTTLot(pool, userId, {type, itemRequest, itemOffer, server, requestLevel, offerLevel}, characteristics = []) {
     try {
-        const result = await pool.query(`INSERT INTO inventory (user_id, trade_type, item_offer, item_request, server, rarity, request_level, offer_level, negotiable)
+        const result = await pool.query(`INSERT INTO inventory (user_id, trade_type, item_offer, item_request, server, rarity, request_level, offer_level)
                                          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-                                         RETURNING id`, [userId, type, itemRequest, itemOffer, server, requestLevel, offerLevel, negotiable]);
+                                         RETURNING id`, [userId, type, itemRequest, itemOffer, server, requestLevel, offerLevel]);
 
         const inventoryId = result.rows[0].id;
 
