@@ -2,7 +2,7 @@ import {ButtonStyle, MessageFlags} from 'discord.js';
 import {getActiveLotsCount} from "../../dbUtils.js";
 import {createTradeMessage} from "./createMessage.js";
 
-export default async function wtbHandler(interaction, pool, client) {
+export default async function createLotHandler(interaction, pool, client) {
     const userId = interaction.user.id;
 
     // Проверяем количество активных лотов у пользователя
@@ -12,16 +12,6 @@ export default async function wtbHandler(interaction, pool, client) {
     }
 
     await createTradeMessage(interaction, pool, client);
-    // if (amount < 1 || amount > 9999) {
-    //     return interaction.reply({ content: "❌ Количество должно быть от 1 до 9999!", flags: MessageFlags.Ephemeral });
-    // }
-    //
-    // // Добавляем новый WTB-лот в базу
-    // const newLot = await pool.query(`
-    //     INSERT INTO inventory (user_id, type, item_request, price, negotiable, server, amount_offer, expires_at)
-    //     VALUES ($1, 'WTB', $2, $3, $4, $5, $6, NOW() + INTERVAL '3 days')
-    //     RETURNING id
-    // `, [userId, item, price, negotiable, server, amount]);
     //
     // // Поиск продавца (WTS) с подходящим предметом
     // const match = await pool.query(`

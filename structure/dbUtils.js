@@ -58,75 +58,82 @@ export async function getSubscriptions(pool, buyerId, sellerId, raidId) {
     return result.rows;
 }
 
-export async function createNewWTSLot(pool, userId, {type, itemOffer, price, negotiable, server, rarity, offerLevel}, characteristics = []) {
+export async function createNewWTSLot(pool, userId, {
+    type,
+    itemOffer,
+    price,
+    negotiable,
+    server,
+    rarity,
+    offerLevel
+}, characteristics = []) {
     try {
-        const result = await pool.query(`INSERT INTO inventory (user_id, trade_type, item_offer, price, negotiable, server, rarity, offer_level)
+        const result = await pool.query(`INSERT INTO inventory (user_id, trade_type, item_offer, price, negotiable,
+                                                                server, offer_rarity, offer_level)
                                          VALUES ($1, $2, $3, $4, $5, $6, $7)
                                          RETURNING id`, [userId, type, itemOffer, price, negotiable, server, rarity, offerLevel]);
 
         const inventoryId = result.rows[0].id;
 
         for (const characteristic of characteristics) {
-            const { effectName, effectValue } = characteristic;
-            await pool.query(`
-                INSERT INTO inventory_characteristics (inventory_id, effect_name, effect_value)
-                SELECT $1, $2, $3
-                WHERE EXISTS (
-                    SELECT 1 FROM accessory_effects 
-                    WHERE effect_name = $2 
-                    AND (low_bonus = $3 OR mid_bonus = $3 OR high_bonus = $3)
-                )
-            `, [inventoryId, effectName, effectValue]);
+            const {effectName, effectValue} = characteristic;
+            await setInventoryCharacteristics(pool, inventoryId, effectName, effectValue);
         }
     } catch (e) {
         console.error("Ошибка при добавлении лота для пользователя:", userId, e);
     }
 }
 
-export async function createNewWTBLot(pool, userId, {type, itemRequest, price, negotiable, server, rarity, requestLevel}, characteristics = []) {
+export async function createNewWTBLot(pool, userId, {
+    type,
+    itemRequest,
+    price,
+    negotiable,
+    server,
+    rarity,
+    requestLevel
+}, characteristics = []) {
     try {
-        const result = await pool.query(`INSERT INTO inventory (user_id, trade_type, item_request, price, negotiable, server, rarity, request_level)
+        const result = await pool.query(`INSERT INTO inventory (user_id, trade_type, item_request, price, negotiable,
+                                                                server, request_rarity, request_level)
                                          VALUES ($1, $2, $3, $4, $5, $6, $7)
                                          RETURNING id`, [userId, type, itemRequest, price, negotiable, server, rarity, requestLevel]);
 
         const inventoryId = result.rows[0].id;
 
         for (const characteristic of characteristics) {
-            const { effectName, effectValue } = characteristic;
-            await pool.query(`
-                INSERT INTO inventory_characteristics (inventory_id, effect_name, effect_value)
-                SELECT $1, $2, $3
-                WHERE EXISTS (
-                    SELECT 1 FROM accessory_effects 
-                    WHERE effect_name = $2 
-                    AND (low_bonus = $3 OR mid_bonus = $3 OR high_bonus = $3)
-                )
-            `, [inventoryId, effectName, effectValue]);
+            const {effectName, effectValue} = characteristic;
+            await setInventoryCharacteristics(pool, inventoryId, effectName, effectValue);
         }
-    } catch (e) {
+    } catch
+        (e) {
         console.error("Ошибка при добавлении лота для пользователя:", userId, e);
     }
 }
 
-export async function createNewWTTLot(pool, userId, {type, itemRequest, itemOffer, server, requestLevel, offerLevel}, characteristics = []) {
+export async function createNewWTTLot(pool, userId, {
+    type,
+    itemRequest,
+    itemOffer,
+    server,
+    requestLevel,
+    offerLevel,
+    offerRarity,
+    requestRarity,
+}, characteristics = []) {
     try {
-        const result = await pool.query(`INSERT INTO inventory (user_id, trade_type, item_offer, item_request, server, rarity, request_level, offer_level)
-                                         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-                                         RETURNING id`, [userId, type, itemRequest, itemOffer, server, requestLevel, offerLevel]);
+        const result = await pool.query(`INSERT INTO inventory (user_id, trade_type, item_offer, item_request, server,
+                                                                offer_rarity, request_rarity, request_level,
+                                                                offer_level)
+                                         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+                                         RETURNING id`, [userId, type, itemOffer, itemRequest, server, offerRarity,
+            requestRarity, requestLevel, offerLevel]);
 
         const inventoryId = result.rows[0].id;
 
         for (const characteristic of characteristics) {
-            const { effectName, effectValue } = characteristic;
-            await pool.query(`
-                INSERT INTO inventory_characteristics (inventory_id, effect_name, effect_value)
-                SELECT $1, $2, $3
-                WHERE EXISTS (
-                    SELECT 1 FROM accessory_effects 
-                    WHERE effect_name = $2 
-                    AND (low_bonus = $3 OR mid_bonus = $3 OR high_bonus = $3)
-                )
-            `, [inventoryId, effectName, effectValue]);
+            const {effectName, effectValue} = characteristic;
+            await setInventoryCharacteristics(pool, inventoryId, effectName, effectValue);
         }
     } catch (e) {
         console.error("Ошибка при добавлении лота для пользователя:", userId, e);
@@ -188,4 +195,15 @@ export async function getActiveLotsCount(pool, userId) {
     return await pool.query(`SELECT COUNT(*)
                              FROM inventory
                              WHERE user_id = $1`, [userId]);
+}
+
+export async function setInventoryCharacteristics(pool, inventoryId, effectName, effectValue) {
+    return await pool.query(`
+        INSERT INTO inventory_characteristics (inventory_id, effect_name, effect_value)
+        SELECT $1, $2, $3
+        WHERE EXISTS (SELECT 1
+                      FROM accessory_effects
+                      WHERE effect_name = $2
+                        AND ($3 = low_bonus OR $3 = mid_bonus OR $3 = high_bonus));
+    `);
 }

@@ -7,9 +7,7 @@ import worstSellers from "../commandHandlers/ranks/worstSellers.js";
 import subscribeToBuy from "../commandHandlers/subscribe/subscribeToBuy.js";
 import subscribeList from "../commandHandlers/subscribe/subscribeList.js";
 import unSubscribeToBuy from "../commandHandlers/subscribe/unSubscribeToBuy.js";
-import wtbHandler from "../commandHandlers/tradeSystem/wtbHandler.js";
-import wtsHandler from "../commandHandlers/tradeSystem/wtsHandler.js";
-import wttHandler from "../commandHandlers/tradeSystem/wttHandler.js";
+import createLotHandler from "../commandHandlers/tradeSystem/createLotHandler.js";
 import removeLotHandler from "../commandHandlers/tradeSystem/removeLotHandler.js";
 import auctionHouseHandler from "../commandHandlers/tradeSystem/auctionHouseHandler.js";
 import handleProfileView from "../commandHandlers/profile/handleProfileView.js";
@@ -63,16 +61,8 @@ export default async function (interaction, pool, client) {
     }
 
     if (interaction.commandName === 'inventory') {
-        if (interaction.options.getSubcommand() === 'wtb') {
-            await wtbHandler(interaction, pool, client);
-        }
-
-        if (interaction.options.getSubcommand() === 'wts') {
-            await wtsHandler(interaction, pool);
-        }
-
-        if (interaction.options.getSubcommand() === 'wtt') {
-            await wttHandler(interaction, pool);
+        if (interaction.options.getSubcommand() === 'create') {
+            await createLotHandler(interaction, pool, client);
         }
 
         if (interaction.options.getSubcommand() === 'list') {

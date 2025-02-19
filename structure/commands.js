@@ -249,31 +249,24 @@ export default [
         .setName('inventory')
         .setDescription('Инвентарь')
         .addSubcommand(subcommand =>
-            subcommand.setName('wtt')
-                .setDescription('Добавить предмет на обмен')
+            subcommand.setName('create')
+                .setDescription('Создать лот')
                 .addStringOption(option => option
                     .setName('item')
-                    .setDescription('Предлагаемый предмет')
+                    .setDescription('Предмет')
                     .setRequired(true)
                     .setAutocomplete(true)
+                ).addStringOption(option => option
+                    .setName('type')
+                    .setDescription('Тип сделки')
+                    .setRequired(true)
+                    .addChoices(
+                        {name: 'Обмен', value: 'WTT'},
+                        {name: 'Продажа', value: 'WTS'},
+                        {name: 'Покупка', value: 'WTB'}
+                    )
                 )
         ).addSubcommand(subcommand =>
-        subcommand.setName('wtb')
-            .setDescription('Запрос на покупку предмета')
-            .addStringOption(option => option
-                .setName('item')
-                .setDescription('Желаемый предмет')
-                .setRequired(true)
-                .setAutocomplete(true))
-    ).addSubcommand(subcommand =>
-        subcommand.setName('wts')
-            .setDescription('Добавить предмет на продажу')
-            .addStringOption(option =>
-                option.setName('item')
-                    .setDescription('Продаваемый предмет')
-                    .setRequired(true)
-                    .setAutocomplete(true))
-    ).addSubcommand(subcommand =>
         subcommand.setName('list')
             .setDescription('Список лотов')
     ), new SlashCommandBuilder()
