@@ -1,7 +1,7 @@
 import {MessageFlags, PermissionsBitField} from "discord.js";
 import {sendPaginatedReviews} from "../../utils.js";
 
-export default async function (interaction, pool, member) {
+export default async function (interaction, pool) {
     const [, , reviewId, userId, page] = interaction.customId.split('_');
     const parsedReviewId = parseInt(reviewId);
     const parsedPage = parseInt(page);
@@ -43,5 +43,5 @@ export default async function (interaction, pool, member) {
 
     await pool.query('UPDATE users SET rating = positive_reviews - negative_reviews WHERE user_id = $1', [userId]);
 
-    await sendPaginatedReviews(interaction, pool, parsedPage);
+    await sendPaginatedReviews(interaction, pool, parsedPage, userId);
 }
