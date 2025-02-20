@@ -13,6 +13,7 @@ export default async function (interaction, pool) {
         });
     }
 
+    const member = await interaction.guild.members.fetch(interaction.user.id);
     const isAdmin = member.permissions.has(PermissionsBitField.Flags.Administrator);
 
     if (!isAdmin) {
