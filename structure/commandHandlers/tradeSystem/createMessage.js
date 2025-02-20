@@ -171,12 +171,12 @@ export async function createFields(item, pool, tradeType, trade, step) {
             }
         }
     } else if (step === 3) {
-        const itemsList = getItemsList(pool);
+        const itemsList = await getItemsList(pool);
         components.push(new ActionRowBuilder().addComponents(
             new StringSelectMenuBuilder()
                 .setCustomId('trade_select_3_item')
                 .setPlaceholder('Желаемый предмет')
-                .addOptions(itemsList)
+                .setOptions(itemsList)
         ));
 
         components.push(new ActionRowBuilder().addComponents(
@@ -188,8 +188,17 @@ export async function createFields(item, pool, tradeType, trade, step) {
                 )
         ));
     } else if (step === 4) {
-        if (['Ожерелье', 'Серьга', 'Кольцо'].includes(item.name)) {
-            let effectOptions = await getEffectOptions(pool, 'accessory_effects', item.name);
+        const itemData = await pool.query('SELECT * FROM items WHERE id = $1', [trade.trade_select_3_item]);
+
+        if (!itemData.rows.length) {
+            console.error("Предмет не найден:", trade.trade_select_3_item);
+            return;
+        }
+
+        const requestItem = itemData.rows[0];
+
+        if (['Ожерелье', 'Серьга', 'Кольцо'].includes(requestItem.name)) {
+            let effectOptions = await getEffectOptions(pool, 'accessory_effects', requestItem.name);
             effectOptions = [...new Set(effectOptions), {label: "Ничего", value: "ничего"}];
             components.push(new ActionRowBuilder().addComponents(
                 new StringSelectMenuBuilder()
@@ -212,7 +221,7 @@ export async function createFields(item, pool, tradeType, trade, step) {
         }
 
         // 🔹 Самоцветы (уровень, количество)
-        if (item.category === 'Самоцвет') {
+        if (requestItem.category === 'Самоцвет') {
             components.push(new ActionRowBuilder().addComponents(
                 new StringSelectMenuBuilder()
                     .setCustomId('trade_select_4_level')
@@ -225,8 +234,17 @@ export async function createFields(item, pool, tradeType, trade, step) {
                         {label: '10', value: '10'})
             ));
         }
-    } else if (step === 5 && item.category === 'Аксессуар') {
-        if (item.category === 'Аксессуар') {
+    } else if (step === 5) {
+        const itemData = await pool.query('SELECT * FROM items WHERE id = $1', [trade.trade_select_3_item]);
+
+        if (!itemData.rows.length) {
+            console.error("Предмет не найден:", trade.trade_select_3_item);
+            return;
+        }
+
+        const requestItem = itemData.rows[0];
+
+        if (requestItem.category === 'Аксессуар') {
             if (trade.trade_select_4_effect_1 && trade.trade_select_4_effect_1.toLowerCase() !== 'ничего') {
                 components.push(new ActionRowBuilder().addComponents(
                     new StringSelectMenuBuilder()

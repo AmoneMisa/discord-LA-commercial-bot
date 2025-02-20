@@ -161,7 +161,7 @@ export async function getItemsList(pool) {
             continue;
         }
 
-        items.push({id: item.id, name: item.name});
+        items.push({value: item.id.toString(), label: item.name});
     }
 
     return items;

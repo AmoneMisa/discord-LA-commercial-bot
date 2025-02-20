@@ -3,6 +3,7 @@ import updateRatings from "../updateRatings.js";
 import updateLeaderboard from "../commandHandlers/updateLeaderboard.js";
 import cron from 'node-cron';
 import {saveProfileToDB} from "../../scrapping/parser.js";
+import {removeLotByExpiresTime} from "../dbUtils.js";
 
 export async function scheduleRankUpdates(frequency, pool, guild) {
     frequency = frequency || await pool.query('SELECT value FROM settings WHERE key = \'rank_update_frequency\'');
@@ -45,9 +46,14 @@ export function schedulersList(pool, client, guild) {
         for (const player of players.rows) {
             await saveProfileToDB(player.nickname);
         }
+        console.log('🔄 Обновление данных профилей из оружейной завершено!');
 
         await updateRatings(pool);
         await updateLeaderboard(client, pool);
         await scheduleRankUpdates(null, pool, guild);
+    });
+
+    cron.schedule('* * * * *', async () => {
+        await removeLotByExpiresTime(pool);
     });
 }
