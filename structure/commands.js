@@ -268,8 +268,11 @@ export default [
                 )
         ).addSubcommand(subcommand =>
         subcommand.setName('list')
-            .setDescription('Список лотов')
-    ), new SlashCommandBuilder()
+            .setDescription('Список лотов'))
+            .addSubcommand(subcommand =>
+        subcommand.setName('remove')
+            .setDescription('Список лотов')),
+    new SlashCommandBuilder()
         .setName('profile')
         .setDescription('Анкета игрока')
         .addSubcommand(subcommand =>

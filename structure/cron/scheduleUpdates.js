@@ -55,7 +55,7 @@ export function schedulersList(pool, client, guild) {
     });
 
     cron.schedule('* * * * *', async () => {
-        await removeLotByExpiresTime(pool);
+        await removeExpiredLots(pool);
         await checkMatching(pool, client);
     });
 }

@@ -1,11 +1,7 @@
-async function removeExpiredLots(pool, client) {
-    const expiredLots = await pool.query(`
-        SELECT id, user_id, item_offer 
-        FROM inventory 
-        WHERE expires_at <= NOW()
-    `);
+import {removeLotByExpiresTime} from "../../dbUtils.js";
 
-    for (const lot of expiredLots.rows) {
+export default async function removeExpiredLots(pool, client) {
+    for (const lot of await removeLotByExpiresTime(pool).rows) {
         const user = await client.users.fetch(lot.user_id).catch(() => null);
         if (user) {
             await user.send(`❌ **Ваш лот "${lot.item_offer}" был снят с продажи!**`);

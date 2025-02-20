@@ -1,3 +1,5 @@
+import {MessageFlags} from "discord.js";
+
 export default async function handleExtendLot(interaction, pool) {
     if (!interaction.customId.startsWith('extend_lot_')) return;
 
