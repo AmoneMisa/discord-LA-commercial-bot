@@ -1,7 +1,7 @@
 import {MessageFlags, PermissionsBitField} from "discord.js";
 import {sendPaginatedReviews} from "../../utils.js";
 
-export default async function (interaction, pool) {
+export default async function (interaction, pool, member) {
     const [, , reviewId, userId, page] = interaction.customId.split('_');
     const parsedReviewId = parseInt(reviewId);
     const parsedPage = parseInt(page);
@@ -13,7 +13,6 @@ export default async function (interaction, pool) {
         });
     }
 
-    const member = await interaction.guild.members.fetch(interaction.user.id);
     const isAdmin = member.permissions.has(PermissionsBitField.Flags.Administrator);
 
     if (!isAdmin) {

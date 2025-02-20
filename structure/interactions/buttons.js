@@ -69,6 +69,6 @@ export default async function (interaction, pool, client) {
     }
 
     if (interaction.customId.startsWith('delete_review_')) {
-        deleteReview(interaction, pool);
+        await deleteReview(interaction, pool);
     }
 }

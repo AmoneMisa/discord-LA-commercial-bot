@@ -11,10 +11,10 @@ export function formatDate(dateString) {
     return `${day}/${month}/${year} ${hours}:${minutes}`;
 }
 
-export async function sendPaginatedReviews(interaction, pool, page = 1, isPositive) {
+export async function sendPaginatedReviews(interaction, pool, page = 1, isPositive, memberId) {
     const reviewsPerPage = 5;
     const offset = (page - 1) * reviewsPerPage;
-    const member = await interaction.guild.members.fetch(interaction.user.id);
+    const member = await interaction.guild.members.fetch(memberId);
     const isAdmin = member.permissions.has(PermissionsBitField.Flags.Administrator);
 
     let reviews;
