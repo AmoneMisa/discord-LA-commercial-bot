@@ -3,7 +3,8 @@ import updateRatings from "../updateRatings.js";
 import updateLeaderboard from "../commandHandlers/updateLeaderboard.js";
 import cron from 'node-cron';
 import {saveProfileToDB} from "../../scrapping/parser.js";
-import {removeLotByExpiresTime} from "../dbUtils.js";
+import {getWTBtoWTSMatching, getWTTMatching, removeLotByExpiresTime} from "../dbUtils.js";
+import checkMatching from "../commandHandlers/tradeSystem/checkMatching.js";
 
 export async function scheduleRankUpdates(frequency, pool, guild) {
     frequency = frequency || await pool.query('SELECT value FROM settings WHERE key = \'rank_update_frequency\'');
@@ -55,5 +56,6 @@ export function schedulersList(pool, client, guild) {
 
     cron.schedule('* * * * *', async () => {
         await removeLotByExpiresTime(pool);
+        await checkMatching(pool, client);
     });
 }

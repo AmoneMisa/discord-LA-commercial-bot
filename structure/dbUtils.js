@@ -205,5 +205,51 @@ export async function setInventoryCharacteristics(pool, inventoryId, effectName,
                       FROM accessory_effects
                       WHERE effect_name = $2
                         AND ($3 = low_bonus OR $3 = mid_bonus OR $3 = high_bonus));
+    `, [inventoryId, effectName, effectValue]);
+}
+
+export async function getWTBtoWTSMatching(pool) {
+    return await pool.query(`SELECT buyer.user_id        AS buyer_id,
+                                    seller.user_id       AS seller_id,
+                                    buyer.item_request   AS buyer_item,
+                                    seller.item_offer    AS seller_item,
+                                    buyer.request_level  AS buyer_level,
+                                    seller.offer_level   AS seller_level,
+                                    buyer.request_rarity AS buyer_rarity,
+                                    seller.offer_rarity  AS seller_rarity,
+                                    buyer.price          AS buyer_price,
+                                    seller.price         AS seller_price,
+                                    seller.negotiable    AS seller_negotiable,
+                                    buyer.server
+                             FROM inventory buyer
+                                      JOIN inventory seller
+                                           ON buyer.item_request = seller.item_offer
+                                               AND buyer.trade_type = 'WTB'
+                                               AND seller.trade_type = 'WTS'
+                                               AND
+                                              (buyer.request_level IS NULL OR buyer.request_level = seller.offer_level)
+                                               AND (buyer.request_rarity IS NULL OR
+                                                    buyer.request_rarity = seller.offer_rarity)
+                                               AND (buyer.price >= seller.price OR seller.negotiable = TRUE)
+                                               AND buyer.server = seller.server;
+    `);
+}
+
+export async function getWTTMatching(pool) {
+    return await pool.query(`SELECT seller.user_id AS seller_id, buyer.user_id AS buyer_id,
+                                    seller.item_offer AS seller_item, buyer.item_request AS buyer_item,
+                                    seller.offer_level AS seller_level, buyer.request_level AS buyer_level,
+                                    seller.offer_rarity AS seller_rarity, buyer.request_rarity AS buyer_rarity,
+                                    seller.price AS seller_price, buyer.price AS buyer_price,
+                                    seller.negotiable AS seller_negotiable, seller.server
+                             FROM inventory seller
+                                      JOIN inventory buyer
+                                           ON seller.item_offer = buyer.item_request
+                                               AND seller.trade_type = 'WTS'
+                                               AND buyer.trade_type = 'WTB'
+                                               AND (seller.offer_level IS NULL OR seller.offer_level = buyer.request_level)
+                                               AND (seller.offer_rarity IS NULL OR seller.offer_rarity = buyer.request_rarity)
+                                               AND (buyer.price >= seller.price OR seller.negotiable = TRUE)
+                                               AND seller.server = buyer.server;
     `);
 }
