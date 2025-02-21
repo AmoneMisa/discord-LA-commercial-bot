@@ -1,12 +1,4 @@
-import {
-    ButtonStyle,
-    Client,
-    Events,
-    GatewayIntentBits,
-    InteractionType,
-    MessageFlags,
-    TextInputStyle
-} from 'discord.js';
+import {ButtonStyle, Client, GatewayIntentBits, InteractionType, MessageFlags, TextInputStyle} from 'discord.js';
 import dotenv from 'dotenv';
 import pkg from 'pg';
 import registerCommands from "./structure/registerCommands.js";
@@ -34,7 +26,6 @@ client.once('ready', async () => {
         return;
     }
 
-    // await initializeDatabase(pool, guild);
     await registerCommands();
     schedulersList(pool, client, guild);
 
