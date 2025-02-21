@@ -37,3 +37,20 @@ export async function getTopSellers(pool) {
 
     return topUsers.rows;
 }
+
+export async function addUserIfNotExists(pool, user) {
+    if (!user || user.bot) {
+        return;
+    } // Игнорируем ботов
+
+    const checkUser = await pool.query('SELECT * FROM users WHERE user_id = $1', [user.id]);
+
+    if (checkUser.rowCount === 0) {
+        await pool.query(
+            `INSERT INTO users (user_id, rating, positive_reviews, negative_reviews)
+             VALUES ($1, 0, 0, 0)`,
+            [user.id]
+        );
+        console.log(`✅ Пользователь ${user.username}#${user.discriminator} добавлен в базу.`);
+    }
+}
