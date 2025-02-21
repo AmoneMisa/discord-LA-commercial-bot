@@ -1,18 +1,15 @@
-/**
- * @type {import('node-pg-migrate').ColumnDefinitions | undefined}
- */
-exports.shorthands = undefined;
+export const up  = (pgm) => {
+    pgm.createTable("roles", {
+        id: "id",
+        role_name: { type: "VARCHAR", unique: true, notNull: true },
+        role_id: { type: "VARCHAR", unique: true },
+        required_rating: { type: "INTEGER", default: 0, notNull: true },
+        min_reviews: { type: "INTEGER", default: 0, notNull: true },
+        min_positive_reviews: { type: "INTEGER", default: 0, notNull: true },
+        min_negative_reviews: { type: "INTEGER", default: 0, notNull: true },
+    });
+};
 
-/**
- * @param pgm {import('node-pg-migrate').MigrationBuilder}
- * @param run {() => void | undefined}
- * @returns {Promise<void> | void}
- */
-exports.up = (pgm) => {};
-
-/**
- * @param pgm {import('node-pg-migrate').MigrationBuilder}
- * @param run {() => void | undefined}
- * @returns {Promise<void> | void}
- */
-exports.down = (pgm) => {};
+export const down = (pgm) => {
+    pgm.dropTable("roles");
+};

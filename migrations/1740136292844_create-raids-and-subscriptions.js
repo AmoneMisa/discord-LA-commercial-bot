@@ -1,4 +1,4 @@
-exports.up = (pgm) => {
+export const up = (pgm) => {
     pgm.createTable("raids", {
         id: "id",
         raid_name: { type: "VARCHAR", notNull: true },
@@ -24,7 +24,7 @@ exports.up = (pgm) => {
     });
 };
 
-exports.down = (pgm) => {
+export const down = (pgm) => {
     pgm.dropTable("subscriptions");
     pgm.dropTable("available_raids");
     pgm.dropTable("raid_roles");

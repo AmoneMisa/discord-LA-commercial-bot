@@ -1,4 +1,4 @@
-exports.up = (pgm) => {
+export const up = (pgm) => {
     pgm.createTable("characters", {
         id: "id",
         profile_id: { type: "INTEGER", references: "profiles(id)", onDelete: "CASCADE", notNull: true },
@@ -8,6 +8,6 @@ exports.up = (pgm) => {
     });
 };
 
-exports.down = (pgm) => {
+export const down = (pgm) => {
     pgm.dropTable("characters");
 };

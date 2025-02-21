@@ -1,4 +1,4 @@
-exports.up = (pgm) => {
+export const up = (pgm) => {
     pgm.createTable("accessory_effects", {
         id: "id",
         category: { type: "VARCHAR", notNull: true },
@@ -9,6 +9,6 @@ exports.up = (pgm) => {
     });
 };
 
-exports.down = (pgm) => {
+export const down = (pgm) => {
     pgm.dropTable("accessory_effects");
 };
