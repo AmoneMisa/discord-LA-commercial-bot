@@ -19,12 +19,12 @@ export async function sendPaginatedReviews(interaction, pool, page = 1, isPositi
 
     let reviews;
 
-    if (isPositive) {
+    if (isPositive === true) {
         reviews = await pool.query(
             'SELECT id, reviewer_id, review_text, is_positive, "timestamp" FROM reviews WHERE target_user = $1 AND is_positive = true ORDER BY timestamp DESC LIMIT $2 OFFSET $3',
             [member.id, reviewsPerPage, offset]
         );
-    } else if (!isPositive) {
+    } else if (isPositive === false) {
         reviews = await pool.query(
             'SELECT id, reviewer_id, review_text, is_positive, "timestamp" FROM reviews WHERE target_user = $1 AND is_positive = false ORDER BY timestamp DESC LIMIT $2 OFFSET $3',
             [member.id, reviewsPerPage, offset]
