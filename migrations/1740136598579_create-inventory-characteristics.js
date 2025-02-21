@@ -1,4 +1,4 @@
-exports.up = (pgm) => {
+export const up = (pgm) => {
     pgm.createTable("inventory_characteristics", {
         id: "id",
         inventory_id: { type: "INTEGER", references: "inventory(id)", onDelete: "CASCADE", notNull: true },
@@ -21,6 +21,6 @@ exports.up = (pgm) => {
     );
 };
 
-exports.down = (pgm) => {
+export const down = (pgm) => {
     pgm.dropTable("inventory_characteristics");
 };

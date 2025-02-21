@@ -35,7 +35,7 @@ client.once('ready', async () => {
         return;
     }
 
-    await initializeDatabase(pool, guild);
+    // await initializeDatabase(pool, guild);
     await registerCommands();
     schedulersList(pool, client, guild);
 

@@ -1,18 +1,13 @@
-/**
- * @type {import('node-pg-migrate').ColumnDefinitions | undefined}
- */
-exports.shorthands = undefined;
+export const up  = (pgm) => {
+    pgm.createTable("rank_criteria", {
+        id: "id",
+        top_seller: { type: "INTEGER", default: 100, notNull: true },
+        great_seller: { type: "INTEGER", default: 75, notNull: true },
+        good_seller: { type: "INTEGER", default: 50, notNull: true },
+        seller: { type: "INTEGER", default: 25, notNull: true },
+    });
+};
 
-/**
- * @param pgm {import('node-pg-migrate').MigrationBuilder}
- * @param run {() => void | undefined}
- * @returns {Promise<void> | void}
- */
-exports.up = (pgm) => {};
-
-/**
- * @param pgm {import('node-pg-migrate').MigrationBuilder}
- * @param run {() => void | undefined}
- * @returns {Promise<void> | void}
- */
-exports.down = (pgm) => {};
+export const down = (pgm) => {
+    pgm.dropTable("rank_criteria");
+};
