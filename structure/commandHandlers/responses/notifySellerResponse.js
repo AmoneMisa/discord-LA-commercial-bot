@@ -13,7 +13,6 @@ export default async function (interaction, pool, client) {
         }
 
         const seller = await client.users.fetch(sellerId);
-        const buyer = await client.users.fetch(buyerId);
 
         await seller.send({
             content: `💰 **Запрос на покупку рейда!**

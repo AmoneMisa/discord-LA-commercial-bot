@@ -38,6 +38,7 @@ export default async function sendRaidResponse(message, pool) {
 
     await message.reply({
         content: `✅ **Выберите действие:**`,
-        components: [row]
+        components: [row],
+        flags: MessageFlags.SuppressNotifications
     });
 }
