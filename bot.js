@@ -10,6 +10,7 @@ import {schedulersList} from "./structure/shedullers/scheduleUpdates.js";
 import buttons from "./structure/interactions/buttons.js";
 import modals from "./structure/interactions/modals.js";
 import commands from "./structure/interactions/commands.js";
+import {addUserIfNotExists} from "./structure/commandHandlers/dbUtils.js";
 
 const {Pool} = pkg;
 const pool = new Pool({connectionString: process.env.DATABASE_URL});
