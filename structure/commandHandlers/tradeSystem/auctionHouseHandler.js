@@ -1,4 +1,4 @@
-import {MessageFlags} from "discord.js";
+import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from "discord.js";
 
 const priceMap = {
     'lt20': '<20к',
@@ -13,27 +13,71 @@ const priceMap = {
 }
 
 export default async function auctionHouseHandler(interaction, pool) {
+    const userId = interaction.user.id;
     const page = interaction.options.getInteger('page') || 1;
     const offset = (page - 1) * 10;
 
     const lots = await pool.query(`
-        SELECT * FROM inventory 
-        ORDER BY expires_at ASC 
-        LIMIT 10 OFFSET $1
-    `, [offset]);
+        SELECT * FROM inventory
+        WHERE user_id != $1
+        ORDER BY expires_at ASC
+        LIMIT 10 OFFSET $2
+    `, [userId, offset]);
 
     if (lots.rows.length === 0) {
         return interaction.reply({ content: "📭 Аукционный дом пуст.", flags: MessageFlags.Ephemeral });
     }
 
-    let message = "🏪 **Аукционный дом** (Страница " + page + ")\n";
-    for (const lot of lots.rows) {
-        const index = lots.rows.indexOf(lot);
-        message += await createMessage(index, lot, pool);
+    let message = `🏪 **Аукционный дом** (Страница ${page})\n`;
+    let buttons = new ActionRowBuilder();
+
+    for (let i = 0; i < lots.rows.length; i++) {
+        message += await createMessage(i, lots.rows[i], pool);
+
+        buttons.addComponents(
+            new ButtonBuilder()
+                .setCustomId(`contact_${lots.rows[i].id}`)
+                .setLabel(`Связаться: ${i + 1}`)
+                .setStyle(ButtonStyle.Primary)
+        );
     }
 
-    return interaction.reply({ content: message, flags: MessageFlags.Ephemeral });
-}
+    const totalLots = await pool.query("SELECT COUNT(*) FROM inventory WHERE user_id != $1", [userId]);
+    const totalPages = Math.ceil(totalLots.rows[0].count / 10);
+
+    if (totalPages > 1) {
+        let paginationButtons = new ActionRowBuilder();
+
+        if (page > 1) {
+            paginationButtons.addComponents(
+                new ButtonBuilder()
+                    .setCustomId(`auction_prev_${page}`)
+                    .setLabel("⬅️ Назад")
+                    .setStyle(ButtonStyle.Secondary)
+            );
+        }
+
+        if (page < totalPages) {
+            paginationButtons.addComponents(
+                new ButtonBuilder()
+                    .setCustomId(`auction_next_${page}`)
+                    .setLabel("Вперёд ➡️")
+                    .setStyle(ButtonStyle.Secondary)
+            );
+        }
+
+        return interaction.reply({
+            content: message,
+            components: [buttons, paginationButtons],
+            flags: MessageFlags.Ephemeral
+        });
+    }
+
+    return interaction.reply({
+        content: message,
+        components: [buttons],
+        flags: MessageFlags.Ephemeral
+    });}
 
 async function createMessage(index, lot, pool) {
     let message = `**${index + 1}.** [${lot.trade_type}] `;
