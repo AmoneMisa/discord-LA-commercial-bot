@@ -5,7 +5,9 @@
   "description": "",
   "main": "bot.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "migrate:make": "node-pg-migrate create",
+    "migrate:up": "node-pg-migrate up",
+    "migrate:down": "node-pg-migrate down"
   },
   "private": true,
   "dependencies": {
@@ -14,6 +16,7 @@
     "dotenv": "^16.4.7",
     "node-cron": "^3.0.3",
     "node-html-parser": "^7.0.1",
+    "node-pg-migrate": "^7.9.1",
     "node-schedule": "^2.1.1",
     "pg": "^8.13.3"
   }
