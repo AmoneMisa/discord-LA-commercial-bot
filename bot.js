@@ -21,6 +21,7 @@ import modals from "./structure/interactions/modals.js";
 import commands from "./structure/interactions/commands.js";
 import autocomplete from "./structure/interactions/autocomplete.js";
 import {addUserIfNotExists} from "./structure/dbUtils.js";
+import sendRaidResponse from "./structure/commandHandlers/responses/sendRaidResponse.js";
 
 const {Pool} = pkg;
 const pool = new Pool({connectionString: process.env.DATABASE_URL});
@@ -37,7 +38,6 @@ client.once('ready', async () => {
         return;
     }
 
-    // await initializeDatabase(pool, guild);
     await registerCommands();
     schedulersList(pool, client, guild);
 
@@ -83,6 +83,7 @@ client.on('interactionCreate', async interaction => {
 client.on(Events.MessageCreate, async message => {
     try {
         await handleMessageSubscription(message, pool, client);
+        await sendRaidResponse(message, pool);
     } catch (e) {
         console.error('messageCreate:', e);
     }

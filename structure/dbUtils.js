@@ -253,3 +253,17 @@ export async function getWTTMatching(pool) {
                                                AND seller.server = buyer.server;
     `);
 }
+
+export async function getUserProfile(pool, userId) {
+    const profile = await pool.query(
+        `SELECT p.main_nickname, 
+                array_agg(c.class_name || ' - ' || c.gear_score) as characters
+         FROM profiles p 
+         LEFT JOIN characters c ON p.id = c.profile_id
+         WHERE p.user_id = $1 
+         GROUP BY p.main_nickname`,
+        [userId]
+    );
+
+    return profile.rows[0] || null;
+}
