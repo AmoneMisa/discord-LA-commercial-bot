@@ -16,7 +16,7 @@ export default async function initializeDatabase(pool, guild) {
         );
     `);
 
-    await pool.query(`ALTER TABLE users ADD COLUMN review_notifications_enabled BOOLEAN DEFAULT TRUE;`);
+    // await pool.query(`ALTER TABLE users ADD COLUMN review_notifications_enabled BOOLEAN DEFAULT TRUE;`);
 
     await pool.query(`
         CREATE TABLE IF NOT EXISTS reviews
@@ -287,7 +287,7 @@ export default async function initializeDatabase(pool, guild) {
                           request_level  INT CHECK (request_level >= 1 AND request_level <= 10) NULL,               -- Только для WTT
                           price          INT CHECK (price >= 0),                                                    -- Только для WTS и WTB
                           negotiable     BOOLEAN   DEFAULT FALSE,                                                   -- Можно ли торговаться
-                          server         VARCHAR(20) CHECK (server IN ('Альдеран', 'Кратос', 'Альдеран и Кратос')), -- Сервер сделки
+                          server         VARCHAR(20) CHECK (server IN ('Альдеран', 'Кратос', 'Альдеран и Кратос')) DEFAULT 'Кратос', -- Сервер сделки
                           offer_rarity   VARCHAR(20) CHECK (offer_rarity IN ('Реликтовый', 'Древний')),             -- Сервер сделки
                           request_rarity VARCHAR(20) CHECK (request_rarity IN ('Реликтовый', 'Древний')),           -- Сервер сделки
                           expires_at     TIMESTAMP DEFAULT NOW() + INTERVAL '3 days',                               -- Сервер

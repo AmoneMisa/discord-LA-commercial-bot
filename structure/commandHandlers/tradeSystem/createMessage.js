@@ -128,7 +128,7 @@ export async function createFields(item, pool, tradeType, trade, step) {
                 .addOptions(
                     {label: 'Кратос', value: 'Кратос'},
                     {label: 'Альдеран', value: 'Альдеран'},
-                    {label: 'Кратос и Альдеран', value: 'Кратос и Альдеран'},
+                    {label: 'Кратос и Альдеран', value: 'Альдеран и Кратос'},
                 )
         ));
 
