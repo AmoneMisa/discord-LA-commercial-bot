@@ -230,8 +230,8 @@ export default [
                         .setDescription('Выберите продавца')
                         .setRequired(true)
                 ).addStringOption(option =>
-                option.setName('raids')
-                    .setDescription('Выберите рейды')
+                option.setName('raid')
+                    .setDescription('Выберите рейд')
                     .setRequired(true)
                     .addChoices(
                         {name: 'Камен 1.0', value: 'Камен 1.0'},
@@ -252,6 +252,14 @@ export default [
                         .setDescription('Выберите продавца')
                         .setRequired(true)
                 )
+        ).addSubcommand(subcommand =>
+            subcommand.setName('send_notification')
+                .setDescription('Уведомление подписчикам о сборе рейда')
+                .addStringOption(option =>
+                    option.setName('raid')
+                        .setDescription('Выберите рейд')
+                        .setRequired(true)
+                        .setAutocomplete(true))
         ),
     new SlashCommandBuilder()
         .setName('inventory')

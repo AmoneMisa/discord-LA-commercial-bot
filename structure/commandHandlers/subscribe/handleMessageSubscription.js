@@ -21,7 +21,8 @@ export default async function handleMessageSubscription(message, pool, client) {
 
     for (const role of mentionedRoles.values()) {
         const raid = await pool.query(`
-            SELECT id FROM available_raids ar
+            SELECT id
+            FROM available_raids ar
             WHERE role_id = $1
         `, [role.id]);
 
@@ -29,32 +30,48 @@ export default async function handleMessageSubscription(message, pool, client) {
             throw new Error(`Raid with role_id = ${role.id} not found`);
         }
 
-        const raidId = raid.rows[0].id;
-        const subscribers = await pool.query(`
-                SELECT buyer_id FROM subscriptions
+        const raidsId = raid.rows;
+        for (const raidId of raidsId) {
+            const subscribers = await pool.query(`
+                SELECT buyer_id
+                FROM subscriptions
                 WHERE seller_id = $1
                   AND raid_id = $2
-            `, [message.author.id, raidId]);
+            `, [message.author.id, raidId.id]);
 
-        for (const subscriber of subscribers.rows) {
-            const user = await client.users.fetch(subscriber.buyer_id);
-            if (user) {
+            if (!subscribers.rows.length) {
+                console.log("У пользователя нет подписчиков", message.author.id);
+                return;
+            }
+
+            for (const subscriber of subscribers.rows) {
+                const user = await client.users.fetch(subscriber.buyer_id);
+
+                if (!user) {
+                    console.error("Пользователь не найден:", subscriber.buyer_id);
+                    return;
+                }
+
                 const row = new ActionRowBuilder()
                     .addComponents(
                         new ButtonBuilder()
-                            .setCustomId(`raid_buy_${message.author.id}_${raidId}`)
+                            .setCustomId(`raid_buy_${message.author.id}_${raidId.id}`)
                             .setLabel('Хочу купить')
                             .setStyle(ButtonStyle.Primary)
                     );
 
-                const raidName = await getRaidName(pool, raidId);
+                const raidName = await getRaidName(pool, raidId.id);
 
                 await user.send({
                     content: `🔔 Игрок **<@${message.author.id}>** набирает группу на **${raidName}**! [Перейти к сообщению](${message.url})`,
                     components: [row], flags: MessageFlags.Ephemeral
                 }).then((message) => {
                     setTimeout(() => {
-                        message.edit({content: `Время для ответа истекло`, components: [], flags: MessageFlags.Ephemeral});
+                        message.edit({
+                            content: `Время для ответа истекло`,
+                            components: [],
+                            flags: MessageFlags.Ephemeral
+                        });
                     }, 1000 * 60 * 5)
                 });
             }

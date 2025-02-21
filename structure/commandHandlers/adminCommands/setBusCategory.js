@@ -1,6 +1,6 @@
 import {MessageFlags} from "discord.js";
 
-export default async function setBussCategory(interaction, pool) {
+export default async function setBusCategory(interaction, pool) {
     await interaction.deferReply({flags: MessageFlags.Ephemeral});
     const category = interaction.options.getChannel('category');
 

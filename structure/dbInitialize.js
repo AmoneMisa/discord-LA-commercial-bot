@@ -160,15 +160,12 @@ export default async function initializeDatabase(pool, guild) {
     if (!result.rows[0].count || +result.rows[0].count < 1) {
         await pool.query(`
             INSERT INTO raids (raid_name)
-            VALUES ('Ехидна'),
+            VALUES ('Камен 1.0'),
+                   ('Ехидна'),
                    ('Бехемос'),
-                   ('Камен 1.0'),
-                   ('Эгир (нормал)'),
-                   ('Эгир (хард)'),
-                   ('Аврельсуд (нормал)'),
-                   ('Аврельсуд (хард)'),
-                   ('Камен 2.0 (нормал)'),
-                   ('Камен 2.0 (хард)');
+                   ('Эгир'),
+                   ('Аврельсуд'),
+                   ('Камен 2.0');
         `);
     }
 

@@ -14,6 +14,7 @@ import handleProfileView from "../commandHandlers/profile/handleProfileView.js";
 import handleProfileEdit from "../commandHandlers/profile/handleProfileEdit.js";
 import handleProfileFill from "../commandHandlers/profile/handleProfileFill.js";
 import reviewNotificationsToggle from "../commandHandlers/ranks/reviewNotificationsToggle.js";
+import manualSendNotificationsToBuyers from "../commandHandlers/subscribe/manualSendNotificationsToBuyers.js";
 
 export default async function (interaction, pool, client) {
     if (interaction.commandName === 'info') {
@@ -58,6 +59,10 @@ export default async function (interaction, pool, client) {
 
         if (interaction.options.getSubcommand() === 'unsubscribe') {
             await unSubscribeToBuy(interaction, pool);
+        }
+
+        if (interaction.options.getSubcommand() === 'send_notification') {
+            await manualSendNotificationsToBuyers(interaction, pool);
         }
     }
 

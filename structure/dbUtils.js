@@ -49,7 +49,7 @@ export async function getRaidName(pool, id) {
 }
 
 export async function getSubscriptions(pool, buyerId, sellerId, raidId) {
-    let result = await pool.query(`SELECT buyer_id AND seller_id AND raid_id
+    let result = await pool.query(`SELECT buyer_id, seller_id, raid_id
                                    FROM subscriptions
                                    WHERE buyer_id = $1
                                      AND seller_id = $2

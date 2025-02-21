@@ -19,7 +19,7 @@ import deleteRole from "./deleteRole.js";
 import setLeaderboardChannel from "./setLeaderboardChannel.js";
 import blockSubscription from "./blockSubscription.js";
 import editRaids from "./editRaids.js";
-import setBussCategory from "./setBussCategory.js";
+import setBusCategory from "./setBusCategory.js";
 import setRaidRole from "./setRaidRole.js";
 import tempBlockSubscription from "./tempBlockSubscription.js";
 import unblockSubscription from "./unblockSubscription.js";
@@ -46,7 +46,7 @@ export default {
     setLeaderboardChannel,
     blockSubscription,
     editRaids,
-    setBussCategory,
+    setBusCategory,
     setRaidRole,
     tempBlockSubscription,
     unblockSubscription
