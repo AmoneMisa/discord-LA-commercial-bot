@@ -9,7 +9,6 @@ import {
 } from 'discord.js';
 import dotenv from 'dotenv';
 import pkg from 'pg';
-import initializeDatabase from "./structure/dbInitialize.js";
 import registerCommands from "./structure/registerCommands.js";
 import updateRatings from "./structure/updateRatings.js";
 import updateLeaderboard from "./structure/commandHandlers/updateLeaderboard.js";
