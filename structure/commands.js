@@ -30,7 +30,7 @@ export default [
         ),
     new SlashCommandBuilder()
         .setName('adm_ranks')
-        .setDefaultMemberPermissions(PermissionFlagsBits.ADMINISTRATOR)
+        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
         .setDescription('Административные настройки рейтинга')
         .addSubcommand(subcommand =>
             subcommand.setName('set_cooldown')
