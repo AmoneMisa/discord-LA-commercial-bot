@@ -27,7 +27,8 @@ export default async function handleMessageSubscription(message, pool, client) {
         `, [role.id]);
 
         if (raid.rowCount === 0) {
-            throw new Error(`Raid with role_id = ${role.id} not found`);
+            console.error(`Raid with role_id = ${role.id} not found`);
+            return;
         }
 
         const raidsId = raid.rows;

@@ -256,7 +256,7 @@ export async function getWTTMatching(pool) {
 
 export async function getUserProfile(pool, userId) {
     const profile = await pool.query(
-        `SELECT p.main_nickname, 
+        `SELECT p.main_nickname,
                 array_agg(c.class_name || ' - ' || c.gear_score) as characters
          FROM profiles p 
          LEFT JOIN characters c ON p.id = c.profile_id

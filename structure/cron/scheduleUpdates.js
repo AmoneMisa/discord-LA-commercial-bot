@@ -3,8 +3,8 @@ import updateRatings from "../updateRatings.js";
 import updateLeaderboard from "../commandHandlers/updateLeaderboard.js";
 import cron from 'node-cron';
 import {saveProfileToDB} from "../../scrapping/parser.js";
-import {getWTBtoWTSMatching, getWTTMatching, removeLotByExpiresTime} from "../dbUtils.js";
 import checkMatching from "../commandHandlers/tradeSystem/checkMatching.js";
+import removeExpiredLots from "../commandHandlers/tradeSystem/removeExpiredLots.js";
 
 export async function scheduleRankUpdates(frequency, pool, guild) {
     frequency = frequency || await pool.query('SELECT value FROM settings WHERE key = \'rank_update_frequency\'');
@@ -45,7 +45,7 @@ export function schedulersList(pool, client, guild) {
         console.log('🔄 Обновление данных профилей из оружейной...');
         const players = await pool.query('SELECT main_nickname FROM profiles');
         for (const player of players.rows) {
-            await saveProfileToDB(player.nickname);
+            await saveProfileToDB(pool, player.nickname);
         }
         console.log('🔄 Обновление данных профилей из оружейной завершено!');
 

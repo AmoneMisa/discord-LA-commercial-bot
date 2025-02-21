@@ -11,7 +11,7 @@ export default async function handleProfileEdit(interaction, pool) {
 
     if (field === 'main_nickname') {
         value = value.toLowerCase();
-        await saveProfileToDB({userId, [toCamelCase(field)]: value});
+        await saveProfileToDB(pool, {userId, [toCamelCase(field)]: value});
     } else {
         await pool.query(`
         UPDATE profiles 

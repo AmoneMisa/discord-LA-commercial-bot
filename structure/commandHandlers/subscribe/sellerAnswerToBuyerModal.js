@@ -3,7 +3,7 @@ import {getRaidName} from "../../dbUtils.js";
 
 export default async function (interaction, pool, client) {
     try {
-        const [ , , buyerId, raidId] = interaction.customId.split('_');
+        const [, , buyerId, raidId] = interaction.customId.split('_');
         const buyer = await client.users.fetch(buyerId);
         const raidName = await getRaidName(pool, raidId);
 

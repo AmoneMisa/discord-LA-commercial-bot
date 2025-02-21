@@ -1,5 +1,4 @@
 import {MessageFlags} from "discord.js";
-import showReviewModal from "../commandHandlers/ranks/showReviewModal.js";
 import {sendPaginatedReviews} from "../utils.js";
 import deleteReview from "../commandHandlers/ranks/deleteReview.js";
 import handleEditRaidsButtons from "../commandHandlers/subscribe/handleEditRaidsButtons.js";
@@ -9,6 +8,9 @@ import handleRemoveLotButtons from "../commandHandlers/tradeSystem/handleRemoveL
 import handleExtendLot from "../commandHandlers/tradeSystem/handleExtendLot.js";
 import {handleAuctionButtons} from "../commandHandlers/tradeSystem/handleAuctionButtons.js";
 import reviewVote from "../commandHandlers/ranks/reviewVote.js";
+import handleSendRaidResponseJoin from "../commandHandlers/responses/handleSendRaidResponseJoin.js";
+import handleBuyButtonsResponse from "../commandHandlers/responses/createModalBuyResponse.js";
+import handleSendRaidResponseBuy from "../commandHandlers/responses/handleSendRaidResponseBuy.js";
 
 export default async function (interaction, pool, client) {
     if (Date.now() - interaction.message.createdTimestamp > 5 * 60 * 1000) {
@@ -54,5 +56,13 @@ export default async function (interaction, pool, client) {
 
     if (interaction.customId.startsWith("contact_")) {
         await handleAuctionButtons(interaction, pool, client);
+    }
+
+    if (interaction.customId.startsWith("join_raid_")) {
+        await handleSendRaidResponseJoin(interaction, pool, client);
+    }
+
+    if (interaction.customId.startsWith("response_raid_buy_")) {
+        await handleSendRaidResponseBuy(interaction, pool, client);
     }
 }

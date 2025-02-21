@@ -17,7 +17,7 @@ export default async function handleProfileFill(interaction, pool) {
                                    FROM profiles
                                    WHERE user_id = $1`, [userId]);
 
-    if (result.rows.length > 0) {
+    if (result.rows[0].count > 0) {
         return await interaction.editReply({
             content: 'У вас уже есть анкета. Чтобы изменить её, используйте команду /profile edit',
             flags: MessageFlags.Ephemeral
@@ -26,7 +26,7 @@ export default async function handleProfileFill(interaction, pool) {
 
     try {
         if (mainNickname) {
-            await saveProfileToDB({
+            await saveProfileToDB(pool,{
                 userId,
                 name,
                 mainNickname,

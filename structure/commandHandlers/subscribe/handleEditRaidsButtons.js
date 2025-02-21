@@ -28,6 +28,6 @@ export default async function handleEditRaidsButtons(interaction, pool) {
             flags: MessageFlags.Ephemeral
         });
 
-        editRaids(interaction, pool);
+        await editRaids(interaction, pool);
     }
 }

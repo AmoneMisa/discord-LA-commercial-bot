@@ -1,15 +1,6 @@
-import pkg from 'pg';
-import dotenv from 'dotenv';
 import {parse} from 'node-html-parser';
 import axios from "axios";
-import * as path from "node:path";
 import {delay} from "../structure/utils.js";
-
-dotenv.config({path: path.resolve(process.cwd(), '../.env')});
-
-// Подключение к базе данных
-const {Pool} = pkg;
-const pool = new Pool({connectionString: process.env.DATABASE_URL});
 
 // Функция парсинга страницы профиля игрока
 async function parseLostArkProfile(nickname) {
@@ -96,16 +87,16 @@ function getClassName(page) {
 }
 
 // Функция записи данных в базу
-export async function saveProfileToDB({
-                                          userId,
-                                          name,
-                                          mainNickname,
-                                          role,
-                                          primeStart,
-                                          primeEnd,
-                                          raidExperience,
-                                          salesExperience
-                                      }) {
+export async function saveProfileToDB(pool, {
+    userId,
+    name,
+    mainNickname,
+    role,
+    primeStart,
+    primeEnd,
+    raidExperience,
+    salesExperience
+}) {
     const profileData = await parseLostArkProfile(mainNickname);
     if (!profileData) return;
 
@@ -114,7 +105,7 @@ export async function saveProfileToDB({
                                                FROM profiles
                                                WHERE user_id = $1`, [userId]);
 
-        if (mainCharResult.rows.length > 0) {
+        if (mainCharResult.rows[0].count > 0) {
             await pool.query(`UPDATE profiles
                               SET name             = COALESCE($1, name),
                                   main_nickname    = COALESCE($2, main_nickname),
@@ -161,8 +152,3 @@ export async function saveProfileToDB({
         console.error('❌ Ошибка записи в БД:', err);
     }
 }
-
-// Тестовый запуск
-// (async () => {
-//     await saveProfileToDB('WhiteAmorality'); // Заменить на реальный ник
-// })();

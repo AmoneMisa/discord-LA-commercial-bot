@@ -11,5 +11,5 @@ export default async function(interaction, pool) {
         flags: MessageFlags.Ephemeral
     });
 
-    editRaids(interaction, pool);
+    await editRaids(interaction, pool);
 }
