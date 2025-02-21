@@ -18,7 +18,7 @@ export default async function (interaction, pool) {
 
     const userRoleData = await pool.query(`
         SELECT role_name FROM roles 
-        WHERE required_rating <= $1 
+        WHERE required_rating::REAL <= $1 
         AND min_reviews <= $2 
         AND min_positive_reviews <= $3
         ORDER BY required_rating DESC

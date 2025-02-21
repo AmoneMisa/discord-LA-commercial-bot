@@ -1,12 +1,4 @@
-import {
-    ButtonStyle,
-    Client,
-    Events,
-    GatewayIntentBits,
-    InteractionType,
-    MessageFlags,
-    TextInputStyle
-} from 'discord.js';
+import {ButtonStyle, Client, GatewayIntentBits, InteractionType, MessageFlags, TextInputStyle} from 'discord.js';
 import dotenv from 'dotenv';
 import pkg from 'pg';
 import registerCommands from "./structure/registerCommands.js";

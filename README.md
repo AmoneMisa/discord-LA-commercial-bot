@@ -36,11 +36,11 @@ DATABASE_URL – postgres://username:password@localhost:5432/discord_bot
 
 ! Запустите миграции командой !<br>
 
-*npm run migrate up*<br>
+*npm run migrate:up*<br>
 
 Если нужно откатить все миграции:
 
-*npm run migrate down*
+*npm run migrate:down*
 
 #### 🔹 1.5 Запустите бота
 

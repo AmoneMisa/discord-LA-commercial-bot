@@ -30,6 +30,7 @@ export default [
         ),
     new SlashCommandBuilder()
         .setName('adm_ranks')
+        .setDefaultMemberPermissions(PermissionFlagsBits.ADMINISTRATOR)
         .setDescription('Административные настройки рейтинга')
         .addSubcommand(subcommand =>
             subcommand.setName('set_cooldown')
@@ -146,6 +147,7 @@ export default [
     new SlashCommandBuilder()
         .setName('adm_settings')
         .setDescription('Настройки администратора')
+        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
         .addSubcommand(subcommand =>
             subcommand.setName('remove_bots')
                 .setDescription('Удаляет всех ботов из базы данных')
