@@ -1,7 +1,8 @@
 import {MessageFlags} from "discord.js";
 import updateRatings from "../../updateRatings.js";
+import sendReviewNotification from "./sendReviewNotification.js";
 
-export default async function (interaction, pool) {
+export default async function (interaction, pool, client) {
     const [_, action, userId] = interaction.customId.split('_');
     const reviewerId = interaction.user.id;
     const reviewText = interaction.fields.getTextInputValue('review_text');
@@ -40,6 +41,7 @@ export default async function (interaction, pool) {
         });
 
         await updateRatings(pool);
+        await sendReviewNotification(pool, userId, reviewerId, isPositive, reviewText, client);
     } catch (error) {
         console.error('❌ Ошибка при сохранении отзыва:', error);
         return interaction.reply({

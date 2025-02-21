@@ -13,6 +13,7 @@ import auctionHouseHandler from "../commandHandlers/tradeSystem/auctionHouseHand
 import handleProfileView from "../commandHandlers/profile/handleProfileView.js";
 import handleProfileEdit from "../commandHandlers/profile/handleProfileEdit.js";
 import handleProfileFill from "../commandHandlers/profile/handleProfileFill.js";
+import reviewNotificationsToggle from "../commandHandlers/ranks/reviewNotificationsToggle.js";
 
 export default async function (interaction, pool, client) {
     if (interaction.commandName === 'info') {
@@ -82,5 +83,9 @@ export default async function (interaction, pool, client) {
         if (interaction.options.getSubcommand() === 'fill') {
             await handleProfileFill(interaction, pool);
         }
+    }
+
+    if (interaction.commandName === 'review_notifications_toggle') {
+        await reviewNotificationsToggle(interaction, pool);
     }
 }

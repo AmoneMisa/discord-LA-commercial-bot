@@ -74,7 +74,7 @@ export default async function (interaction, pool, client) {
     }
 
     if (interaction.customId.startsWith('delete_review_')) {
-        deleteReview(interaction, pool);
+        await deleteReview(interaction, pool);
     }
 
     if (interaction.customId === 'create_raid' || interaction.customId.startsWith('delete_raid')) {

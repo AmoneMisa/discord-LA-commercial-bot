@@ -5,7 +5,7 @@ import handleSellerAnswerToBuyerModal from "../commandHandlers/subscribe/handleS
 
 export default async function(interaction, pool, client) {
     if (interaction.fields.fields.get('review_text') && interaction.fields.getTextInputValue('review_text')) {
-        await sendReview(interaction, pool);
+        await sendReview(interaction, pool, client);
     }
 
     if (interaction.fields.fields.get('buyer_nickname') && interaction.fields.getTextInputValue('buyer_nickname')) {
