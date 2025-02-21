@@ -37,6 +37,7 @@ client.once('ready', async () => {
 client.on('interactionCreate', async interaction => {
     try {
         const targetUser = interaction?.options?.getUser('member');
+        await addUserIfNotExists(pool, interaction.user);
 
         if (interaction.isCommand() && interaction.commandName === 'admin_settings' && interaction.options.getSubcommand() === 'remove_bots') {
             await removeBots(interaction, pool);
