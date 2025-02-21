@@ -11,6 +11,7 @@ import buttons from "./structure/interactions/buttons.js";
 import modals from "./structure/interactions/modals.js";
 import commands from "./structure/interactions/commands.js";
 import {addUserIfNotExists} from "./structure/commandHandlers/dbUtils.js";
+import createRoles from "./structure/createRoles.js";
 
 const {Pool} = pkg;
 const pool = new Pool({connectionString: process.env.DATABASE_URL});
@@ -33,6 +34,7 @@ client.once('ready', async () => {
     await updateRatings(pool);
     await setRolesByRanks(pool, guild);
     await updateLeaderboard(client, pool);
+    await createRoles(pool, guild);
 });
 
 client.on('interactionCreate', async interaction => {
