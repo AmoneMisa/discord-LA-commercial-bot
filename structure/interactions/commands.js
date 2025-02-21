@@ -4,6 +4,7 @@ import lastNegativeReviewsCommand from "../commandHandlers/ranks/lastNegativeRev
 import lastReviewsCommand from "../commandHandlers/ranks/lastReviewsCommand.js";
 import handleAdminSettingsCommand from "../commandHandlers/handleAdminSettingsCommand.js";
 import worstSellers from "../commandHandlers/ranks/worstSellers.js";
+import reviewNotificationsToggle from "../commandHandlers/ranks/reviewNotificationsToggle.js";
 
 export default async function (interaction, pool) {
     if (interaction.commandName === 'info') {
@@ -31,5 +32,9 @@ export default async function (interaction, pool) {
 
     if (interaction.commandName === 'worst_sellers') {
         await worstSellers(interaction, pool);
+    }
+
+    if (interaction.commandName === 'review_notifications_toggle') {
+        await reviewNotificationsToggle(interaction, pool);
     }
 }

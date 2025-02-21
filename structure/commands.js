@@ -21,6 +21,14 @@ export default [
         .setName('worst_sellers')
         .setDescription('Пять худших продавцов'),
     new SlashCommandBuilder()
+        .setName("review_notifications_toggle")
+        .setDescription("Включить или отключить уведомления о новых отзывах")
+        .addBooleanOption(option =>
+            option.setName("enabled")
+                .setDescription("Включить (true) или отключить (false) уведомления")
+                .setRequired(true)
+        ),
+    new SlashCommandBuilder()
         .setName('admin_settings_ranks')
         .setDescription('Административные настройки рейтинга')
         .addSubcommand(subcommand =>

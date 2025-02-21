@@ -11,9 +11,12 @@ export default async function initializeDatabase(pool, guild) {
             user_id          VARCHAR PRIMARY KEY,
             rating           INTEGER DEFAULT 0,
             positive_reviews INTEGER DEFAULT 0,
-            negative_reviews INTEGER DEFAULT 0
+            negative_reviews INTEGER DEFAULT 0,
+            review_notifications_enabled BOOLEAN DEFAULT TRUE
         );
     `);
+
+    await pool.query(`ALTER TABLE users ADD COLUMN review_notifications_enabled BOOLEAN DEFAULT TRUE;`);
 
     await pool.query(`
         CREATE TABLE IF NOT EXISTS reviews
