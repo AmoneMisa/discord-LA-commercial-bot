@@ -1,5 +1,14 @@
 import { MessageFlags } from 'discord.js';
 
+/**
+ * Updates the rank criteria for a specified role in the database and notifies the user about the changes.
+ *
+ * @param {Object} interaction - The interaction object containing command options and methods to interact with the user.
+ * @param {Object} pool - The database connection pool used for executing queries.
+ * @param {Object} pool.query - The function used to execute SQL queries within the pool.
+ *
+ * @return {Promise<void>} A Promise that resolves after the rank criteria is updated and the user has been notified.
+ */
 export default async function setRankCriteria(interaction, pool) {
     const roleName = interaction.options.getString('role_name');
     const requiredRating = Math.min(interaction.options.getInteger('required_rating'), 100);

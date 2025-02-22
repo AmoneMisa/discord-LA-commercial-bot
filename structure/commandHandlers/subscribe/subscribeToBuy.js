@@ -1,6 +1,15 @@
 import {MessageFlags} from "discord.js";
 import {getSubscriptions} from "../../dbUtils.js";
 
+/**
+ * Handles the subscription process for a user to receive notifications about a seller's raids.
+ * This includes validation of the user's ability to subscribe, checking if the seller and raid exist,
+ * and properly associating the subscription in the database.
+ *
+ * @param {Object} interaction - The interaction object containing information about the user action in the Discord context.
+ * @param {Object} pool - The database connection pool used to query and manipulate data.
+ * @return {Promise<void>} A promise that resolves when the subscription process is complete, either successfully or with an appropriate error message.
+ */
 export default async function subscribeToBuy(interaction, pool) {
     const categoryResult = await pool.query('SELECT value FROM settings WHERE key = $1', ['bus_category']);
 

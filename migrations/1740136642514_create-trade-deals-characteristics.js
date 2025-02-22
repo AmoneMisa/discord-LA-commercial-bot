@@ -1,3 +1,21 @@
+/**
+ * Defines the "up" migration for creating and modifying the "trade_deals_characteristics" table.
+ *
+ * This migration performs the following actions:
+ * 1. Creates the "trade_deals_characteristics" table with the following columns:
+ *    - `id`: Primary key.
+ *    - `trade_id`: References the `id` column of the "trade_deals" table, cascading on delete and cannot be null.
+ *    - `effect_name`: A non-nullable string representing the name of the effect.
+ *    - `effect_value`: A non-nullable string representing the value of the effect.
+ *
+ * 2. Adds a foreign key constraint on the "effect_name" column that references the "effect_name" column
+ *    in the "accessory_effects" table.
+ *
+ * 3. Enforces a uniqueness constraint to ensure that each combination of `trade_id` and `effect_name`
+ *    is unique.
+ *
+ * @param {object} pgm - The database migration object used to define the schema changes.
+ */
 export const up = (pgm) => {
     pgm.createTable("trade_deals_characteristics", {
         id: "id",
@@ -21,6 +39,12 @@ export const up = (pgm) => {
     );
 };
 
+/**
+ * A function to migrate the database schema down by dropping the
+ * "trade_deals_characteristics" table.
+ *
+ * @param {Object} pgm - The database migration object used to perform schema changes.
+ */
 export const down = (pgm) => {
     pgm.dropTable("trade_deals_characteristics");
 };

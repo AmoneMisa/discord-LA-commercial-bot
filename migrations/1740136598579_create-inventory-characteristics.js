@@ -1,3 +1,18 @@
+/**
+ * Defines the migration script for creating and modifying the "inventory_characteristics" table.
+ *
+ * The `up` function performs the following actions:
+ * 1. Creates the "inventory_characteristics" table with the following columns:
+ *    - `id`: Primary key, auto-generated.
+ *    - `inventory_id`: Foreign key referencing the `id` column of the "inventory" table,
+ *                      with "CASCADE" behavior on deletion. This column is required.
+ *    - `effect_name`: A string column that is required.
+ *    - `effect_value`: A string column that is required.
+ * 2. Adds a foreign key constraint to ensure that `effect_name` in this table corresponds
+ *    to an existing `effect_name` in the "accessory_effects" table.
+ * 3. Adds a unique constraint enforcing that each `inventory_id` and `effect_name` pair
+ *    must be unique, preventing duplicate entries for a given inventory item.
+ */
 export const up = (pgm) => {
     pgm.createTable("inventory_characteristics", {
         id: "id",
@@ -21,6 +36,13 @@ export const up = (pgm) => {
     );
 };
 
+/**
+ * The `down` function is a migration step used to revert database schema changes.
+ * This specific implementation drops the "inventory_characteristics" table from the database.
+ *
+ * @function
+ * @param {object} pgm - The migration object provided by the database migration framework.
+ */
 export const down = (pgm) => {
     pgm.dropTable("inventory_characteristics");
 };

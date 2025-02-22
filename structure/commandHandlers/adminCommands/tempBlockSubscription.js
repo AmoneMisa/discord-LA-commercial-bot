@@ -1,5 +1,12 @@
 import {MessageFlags} from "discord.js";
 
+/**
+ * Temporarily blocks a user from subscriptions for a specified number of hours.
+ *
+ * @param {object} interaction - The interaction object containing the user and hours information.
+ * @param {object} pool - The database connection pool to execute the query.
+ * @return {Promise<void>} Resolves when the user has been blocked and a reply is sent to the interaction.
+ */
 export default async function tempBlockSubscription(interaction, pool) {
     const userId = interaction.options.getUser('user').id;
     const hours = interaction.options.getInteger('hours');

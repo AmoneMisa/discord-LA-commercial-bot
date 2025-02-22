@@ -12,6 +12,14 @@ const priceMap = {
     'bt500': '500к+'
 }
 
+/**
+ * Handles the auction house interaction by displaying available lots for auction
+ * and providing pagination and contact options via interactive buttons.
+ *
+ * @param {Object} interaction - The interaction object containing data about the user and invoked options.
+ * @param {Object} pool - The database connection pool used for querying the inventory data.
+ * @return {Promise<void>} - A promise that resolves once the interaction reply is sent.
+ */
 export default async function auctionHouseHandler(interaction, pool) {
     const userId = interaction.user.id;
     const page = interaction.options.getInteger('page') || 1;
@@ -79,6 +87,14 @@ export default async function auctionHouseHandler(interaction, pool) {
         flags: MessageFlags.Ephemeral
     });}
 
+/**
+ * Constructs a descriptive message string based on the provided lot details and additional characteristics.
+ *
+ * @param {number} index - The index of the lot in the collection, used for numbering in the message.
+ * @param {Object} lot - An object representing the details of the lot (e.g., trade type, items, price, server, etc.).
+ * @param {Object} pool - The database connection or resource pool to fetch additional lot characteristics.
+ * @return {Promise<string>} A promise that resolves to the constructed message string for the lot.
+ */
 async function createMessage(index, lot, pool) {
     let message = `**${index + 1}.** [${lot.trade_type}] `;
 

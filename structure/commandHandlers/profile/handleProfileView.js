@@ -2,6 +2,15 @@ import {MessageFlags} from "discord.js";
 import sendCharacterList from "../../generateCharactersListImage.js";
 import {getUserAchievements} from "../../dbUtils.js";
 
+/**
+ * Handles the profile view for a specified user, retrieving and displaying their profile, associated characters, and achievements.
+ *
+ * @param {Object} interaction - The interaction object associated with the command, used to retrieve user input and respond to the user.
+ * @param {Object} pool - The database connection pool to query user profiles, characters, and achievements.
+ *
+ * @return {Promise<void>} A promise that resolves when the profile view is handled and the response is sent.
+ *                          Returns early if the user does not have a profile.
+ */
 export default async function handleProfileView(interaction, pool) {
     const userId = interaction.options.getUser('user').id;
     const profile = await pool.query(`SELECT *

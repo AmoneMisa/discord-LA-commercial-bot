@@ -1,6 +1,15 @@
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from 'discord.js';
 import {getRaidName} from "../../dbUtils.js";
 
+/**
+ * Handles message subscriptions for a specified guild message, verifying mentioned roles,
+ * querying the database for relevant raid data, and sending notifications to subscribers.
+ *
+ * @param {Object} message - The message object from Discord.js, containing details about the message.
+ * @param {Object} pool - The database pool instance used for querying the database.
+ * @param {Object} client - The Discord.js client instance used for fetching user details and sending messages.
+ * @return {Promise<void>} A promise that resolves with no returned value after handling the message subscription.
+ */
 export default async function handleMessageSubscription(message, pool, client) {
     if (!message.guild || message.author.bot) {
         return;

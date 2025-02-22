@@ -1,6 +1,17 @@
 import {getRaidName} from "../../dbUtils.js";
 import {MessageFlags} from "discord.js";
 
+/**
+ * Handles an interaction event for approving a raid purchase request.
+ * Sends a confirmation message to the buyer and updates the interaction message.
+ *
+ * @async
+ * @function
+ * @param {Object} interaction - The interaction object containing details of the user's action.
+ * @param {Object} pool - The database connection pool used to fetch raid data.
+ * @param {Object} client - The Discord client instance used to interact with the Discord API.
+ * @throws Will log an error if sending the response to the buyer fails.
+ */
 export default async function (interaction, pool, client) {
     try {
         const [ , , , buyerId, raidId] = interaction.customId.split('_');

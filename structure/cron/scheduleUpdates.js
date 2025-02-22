@@ -6,6 +6,17 @@ import {saveProfileToDB} from "../../scrapping/parser.js";
 import checkMatching from "../commandHandlers/tradeSystem/checkMatching.js";
 import removeExpiredLots from "../commandHandlers/tradeSystem/removeExpiredLots.js";
 
+/**
+ * Schedules rank updates based on the provided frequency or the default stored in the database.
+ *
+ * @param {string} frequency - The frequency of rank updates (e.g., '1d', '3d', '1w', '2w', '1m', '3m').
+ *                             If not provided, it queries the default value from the database.
+ * @param {Object} pool - The database connection pool used to retrieve the default frequency if not provided.
+ * @param {Object} guild - The Discord guild object, required for rank update operations.
+ *
+ * @return {Promise<void>} A promise that resolves when the scheduling has been set up or exits early if
+ *                         the frequency is invalid.
+ */
 export async function scheduleRankUpdates(frequency, pool, guild) {
     frequency = frequency || await pool.query('SELECT value FROM settings WHERE key = \'rank_update_frequency\'');
     let scheduleTime;

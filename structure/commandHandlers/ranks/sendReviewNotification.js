@@ -1,3 +1,15 @@
+/**
+ * Sends a review notification to a target user if their notification settings allow it.
+ * The notification includes information about the review such as the reviewer, positivity, and review text.
+ *
+ * @param {Object} pool - The database connection pool for querying user settings.
+ * @param {string} targetUserId - The ID of the user who will receive the notification.
+ * @param {string} reviewerId - The ID of the user who wrote the review.
+ * @param {boolean} isPositive - Indicates whether the review is positive (true) or negative (false).
+ * @param {string} [reviewText] - The text content of the review (optional).
+ * @param {Object} client - The client instance used to fetch Discord user data and send messages.
+ * @return {Promise<void>} A promise that resolves when the notification process is complete.
+ */
 export default async function sendReviewNotification(pool, targetUserId, reviewerId, isPositive, reviewText, client) {
     try {
         // Получаем настройки пользователя

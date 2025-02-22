@@ -1,6 +1,23 @@
 import {MessageFlags} from "discord.js";
 import showReviewModal from "./showReviewModal.js";
 
+/**
+ * Handles an interaction event for submitting or managing reviews.
+ *
+ * This function processes an interaction related to reviews, performing multiple checks and actions:
+ * - Splits and retrieves the action type and target user ID from the interaction's custom ID.
+ * - Verifies if the reviewer user is blocked from submitting reviews.
+ * - Checks if the target user is blocked from receiving reviews.
+ * - Implements cooldown restrictions if enabled, preventing review spam for the same user within a configured time window.
+ * - Ensures users are not allowed to review themselves unless self-voting is explicitly permitted.
+ * - Finally, invokes a modal to proceed with the review submission if all conditions are satisfied.
+ *
+ * @param {Interaction} interaction - The interaction object containing the review action and user details.
+ * @param {Pool} pool - The database connection pool to query necessary data.
+ *
+ * @async
+ * @throws Will reply to the interaction with an appropriate error message if any condition (e.g., blocked user, cooldown, self-voting restriction) is violated.
+ */
 export default async function(interaction, pool) {
     const [action, userId] = interaction.customId.split('_');
     const reviewerId = interaction.user.id;

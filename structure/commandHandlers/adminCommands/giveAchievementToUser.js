@@ -1,5 +1,12 @@
 import {MessageFlags} from "discord.js";
 
+/**
+ * Assigns a specified achievement to a user by interacting with the database.
+ *
+ * @param {Object} interaction - The Discord interaction object that contains command details and options.
+ * @param {Object} pool - The database connection pool used to interact with the database.
+ * @return {Promise<void>} Resolves when the achievement is successfully assigned or an error is handled.
+ */
 export default async function giveAchievementToUser(interaction, pool) {
     const user = interaction.options.getUser('user');
     const achievementName = interaction.options.getString('achievement');

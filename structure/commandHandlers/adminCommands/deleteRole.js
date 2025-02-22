@@ -1,5 +1,13 @@
 import { MessageFlags } from 'discord.js';
 
+/**
+ * Deletes a role from the server and removes its entry from the database.
+ *
+ * @param {Object} interaction - The interaction object containing information about the user interaction.
+ * @param {Object} pool - The database connection pool used to query the roles table.
+ * @param {Object} guild - The guild object representing the server where the role exists.
+ * @return {Promise<void>} A promise that resolves when the role is deleted and the user is informed.
+ */
 export default async function deleteRole(interaction, pool, guild) {
     const name = interaction.options.getString('name');
 

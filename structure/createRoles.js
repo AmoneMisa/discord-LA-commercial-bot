@@ -1,5 +1,25 @@
 import {PermissionsBitField} from "discord.js";
 
+/**
+ * Synchronizes roles between a Discord server and a database.
+ *
+ * This asynchronous function ensures that roles present in the database are created or updated
+ * in the Discord guild. Roles in the database are checked against those in the Discord guild,
+ * and missing roles are created in the guild. Any discrepancies in role IDs are updated in the database.
+ *
+ * @param {Pool} pool - A database connection pool object to execute queries.
+ * @param {Guild} guild - A Discord guild object representing the server to synchronize roles with.
+ *
+ * Functionality:
+ * 1. Fetches all roles from the database along with their names and IDs.
+ * 2. Fetches all roles from the Discord server's guild.
+ * 3. Creates roles in the Discord server if they exist in the database but not in the server.
+ * 4. Updates the role ID in the database if it is null or outdated.
+ * 5. Logs progress during the operation and details about created or updated roles.
+ *
+ * Error Handling:
+ * Logs an error message to the console in case of any exceptions during execution.
+ */
 export default async function (pool, guild) {
     try {
         console.log("🔄 Проверка и обновление ролей в Discord...");

@@ -1,3 +1,9 @@
+/**
+ * Retrieves the leaderboard channel ID from the settings table.
+ *
+ * @param {Object} pool - The database connection pool used to execute the query.
+ * @return {Promise<string|null>} The leaderboard channel ID if found, or null if not present.
+ */
 export async function getLeaderboardChannelId(pool) {
     const result = await pool.query(`SELECT value
                                      FROM settings
@@ -5,12 +11,26 @@ export async function getLeaderboardChannelId(pool) {
     return result.rows[0]?.value || null;
 }
 
+/**
+ * Sets the leaderboard channel ID in the database.
+ *
+ * @param {Object} pool - The database connection pool used to execute the query.
+ * @param {string} channelId - The ID of the channel to be set as the leaderboard channel.
+ * @return {Promise<void>} A promise that resolves when the leaderboard channel ID has been successfully updated in the database.
+ */
 export async function setLeaderboardChannelId(pool, channelId) {
     await pool.query(`UPDATE settings
                       SET value = $1
                       WHERE key = 'leaderboard_channel_id'`, [channelId]);
 }
 
+/**
+ * Retrieves the message ID for the leaderboard from the database.
+ *
+ * @param {object} pool - The database connection pool used to query the database.
+ * @return {Promise<string|null>} A promise that resolves to the leaderboard message ID as a string,
+ * or null if the message ID is not found.
+ */
 export async function getLeaderboardMessageId(pool) {
     const result = await pool.query(`SELECT value
                                      FROM settings
@@ -18,12 +38,25 @@ export async function getLeaderboardMessageId(pool) {
     return result.rows[0]?.value || null;
 }
 
+/**
+ * Updates the leaderboard message ID in the database settings.
+ *
+ * @param {Object} pool - The database connection pool object.
+ * @param {string} messageId - The new leaderboard message ID to be stored in the database.
+ * @return {Promise<void>} A promise that resolves when the update operation is complete.
+ */
 export async function setLeaderboardMessageId(pool, messageId) {
     await pool.query(`UPDATE settings
                       SET value = $1
                       WHERE key = 'leaderboard_message_id'`, [messageId]);
 }
 
+/**
+ * Fetches the top sellers based on their rating from the database.
+ *
+ * @param {Object} pool - The database connection pool to execute the query.
+ * @return {Promise<Array>} A promise that resolves to an array of top sellers, including their user_id, rating, positive_reviews, and negative_reviews.
+ */
 export async function getTopSellers(pool) {
     const topUsers = await pool.query(
         `SELECT user_id, rating, positive_reviews, negative_reviews
@@ -38,6 +71,13 @@ export async function getTopSellers(pool) {
     return topUsers.rows;
 }
 
+/**
+ * Retrieves the raid name associated with a given ID from the database.
+ *
+ * @param {Object} pool - The database connection pool used to execute queries.
+ * @param {number} id - The ID used to find the associated raid name.
+ * @return {Promise<string>} A promise that resolves to the raid name as a string.
+ */
 export async function getRaidName(pool, id) {
     let result = await pool.query(`SELECT raid_id
                                    FROM available_raids
@@ -48,6 +88,15 @@ export async function getRaidName(pool, id) {
     return result.rows[0].raid_name;
 }
 
+/**
+ * Retrieves subscriptions from the database that match the specified buyer ID, seller ID, and raid ID.
+ *
+ * @param {Object} pool - The database connection pool to perform the query.
+ * @param {number} buyerId - The ID of the buyer associated with the subscription.
+ * @param {number} sellerId - The ID of the seller associated with the subscription.
+ * @param {number} raidId - The ID of the raid associated with the subscription.
+ * @return {Promise<Array>} A promise that resolves to an array of rows containing the subscription details.
+ */
 export async function getSubscriptions(pool, buyerId, sellerId, raidId) {
     let result = await pool.query(`SELECT buyer_id, seller_id, raid_id
                                    FROM subscriptions
@@ -58,6 +107,25 @@ export async function getSubscriptions(pool, buyerId, sellerId, raidId) {
     return result.rows;
 }
 
+/**
+ * Creates a new "WTS" (Want to Sell) lot in the inventory.
+ *
+ * @param {object} pool - The database connection pool for executing queries.
+ * @param {number} userId - The ID of the user creating the lot.
+ * @param {object} details - The details of the item to be listed in the lot.
+ * @param {string} details.type - The trade type (e.g., "WTS").
+ * @param {string} details.itemOffer - The item being offered for trade or sale.
+ * @param {number} details.price - The price of the item.
+ * @param {boolean} details.negotiable - Indicates if the price is negotiable.
+ * @param {string} details.server - The server associated with the trade.
+ * @param {string} details.rarity - The rarity of the offered item.
+ * @param {number} details.offerLevel - The level of the offered item.
+ * @param {Array} [characteristics] - An optional list of additional characteristics for the offered item.
+ * @param {object} characteristics[] - Each characteristic of the item.
+ * @param {string} characteristics[].effectName - The name of the characteristic or effect.
+ * @param {number} characteristics[].effectValue - The value of the characteristic or effect.
+ * @return {Promise<void>} A promise that resolves when the lot is created or rejects with an error.
+ */
 export async function createNewWTSLot(pool, userId, {
     type,
     itemOffer,
@@ -84,6 +152,25 @@ export async function createNewWTSLot(pool, userId, {
     }
 }
 
+/**
+ * Creates a new "Want To Buy" (WTB) lot for the user and inserts it into the inventory database.
+ * The method also allows adding characteristics associated with the new lot.
+ *
+ * @param {Object} pool - The database connection pool to execute the queries.
+ * @param {number} userId - ID of the user who is creating the WTB lot.
+ * @param {Object} lotDetails - Details of the lot to be created.
+ * @param {string} lotDetails.type - The type of trade for the lot.
+ * @param {string} lotDetails.itemRequest - The requested item description.
+ * @param {number} lotDetails.price - The price of the lot.
+ * @param {boolean} lotDetails.negotiable - Indicates if the price is negotiable.
+ * @param {string} lotDetails.server - The server where the transaction will take place.
+ * @param {string} lotDetails.rarity - The rarity of the requested item.
+ * @param {number} lotDetails.requestLevel - The required level for the requested item.
+ * @param {Array} [characteristics=[]] - A list of characteristics to attach to the inventory lot.
+ * @param {Object} characteristics[].effectName - Name of the characteristic effect.
+ * @param {any} characteristics[].effectValue - Value of the characteristic effect.
+ * @return {Promise<void>} - Returns a Promise that resolves with no value if successful, or logs an error if the operation fails.
+ */
 export async function createNewWTBLot(pool, userId, {
     type,
     itemRequest,
@@ -111,6 +198,26 @@ export async function createNewWTBLot(pool, userId, {
     }
 }
 
+/**
+ * Creates a new WTT (Want To Trade) lot in the inventory for the specified user.
+ *
+ * @param {Object} pool - The database connection pool used to execute queries.
+ * @param {number} userId - The ID of the user creating the WTT lot.
+ * @param {Object} tradeDetails - An object containing details of the trade.
+ * @param {string} tradeDetails.type - The type of trade (e.g., WTT, WTB).
+ * @param {string} tradeDetails.itemRequest - The item being requested in the trade.
+ * @param {string} tradeDetails.itemOffer - The item being offered in the trade.
+ * @param {string} tradeDetails.server - The server on which the trade occurs.
+ * @param {number} tradeDetails.requestLevel - The level of the requested item.
+ * @param {number} tradeDetails.offerLevel - The level of the offered item.
+ * @param {string} tradeDetails.offerRarity - The rarity of the offered item.
+ * @param {string} tradeDetails.requestRarity - The rarity of the requested item.
+ * @param {Array<Object>} [characteristics=[]] - Optional array of characteristic objects for the lot. Each object contains:
+ * - {string} effectName - The name of the characteristic effect.
+ * - {string} effectValue - The value of the characteristic effect.
+ *
+ * @return {Promise<void>} A promise that resolves once the new WTT lot has been created and characteristics (if any) have been set.
+ */
 export async function createNewWTTLot(pool, userId, {
     type,
     itemRequest,
@@ -140,17 +247,41 @@ export async function createNewWTTLot(pool, userId, {
     }
 }
 
+/**
+ * Removes expired lots from the inventory based on their expiration time.
+ *
+ * @param {Object} pool - The database connection pool object used to execute the query.
+ * @return {Promise<void>} Resolves when the expired lots have been successfully removed.
+ */
 export async function removeLotByExpiresTime(pool) {
     await pool.query(`DELETE
                       FROM inventory
                       WHERE expires_at <= NOW();`);
 }
 
+/**
+ * Inserts a new trade record into the trade_deals database.
+ *
+ * @param {object} pool - The database connection pool used to execute the query.
+ * @param {number} buyerId - The unique identifier of the buyer in the trade.
+ * @param {number} sellerId - The unique identifier of the seller in the trade.
+ * @param {string} itemOffered - The item being offered in the trade deal.
+ * @param {number} price - The price of the item being traded.
+ * @param {string} tradeType - The type of trade being conducted (e.g., barter, sale).
+ * @param {string} server - The server associated with the trade transaction.
+ * @return {Promise<void>} A promise that resolves when the trade record is successfully added to the database.
+ */
 export async function addTradeRecord(pool, buyerId, sellerId, itemOffered, price, tradeType, server) {
     await pool.query(`INSERT INTO trade_deals (buyer_id, seller_id, item_offered, price, trade_type, server)
                       VALUES ($1, $2, $3, $4, $5, $6);`, buyerId, sellerId, itemOffered, price, tradeType, server);
 }
 
+/**
+ * Fetches a list of unique items from the database and formats them for use.
+ *
+ * @param {Object} pool - Database connection pool used to execute queries.
+ * @return {Promise<Array<{value: string, label: string}>>} A promise that resolves to an array of objects, each containing a `value` and `label` property representing the ID and name of an item, respectively.
+ */
 export async function getItemsList(pool) {
     let result = await pool.query(`SELECT *
                                    FROM items`);
@@ -167,6 +298,13 @@ export async function getItemsList(pool) {
     return items;
 }
 
+/**
+ * Retrieves the name of an item based on its ID from the database.
+ *
+ * @param {object} pool - The database connection pool instance to execute the query.
+ * @param {number} id - The unique identifier of the item.
+ * @return {Promise<string>} A promise that resolves to the name of the item.
+ */
 export async function getItemName(pool, id) {
     let result = await pool.query(`SELECT *
                                    FROM items
@@ -174,6 +312,13 @@ export async function getItemName(pool, id) {
     return result.rows[0].name;
 }
 
+/**
+ * Adds a user to the database if they do not already exist and are not a bot.
+ *
+ * @param {Object} pool - The database connection pool to perform queries.
+ * @param {Object} user - The user object containing details about the user. Must include `id`, `bot`, `username`, and `discriminator` properties.
+ * @return {Promise<void>} A Promise that resolves when the operation is complete or if the user already exists or is a bot.
+ */
 export async function addUserIfNotExists(pool, user) {
     if (!user || user.bot) {
         return;
@@ -191,12 +336,29 @@ export async function addUserIfNotExists(pool, user) {
     }
 }
 
+/**
+ * Retrieves the count of active lots for a specified user from the inventory database.
+ *
+ * @param {Object} pool - The database connection pool used to perform the query.
+ * @param {number} userId - The unique identifier of the user whose active lots are to be counted.
+ * @return {Promise<number>} A promise that resolves to the count of active lots for the given user.
+ */
 export async function getActiveLotsCount(pool, userId) {
     return await pool.query(`SELECT COUNT(*)
                              FROM inventory
                              WHERE user_id = $1`, [userId]);
 }
 
+/**
+ * Sets the inventory characteristics by inserting a new record into the inventory_characteristics table
+ * if the specified effect exists in the accessory_effects table with a matching effect value.
+ *
+ * @param {Object} pool - The database connection pool used to execute the query.
+ * @param {number} inventoryId - The ID of the inventory item to associate with the effect.
+ * @param {string} effectName - The name of the effect to be added.
+ * @param {string|number} effectValue - The value of the effect that must match the low_bonus, mid_bonus, or high_bonus.
+ * @return {Promise<Object>} A promise that resolves to the result of the database query.
+ */
 export async function setInventoryCharacteristics(pool, inventoryId, effectName, effectValue) {
     return await pool.query(`
         INSERT INTO inventory_characteristics (inventory_id, effect_name, effect_value)
@@ -208,6 +370,13 @@ export async function setInventoryCharacteristics(pool, inventoryId, effectName,
     `, [inventoryId, effectName, effectValue]);
 }
 
+/**
+ * Retrieves matching records between buyer (WTB - Want To Buy) and seller (WTS - Want To Sell) from the inventory pool.
+ *
+ * @param {Object} pool - The database connection pool used to execute the query.
+ * @return {Promise<Object[]>} A promise resolving to a list of matching records between buyers and sellers,
+ * including details such as user IDs, items, levels, rarity, price, negotiation status, and server.
+ */
 export async function getWTBtoWTSMatching(pool) {
     return await pool.query(`SELECT buyer.user_id        AS buyer_id,
                                     seller.user_id       AS seller_id,
@@ -235,6 +404,16 @@ export async function getWTBtoWTSMatching(pool) {
     `);
 }
 
+/**
+ * Retrieves a list of matching "Want To Sell" (WTS) and "Want To Buy" (WTB) trade entries
+ * from the inventory database based on specific criteria such as item, level, rarity,
+ * price, negotiability, and server.
+ *
+ * @param {Object} pool - The database connection pool used to execute the query.
+ * @return {Promise<Object[]>} A promise that resolves to an array of trade matches, where each match
+ * consists of details about the seller and buyer, including user IDs, item details, levels, rarity, price,
+ * negotiability, and server.
+ */
 export async function getWTTMatching(pool) {
     return await pool.query(`SELECT seller.user_id AS seller_id, buyer.user_id AS buyer_id,
                                     seller.item_offer AS seller_item, buyer.item_request AS buyer_item,
@@ -254,6 +433,15 @@ export async function getWTTMatching(pool) {
     `);
 }
 
+/**
+ * Retrieves the user profile along with associated character information from the database.
+ *
+ * @param {Object} pool - The database connection pool used to query the database.
+ * @param {number} userId - The unique identifier of the user whose profile is being retrieved.
+ * @return {Promise<Object|null>} A promise that resolves to an object representing the user's profile
+ *                                including the associated characters data, or null if the user profile
+ *                                is not found.
+ */
 export async function getUserProfile(pool, userId) {
     const profile = await pool.query(
         `SELECT p.*,
@@ -280,6 +468,13 @@ export async function getUserProfile(pool, userId) {
     return profile.rows[0] || null;
 }
 
+/**
+ * Retrieves the list of achievements for a specific user from the database.
+ *
+ * @param {Object} pool - The database connection pool instance.
+ * @param {string|number} userId - The ID of the user whose achievements are to be retrieved.
+ * @return {Promise<Array>} A promise that resolves to an array of user achievements. Each achievement contains properties such as id, name, description, icon, and assigned_at. Returns an empty array if an error occurs.
+ */
 export async function getUserAchievements(pool, userId) {
     try {
         const result = await pool.query(`

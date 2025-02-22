@@ -1,5 +1,18 @@
 import {ButtonStyle, MessageFlags} from "discord.js";
 
+/**
+ * Handles an interaction to initiate a purchase request from a buyer to a seller in a raid scenario.
+ *
+ * @async
+ * @function
+ * @param {Interaction} interaction - The interaction object containing the user's request.
+ * @param {Pool} pool - The database connection pool object used for any database operations (not used in this function).
+ * @param {Client} client - The client instance of the bot used to fetch user information and send messages.
+ * @description This function sends a message to the seller initiated by the buyer regarding a raid purchase request.
+ *              If the buyer attempts to send the request to themselves, the interaction is terminated with a notice.
+ *              The seller is notified and given five minutes to respond, after which the message is updated to indicate a timeout.
+ * @throws This function logs errors to the console and notifies the user in case of an error during the interaction.
+ */
 export default async function (interaction, pool, client) {
     try {
         // отправка сообщения продавцу от покупателя

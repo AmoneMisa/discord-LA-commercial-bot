@@ -1,6 +1,13 @@
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from 'discord.js';
 import {createLotItemMessage} from "../../utils.js";
 
+/**
+ * Handles the removal of a lot from the user's inventory and manages paginated display of active lots.
+ *
+ * @param {Object} interaction - The interaction object representing the user's command or action.
+ * @param {Object} pool - The database connection pool object used to perform database operations.
+ * @return {Promise<void>} A Promise that resolves when the interaction reply operation is complete.
+ */
 export default async function removeLotHandler(interaction, pool) {
     const userId = interaction.user.id;
     const page = interaction.options.getInteger('page') || 1;

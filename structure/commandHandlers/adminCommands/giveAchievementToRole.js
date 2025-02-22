@@ -1,5 +1,13 @@
 import {MessageFlags} from "discord.js";
 
+/**
+ * Assigns an achievement to all members with a specified role in a guild.
+ *
+ * @param {Object} interaction - The interaction object representing the command invocation.
+ * @param {Object} pool - The database connection pool for executing SQL queries.
+ * @param {Object} guild - The guild object where the role and members are retrieved from.
+ * @return {Promise<void>} Resolves when the achievement has been assigned or an appropriate message has been sent to the interaction.
+ */
 export default async function giveAchievementToRole(interaction, pool, guild) {
     const role = interaction.options.getRole('role');
     const achievementName = interaction.options.getString('achievement');

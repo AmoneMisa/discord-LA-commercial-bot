@@ -2,6 +2,14 @@ import {ActionRowBuilder, MessageFlags, StringSelectMenuBuilder, TextInputStyle}
 import tradeStringSelectMenuHandler from "./tradeStringSelectMenuHandler.js";
 import {getItemsList} from "../../dbUtils.js";
 
+/**
+ * Creates and handles a trade message interaction for a user specifying trade parameters.
+ *
+ * @param {Object} interaction - The interaction object representing a user's interaction with the bot.
+ * @param {Object} pool - The database connection pool for executing queries.
+ * @param {Object} client - The client instance for handling advanced bot operations, if required.
+ * @return {Promise<void>} A promise that resolves to `void` when the operation finishes.
+ */
 export async function createTradeMessage(interaction, pool, client) {
     const itemId = interaction.options.getString('item'); // ID предмета
     const tradeType = interaction.options.getString('type'); // Тип сделки

@@ -3,6 +3,22 @@ import {formatDate} from "../../utils.js";
 import dotenv from 'dotenv';
 dotenv.config();
 
+/**
+ * Handles an interaction to retrieve and display user statistics, role information, and manage voting buttons.
+ *
+ * @async
+ * @param {Object} interaction - The interaction object containing details of the user's input and interaction context.
+ * @param {Object} pool - The database connection pool to execute queries.
+ *
+ * The function performs the following:
+ *  - Retrieves the specified user from the interaction options.
+ *  - Ensures the user exists in the database, initializing their stats if they are not found.
+ *  - Fetches the appropriate role for the user based on their rating and reviews.
+ *  - Retrieves timestamps for the last positive and negative reviews for the user, if available.
+ *  - Builds a response message displaying the user's statistics, role, and review details.
+ *  - Creates and attaches upvote and downvote buttons to the response for further user interaction.
+ *  - Sends the response message with the provided statistics and button components as ephemeral.
+ */
 export default async function (interaction, pool) {
     const member = interaction.options.getUser('member');
     if (!member) return interaction.reply({ content: 'Выберите участника.', flags: MessageFlags.Ephemeral });

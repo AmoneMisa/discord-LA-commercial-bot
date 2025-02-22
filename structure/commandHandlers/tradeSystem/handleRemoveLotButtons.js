@@ -1,5 +1,12 @@
 import {MessageFlags} from "discord.js";
 
+/**
+ * Handles the "remove lot" button interaction to delete a specified lot from the inventory.
+ *
+ * @param {Object} interaction - The interaction object representing the user's action.
+ * @param {Object} pool - The database connection pool for executing queries.
+ * @return {Promise<void>} A promise that resolves when the operation is complete.
+ */
 export default async function handleRemoveLotButtons(interaction, pool) {
     if (!interaction.customId.startsWith('remove_lot_')) {
         return;

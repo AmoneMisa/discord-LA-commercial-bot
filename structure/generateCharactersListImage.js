@@ -12,6 +12,14 @@ const ACHIEVEMENTS_DIR = path.resolve('static/achievements'); // Папка с �
 
 registerFont(FONT_PATH, { family: 'Noto Sans', weight: '400', style: 'normal' });
 // 🎨 Функция отрисовки
+/**
+ * Draws a list of characters and their details on a canvas, including their class icons, gear scores,
+ * and relevant achievements. The resulting canvas is saved as an image file.
+ *
+ * @param {Array} characters - An array of character objects, each containing `char_name`, `class_name`, and `gear_score`.
+ * @param {Array} achievements - An array of achievement objects, each containing `name`.
+ * @return {Promise<string>} A promise that resolves with the file path of the generated image.
+ */
 export async function drawCharacterList(characters = [], achievements = []) {
     const WIDTH = 800;
     const HEIGHT = 500;
@@ -139,6 +147,16 @@ export async function drawCharacterList(characters = [], achievements = []) {
 }
 
 // 🚀 Отправка изображения в Discord и автоматическое удаление
+/**
+ * Sends a list of characters to either a user directly or as a reply to an interaction, along with their achievements and a generated file attachment.
+ *
+ * @param {Object} interaction - The interaction object used to reply if the user is not provided.
+ * @param {string} messageText - The text message to accompany the character list.
+ * @param {Array} characters - The list of characters to include in the generated file.
+ * @param {Object|null} user - The user object to send the message to, if specified.
+ * @param {Array} [achievements=[]] - Optional list of achievements related to the characters being sent.
+ * @return {Promise<void>} A promise that resolves once the message is sent and the file is scheduled for deletion.
+ */
 export default async function sendCharacterList(interaction, messageText, characters, user, achievements = []) {
     const filePath = await drawCharacterList(characters, achievements);
 
@@ -164,6 +182,17 @@ export default async function sendCharacterList(interaction, messageText, charac
     }, 5000);
 }
 
+/**
+ * Draws a rounded rectangle on a given canvas rendering context.
+ *
+ * @param {CanvasRenderingContext2D} ctx - The canvas rendering context to draw on.
+ * @param {number} x - The x-coordinate of the top-left corner of the rectangle.
+ * @param {number} y - The y-coordinate of the top-left corner of the rectangle.
+ * @param {number} width - The width of the rectangle.
+ * @param {number} height - The height of the rectangle.
+ * @param {number} radius - The radius of the rectangle's corners.
+ * @return {void} Does not return a value.
+ */
 function drawRoundedRect(ctx, x, y, width, height, radius) {
     ctx.beginPath();
     ctx.moveTo(x + radius, y);

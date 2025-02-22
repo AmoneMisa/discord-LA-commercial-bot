@@ -1,5 +1,13 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags } from 'discord.js';
 
+/**
+ * Handles the editing of raids by retrieving a list of raids from the database,
+ * creating interactive buttons for each raid, and updating the interaction response.
+ *
+ * @param {Object} interaction - The Discord interaction instance that triggered the command.
+ * @param {Object} pool - The database connection pool to query raid information.
+ * @return {Promise<void>} Resolves when the interaction response has been handled.
+ */
 export default async function editRaids(interaction, pool) {
     const raids = await pool.query('SELECT id, raid_name FROM raids ORDER BY id LIMIT 20');
 

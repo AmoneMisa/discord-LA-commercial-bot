@@ -1,5 +1,12 @@
 import {MessageFlags} from "discord.js";
 
+/**
+ * Handles the extension of a lot's expiration date in the inventory.
+ *
+ * @param {object} interaction - The interaction object representing the user's action.
+ * @param {object} pool - The database connection pool used to query and update the inventory database.
+ * @return {Promise<void>} A promise that resolves when the lot has been successfully extended, or provides feedback if the lot is not found or has already been removed.
+ */
 export default async function handleExtendLot(interaction, pool) {
     if (!interaction.customId.startsWith('extend_lot_')) return;
 

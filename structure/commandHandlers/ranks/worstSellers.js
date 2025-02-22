@@ -1,5 +1,12 @@
 import { MessageFlags } from 'discord.js';
 
+/**
+ * Retrieves and replies with the top 5 worst-rated sellers from the database within the last 30 days.
+ *
+ * @param {Object} interaction - The interaction object containing information about the command or event, used for replying to the user.
+ * @param {Object} pool - The database pool used for querying worst-rated sellers based on recent reviews.
+ * @return {Promise<void>} - Resolves when the response is sent to the user, either with the list of worst-rated sellers or a default message if none are found.
+ */
 export default async function worstSellers(interaction, pool) {
     const worstUsers = await pool.query(
         `SELECT user_id, rating, positive_reviews, negative_reviews

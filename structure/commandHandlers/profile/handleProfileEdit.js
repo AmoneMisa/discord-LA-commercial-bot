@@ -2,6 +2,14 @@ import {MessageFlags} from "discord.js";
 import {saveProfileToDB} from "../../../scrapping/parser.js";
 import {toCamelCase} from "../../utils.js";
 
+/**
+ * Handles the user's request to edit fields in their profile.
+ * Performs validations for specific fields and updates the profile in the database.
+ *
+ * @param {Object} interaction - The interaction object representing the user's request.
+ * @param {Object} pool - The database connection pool for executing queries.
+ * @return {Promise<void>} A promise that resolves when the profile update has been successfully processed.
+ */
 export default async function handleProfileEdit(interaction, pool) {
     await interaction.deferReply({flags: MessageFlags.Ephemeral});
 

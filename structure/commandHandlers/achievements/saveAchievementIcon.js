@@ -20,13 +20,11 @@ export default async function (achievementName, image) {
         if (!fs.existsSync(achievementsDir)) {
             fs.mkdirSync(achievementsDir, { recursive: true });
         }
-
-        console.log(achievementName);
         // Преобразуем название достижения в snake_case
         const fileName = achievementName
             .toLowerCase()
             .replace(/\s+/g, '_')
-            .replace(/[^а-яёa-z0-9_]/g, '') + '.png';
+            .replace(/[^а-яёa-z0-9_!-*$]/g, '') + '.png';
 
         // Полный путь к файлу
         const filePath = path.join(achievementsDir, fileName);

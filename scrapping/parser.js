@@ -3,6 +3,14 @@ import axios from "axios";
 import {delay} from "../structure/utils.js";
 
 // Функция парсинга страницы профиля игрока
+/**
+ * Parses Lost Ark player profile and retrieves character information including name, gear score, and class name.
+ * Ensures that characters with duplicate names are not added, and sorts characters by gear score in descending order.
+ * Filters characters to identify those with a gear score of 1660 or higher.
+ *
+ * @param {string} nickname - The nickname of the Lost Ark player whose profile is to be parsed.
+ * @return {Promise<Object|null>} A promise that resolves to an object containing the player's nickname, a list of characters, and high-level characters (gear score >= 1660), or null if an error occurs.
+ */
 async function parseLostArkProfile(nickname) {
     try {
         const page = await getCharacterPage(nickname);
@@ -49,6 +57,13 @@ async function parseLostArkProfile(nickname) {
     }
 }
 
+/**
+ * Extracts a list of character names from a specified element on a webpage.
+ *
+ * @param {Object} page - The webpage object containing the desired element.
+ * @param {string} listSelector - The CSS selector of the element containing the character list.
+ * @return {string[]} An array of character names with unwanted patterns removed.
+ */
 function getCharacterList(page, listSelector) {
     return page.querySelector(listSelector)
         .innerText.replaceAll(/Ур\.\d+/g, '')
@@ -56,6 +71,12 @@ function getCharacterList(page, listSelector) {
         .filter(name => name !== '');
 }
 
+/**
+ * Fetches and parses a character's weaponry page from the specified URL.
+ *
+ * @param {string} nickname - The nickname of the character whose page is to be retrieved.
+ * @return {Promise<object>} A promise that resolves to the parsed data of the character's page.
+ */
 async function getCharacterPage(nickname) {
     const page = await axios.get(`https://xn--80aubmleh.xn--p1ai/%D0%9E%D1%80%D1%83%D0%B6%D0%B5%D0%B9%D0%BD%D0%B0%D1%8F/${(nickname)}`)
         .catch(e => {
@@ -65,6 +86,12 @@ async function getCharacterPage(nickname) {
     return parse(page.data);
 }
 
+/**
+ * Retrieves the gear score from the provided page element.
+ *
+ * @param {object} page - The page object containing the DOM to search for the gear score.
+ * @return {string|null} The gear score as a string, or null if the element is not found.
+ */
 function getGearScore(page) {
     let elem = page.querySelector('.level-info2__item');
 
@@ -76,6 +103,13 @@ function getGearScore(page) {
     return elem.innerText.match(/[\d,]+(?:\.\d+)?/)[0].replace(',', '');
 }
 
+/**
+ * Retrieves the 'alt' attribute of the first element with the class
+ * 'profile-character-info__img' found within the provided page.
+ *
+ * @param {Document} page - The DOM Document or element within which to search for the target element.
+ * @return {string|null} The value of the 'alt' attribute of the found element, or null if the element is not found.
+ */
 function getClassName(page) {
     let elem = page.querySelector('.profile-character-info__img');
     if (!elem) {
@@ -87,6 +121,24 @@ function getClassName(page) {
 }
 
 // Функция записи данных в базу
+/**
+ * Saves a user profile along with associated high-level character data to the database.
+ * Updates the profile and character data if they already exist, or creates new entries otherwise.
+ *
+ * @param {Object} pool - Database connection pool to execute queries.
+ * @param {Object} profileData - Object containing profile and associated character information.
+ * @param {string} profileData.userId - Unique identifier for the user.
+ * @param {string} profileData.name - The name of the user.
+ * @param {string} profileData.mainNickname - Main nickname associated with the user.
+ * @param {string} profileData.role - The user's designated role.
+ * @param {string} profileData.primeStart - Timestamp indicating when the prime membership starts.
+ * @param {string} profileData.primeEnd - Timestamp indicating when the prime membership ends.
+ * @param {string} profileData.raidExperience - Description of the user's raid experience.
+ * @param {string} profileData.salesExperience - Description of the user's sales experience.
+ * @param {string} profileData.server - The server associated with the user profile.
+ * @return {Promise<void>} Resolves when all operations (inserts and updates) are completed successfully,
+ *                         otherwise logs an error to the console in case of failure.
+ */
 export async function saveProfileToDB(pool, {
     userId,
     name,

@@ -1,6 +1,19 @@
 import {ActionRowBuilder, ButtonStyle, MessageFlags, ModalBuilder, TextInputBuilder, TextInputStyle} from "discord.js";
 import {getRaidName} from "../../dbUtils.js";
 
+/**
+ * Handles interaction events for processing raid purchase requests.
+ *
+ * This function processes whether the seller accepts or rejects a raid purchase request.
+ * If the request is accepted, a modal is presented to the seller to input additional details.
+ * If the request is rejected, the buyer is notified, and the interaction message is updated.
+ *
+ * @async
+ * @function
+ * @param {Object} interaction - The interaction object representing the interaction event.
+ * @param {Object} pool - The database connection pool used to fetch raid details.
+ * @param {Object} client - The Discord client instance used to interact with the Discord API.
+ */
 export default async function (interaction, pool, client) {
     try {
         const [, , buyerId, raidId] = interaction.customId.split('_');

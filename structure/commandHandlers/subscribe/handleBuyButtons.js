@@ -1,5 +1,12 @@
 import { MessageFlags, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } from 'discord.js';
 
+/**
+ * Handles buy button interactions by presenting a modal for raid purchase.
+ *
+ * @param {Object} interaction - The interaction object from the Discord API.
+ * @param {string} interaction.customId - The custom ID associated with the interaction.
+ * @return {Promise<void>} Resolves when the modal is shown to the user.
+ */
 export default async function handleBuyButtons(interaction) {
     const [ , , sellerId, raidId] = interaction.customId.split('_');
 

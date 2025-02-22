@@ -14,6 +14,26 @@ const priceMap = {
     'bt500': '500к+'
 }
 
+/**
+ * Handles a trade interaction for managing user-created trade listings in a game or application.
+ *
+ * This function dynamically processes user interactions, updating trade data and guiding the user
+ * through the creation of a trade listing step-by-step. Depending on the trade type and item specifics,
+ * it validates input fields, updates active trade information, and orchestrates the creation of a lot.
+ * The flow includes actions for trading items to sell (WTS), items to buy (WTB), or items to trade (WTT).
+ *
+ * @async
+ * @function
+ * @param {Object} pool - Database connection pool for executing queries.
+ * @param {Object} client - Discord API client object.
+ * @param {Map} activeTrades - Map storing currently active trades categorized by user ID.
+ * @param {string} tradeType - Type of trade being created ("WTB", "WTS", or "WTT").
+ * @param {Object} item - Details of the item involved in the trade.
+ * @param {Object} interaction - Interaction object containing user input and event data from Discord.
+ * @returns {Promise<boolean|undefined>} Returns a boolean indicating whether the interaction flow
+ *                                       is complete (true for listing created, false to continue),
+ *                                       or undefined if the function does not return at that point.
+ */
 export default async function (pool, client, activeTrades, tradeType, item, interaction) {
     await interaction.deferUpdate();
 

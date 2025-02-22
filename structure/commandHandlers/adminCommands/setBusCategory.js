@@ -1,5 +1,14 @@
 import {MessageFlags} from "discord.js";
 
+/**
+ * Sets a bus category in the system, ensuring it is a valid category channel.
+ * Stores the category's ID in the database and updates existing data if necessary.
+ * Replies and edits the interaction context based on the outcome of the operation.
+ *
+ * @param {Object} interaction - The interaction object from Discord, used to handle user commands and replies.
+ * @param {Object} pool - The database connection pool for executing queries to store the bus category.
+ * @return {Promise<void>} A promise that resolves when the operation is complete.
+ */
 export default async function setBusCategory(interaction, pool) {
     await interaction.deferReply({flags: MessageFlags.Ephemeral});
     const category = interaction.options.getChannel('category');
