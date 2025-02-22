@@ -424,9 +424,9 @@ export default [
                 option.setName("description")
                     .setDescription("Описание достижения")
                     .setRequired(true))
-            .addStringOption(option =>
+            .addAttachmentOption(option =>
                 option.setName("icon")
-                    .setDescription("Ссылка на иконку достижения")
+                    .setDescription("Иконка достижения (только формат png)")
                     .setRequired(true))
         ).addSubcommand(subcommand =>
         subcommand.setName("edit")

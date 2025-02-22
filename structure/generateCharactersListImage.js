@@ -2,17 +2,20 @@ import {createCanvas, loadImage, registerFont} from 'canvas';
 import fs from 'fs';
 import path from 'path';
 import {MessageFlags} from "discord.js";
+import {getUserAchievements} from "./dbUtils.js";
 
 // 📌 Пути к папкам
 const ICONS_DIR = path.resolve('static/classIcons'); // Папка с иконками классов
 const OUTPUT_DIR = path.resolve('static/generated'); // Папка для временных изображений
 const FONT_PATH = path.resolve('static/fonts/NotoSans-VariableFont_wdth,wght.ttf');
+const ACHIEVEMENTS_DIR = path.resolve('static/achievements'); // Папка с иконками достижений
+
 console.log("FONT_PATH", FONT_PATH)
 registerFont(FONT_PATH, { family: 'Noto Sans', weight: '400', style: 'normal' });
 // 🎨 Функция отрисовки
-export async function drawCharacterList(characters) {
+export async function drawCharacterList(characters, achievements) {
     const WIDTH = 800;
-    const HEIGHT = 450;
+    const HEIGHT = 500;
     const PADDING = 12;
     const INNER_PADDING = 8; // Новый паддинг слева и справа
     const BOX_HEIGHT = 40;
@@ -20,6 +23,9 @@ export async function drawCharacterList(characters) {
     const FONT_SIZE = 15;
     const ROWS = 5;
     const COLS = 3;
+    const ACHIEVEMENT_ICON_SIZE = 20;
+    const ACHIEVEMENT_SPACING = 10; // Расстояние между иконками достижений
+    const ACHIEVEMENT_ROW_Y = HEIGHT - 50; // Позиция достижений
 
     const canvas = createCanvas(WIDTH, HEIGHT);
     const ctx = canvas.getContext('2d');
@@ -93,6 +99,24 @@ export async function drawCharacterList(characters) {
         ctx.fillText(`${char.char_name} - ${char.gear_score}`, x + 50, y + 25);
     }
 
+    let achievementX = PADDING + INNER_PADDING;
+
+    if (achievements.length) {
+        for (const achievement of achievements) {
+            const achievementPath = path.join(ACHIEVEMENTS_DIR, `${achievement.icon}.png`);
+
+            try {
+                const file = fs.readFileSync(achievementPath);
+                const icon = await loadImage(file);
+                ctx.drawImage(icon, achievementX, ACHIEVEMENT_ROW_Y, ACHIEVEMENT_ICON_SIZE, ACHIEVEMENT_ICON_SIZE);
+            } catch (err) {
+                console.error(`Ошибка загрузки иконки достижения: ${achievementPath}`, err);
+            }
+
+            achievementX += ACHIEVEMENT_ICON_SIZE + ACHIEVEMENT_SPACING;
+        }
+    }
+
     // Сохранение изображения
     if (!fs.existsSync(OUTPUT_DIR)) {
         fs.mkdirSync(OUTPUT_DIR, { recursive: true });
@@ -109,8 +133,8 @@ export async function drawCharacterList(characters) {
 }
 
 // 🚀 Отправка изображения в Discord и автоматическое удаление
-export default async function sendCharacterList(interaction, messageText, characters, user) {
-    const filePath = await drawCharacterList(characters);
+export default async function sendCharacterList(interaction, messageText, characters, user, achievements) {
+    const filePath = await drawCharacterList(characters, achievements);
 
     if (user) {
         await user.send({

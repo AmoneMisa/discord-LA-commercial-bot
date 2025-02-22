@@ -279,3 +279,20 @@ export async function getUserProfile(pool, userId) {
 
     return profile.rows[0] || null;
 }
+
+export async function getUserAchievements(pool, userId) {
+    try {
+        const result = await pool.query(`
+            SELECT a.id, a.name, a.description, a.icon, ua.assigned_at
+            FROM user_achievements ua
+            JOIN achievements a ON ua.achievement_id = a.id
+            WHERE ua.user_id = $1
+            ORDER BY ua.assigned_at DESC;
+        `, [userId]);
+
+        return result.rows;
+    } catch (err) {
+        console.error('❌ Ошибка получения достижений пользователя:', err);
+        return [];
+    }
+}
