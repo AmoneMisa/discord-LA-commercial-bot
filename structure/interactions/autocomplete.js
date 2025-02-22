@@ -1,4 +1,5 @@
 import {getItemsList} from "../dbUtils.js";
+import autocompleteAchievements from "../commandHandlers/achievements/autocompleteAchievements.js";
 
 export default async function (interaction, pool) {
     const focusedOption = interaction.options.getFocused(true);
@@ -11,4 +12,6 @@ export default async function (interaction, pool) {
     await interaction.respond(
         filtered.map(item => ({name: item.label, value: item.value.toString()}))
     );
+
+    await autocompleteAchievements(interaction, pool);
 }

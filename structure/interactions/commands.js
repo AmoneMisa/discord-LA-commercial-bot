@@ -15,6 +15,7 @@ import handleProfileEdit from "../commandHandlers/profile/handleProfileEdit.js";
 import handleProfileFill from "../commandHandlers/profile/handleProfileFill.js";
 import reviewNotificationsToggle from "../commandHandlers/ranks/reviewNotificationsToggle.js";
 import manualSendNotificationsToBuyers from "../commandHandlers/subscribe/manualSendNotificationsToBuyers.js";
+import getAchievementInfo from "../commandHandlers/achievements/getAchievementInfo.js";
 
 export default async function (interaction, pool, client) {
     if (interaction.commandName === 'info') {
@@ -92,5 +93,9 @@ export default async function (interaction, pool, client) {
 
     if (interaction.commandName === 'review_notifications_toggle') {
         await reviewNotificationsToggle(interaction, pool);
+    }
+
+    if (interaction.commandName === 'achievement-info') {
+        await getAchievementInfo(interaction, pool);
     }
 }

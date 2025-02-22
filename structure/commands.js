@@ -369,5 +369,91 @@ export default [
                 .addUserOption(option =>
                 option.setName('user')
                     .setDescription('Выберите пользователя')
-                    .setRequired(true)))
+                    .setRequired(true))),
+    new SlashCommandBuilder()
+        .setName("achievement-info")
+        .setDescription("🔍 Получить информацию о достижении.")
+        .addStringOption(option =>
+            option.setName("achievement")
+                .setDescription("Название достижения")
+                .setRequired(true)
+                .setAutocomplete(true)),
+    new SlashCommandBuilder()
+        .setName("adm_achievement")
+        .setDescription("🎖️ Выдать достижение пользователю")
+        .addSubcommand(subcommand =>
+        subcommand.setName("give-user")
+            .addUserOption(option =>
+            option.setName("user")
+                .setDescription("Пользователь, которому выдается достижение")
+                .setRequired(true))
+            .addStringOption(option =>
+                option.setName("achievement")
+                    .setDescription("Название достижения")
+                    .setRequired(true)
+                    .setAutocomplete(true))
+        ).addSubcommand(subcommand =>
+        subcommand.setName("give-user")
+            .addUserOption(option =>
+            option.setName("user")
+                .setDescription("Пользователь, которому выдается достижение")
+                .setRequired(true))
+            .addStringOption(option =>
+                option.setName("achievement")
+                    .setDescription("Название достижения")
+                    .setRequired(true)
+                    .setAutocomplete(true))
+        ).addSubcommand(subcommand =>
+        subcommand.setName("give-role")
+            .addUserOption(option =>
+            option.setName("role")
+                .setDescription("Роль, которой выдается достижение")
+                .setRequired(true))
+            .addStringOption(option =>
+                option.setName("achievement")
+                    .setDescription("Название достижения")
+                    .setRequired(true)
+                    .setAutocomplete(true))
+        ).addSubcommand(subcommand =>
+        subcommand.setName("create")
+            .addStringOption(option =>
+                option.setName("name")
+                    .setDescription("Название достижения")
+                    .setRequired(true))
+            .addStringOption(option =>
+                option.setName("description")
+                    .setDescription("Описание достижения")
+                    .setRequired(true))
+            .addStringOption(option =>
+                option.setName("icon")
+                    .setDescription("Ссылка на иконку достижения")
+                    .setRequired(true))
+        ).addSubcommand(subcommand =>
+        subcommand.setName("edit")
+            .addStringOption(option =>
+                option.setName("name")
+                    .setDescription("Название достижения")
+                    .setRequired(true)
+                    .setAutocomplete(true))
+            .addStringOption(option =>
+                option.setName("field")
+                    .setDescription("Какое поле редактировать")
+                    .setRequired(true)
+                    .addChoices(
+                        { name: "Название", value: "name" },
+                        { name: "Описание", value: "description" },
+                        { name: "Иконка", value: "icon" }
+                    ))
+            .addStringOption(option =>
+                option.setName("value")
+                    .setDescription("Новое значение")
+                    .setRequired(true))
+        ).addSubcommand(subcommand =>
+        subcommand.setName("delete")
+            .addStringOption(option =>
+                option.setName("name")
+                    .setDescription("Название достижения")
+                    .setRequired(true)
+                    .setAutocomplete(true))
+        ),
 ];

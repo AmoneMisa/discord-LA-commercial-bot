@@ -23,6 +23,11 @@ import setBusCategory from "./setBusCategory.js";
 import setRaidRole from "./setRaidRole.js";
 import tempBlockSubscription from "./tempBlockSubscription.js";
 import unblockSubscription from "./unblockSubscription.js";
+import deleteAchievement from "./deleteAchievement.js";
+import createAchievement from "./createAchievement.js";
+import editAchievement from "./editAchievement.js";
+import giveAchievementToUser from "./giveAchievementToUser.js";
+import giveAchievementToRole from "./giveAchievementToRole.js";
 
 export default {
     setCooldown,
@@ -49,5 +54,10 @@ export default {
     setBusCategory,
     setRaidRole,
     tempBlockSubscription,
-    unblockSubscription
+    unblockSubscription,
+    deleteAchievement,
+    createAchievement,
+    editAchievement,
+    giveAchievementToRole,
+    giveAchievementToUser
 }
