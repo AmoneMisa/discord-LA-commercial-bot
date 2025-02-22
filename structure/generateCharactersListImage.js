@@ -10,7 +10,6 @@ const OUTPUT_DIR = path.resolve('static/generated'); // Папка для вре
 const FONT_PATH = path.resolve('static/fonts/NotoSans-VariableFont_wdth,wght.ttf');
 const ACHIEVEMENTS_DIR = path.resolve('static/achievements'); // Папка с иконками достижений
 
-console.log("FONT_PATH", FONT_PATH)
 registerFont(FONT_PATH, { family: 'Noto Sans', weight: '400', style: 'normal' });
 // 🎨 Функция отрисовки
 export async function drawCharacterList(characters, achievements) {
