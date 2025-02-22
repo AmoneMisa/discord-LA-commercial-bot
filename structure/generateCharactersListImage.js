@@ -28,7 +28,7 @@ export async function drawCharacterList(characters) {
     drawRoundedRect(ctx, 0, 0, WIDTH + 15, HEIGHT + 15, 8);
 
     // Рамка
-    ctx.fillStyle = '#626060';
+    ctx.fillStyle = '#604b60';
     drawRoundedRect(ctx, PADDING, PADDING, WIDTH - 2 * PADDING, HEIGHT - 2 * PADDING, 10);
 
     // Заголовок
@@ -43,7 +43,7 @@ export async function drawCharacterList(characters) {
         console.error(`❌ Ошибка загрузки иконки класса: ${classIconPath}`, err);
     }
 
-    ctx.fillStyle = '#FFD04E';
+    ctx.fillStyle = '#ffe176';
     ctx.font = '18px Josefin Sans';
     ctx.fillText(`${characters[0].char_name}`,
         headerX, headerY);
@@ -72,7 +72,7 @@ export async function drawCharacterList(characters) {
         const y = PADDING + 60 + row * (BOX_HEIGHT + 10);
 
         // Фон для текста
-        ctx.fillStyle = '#373636';
+        ctx.fillStyle = '#2f242f';
         drawRoundedRect(ctx, x, y, (WIDTH - 2 * PADDING - INNER_PADDING) / COLS - 10, BOX_HEIGHT, 6);
 
         // Загружаем иконку класса
