@@ -75,6 +75,9 @@ export async function drawCharacterList(characters = [], achievements = []) {
     ctx.lineTo(WIDTH - PADDING - INNER_PADDING, PADDING + 40);
     ctx.stroke();
 
+    if (characters.length > 24) {
+        characters = characters.slice(0, 24);
+    }
     // Отрисовка персонажей в колонках
     for (let i = 0; i < Math.min(characters.length, ROWS * COLS); i++) {
         const char = characters[i];
