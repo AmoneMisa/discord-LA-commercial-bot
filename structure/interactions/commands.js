@@ -2,7 +2,7 @@ import handleInfoCommand from "../commandHandlers/ranks/handleInfoCommand.js";
 import lastPositiveReviewsCommand from "../commandHandlers/ranks/lastPositiveReviewsCommand.js";
 import lastNegativeReviewsCommand from "../commandHandlers/ranks/lastNegativeReviewsCommand.js";
 import lastReviewsCommand from "../commandHandlers/ranks/lastReviewsCommand.js";
-import handleAdminSettingsCommand from "../commandHandlers/handleAdminSettingsCommand.js";
+import handleAdminSettingsCommand from "../commandHandlers/handleAdminCommand.js";
 import worstSellers from "../commandHandlers/ranks/worstSellers.js";
 import subscribeToBuy from "../commandHandlers/subscribe/subscribeToBuy.js";
 import subscribeList from "../commandHandlers/subscribe/subscribeList.js";
@@ -34,10 +34,7 @@ export default async function (interaction, pool, client) {
         await lastReviewsCommand(interaction, pool);
     }
 
-    if ((interaction.commandName === 'adm_settings'
-            || interaction.commandName === 'adm_subscription'
-            || interaction.commandName === 'adm_ranks')
-        && interaction.options.getSubcommand() !== 'remove_bots') {
+    if (interaction.commandName.startsWith("adm_") && interaction.options.getSubcommand() !== 'remove_bots') {
         await handleAdminSettingsCommand(interaction, pool, interaction.guild);
     }
 

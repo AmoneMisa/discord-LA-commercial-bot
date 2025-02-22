@@ -5,13 +5,13 @@ import axios from 'axios';
 /**
  * Сохранение иконки достижения из команды
  * @param {string} achievementName - Название достижения
- * @param {string} imageUrl - URL загруженного изображения
+ * @param image - Объект картинки
  * @returns {string} - Путь к сохранённому файлу
  */
-export async function saveAchievementIcon(achievementName, imageUrl) {
+export default async function (achievementName, image) {
     try {
         // Проверяем формат файла (разрешаем только PNG)
-        if (!imageUrl.endsWith('.png')) {
+        if (!image.contentType.includes('png')) {
             throw new Error('❌ Файл должен быть в формате PNG.');
         }
 
@@ -21,17 +21,18 @@ export async function saveAchievementIcon(achievementName, imageUrl) {
             fs.mkdirSync(achievementsDir, { recursive: true });
         }
 
+        console.log(achievementName);
         // Преобразуем название достижения в snake_case
         const fileName = achievementName
             .toLowerCase()
             .replace(/\s+/g, '_')
-            .replace(/[^a-z0-9_]/g, '') + '.png';
+            .replace(/[^а-яёa-z0-9_]/g, '') + '.png';
 
         // Полный путь к файлу
         const filePath = path.join(achievementsDir, fileName);
 
         // Скачиваем изображение
-        const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+        const response = await axios.get(image.url, { responseType: 'arraybuffer' });
         fs.writeFileSync(filePath, response.data);
 
         console.log(`✅ Иконка достижения сохранена: ${filePath}`);

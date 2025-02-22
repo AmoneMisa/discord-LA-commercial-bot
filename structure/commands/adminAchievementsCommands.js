@@ -29,7 +29,7 @@ export default [
                     .setRequired(true)
                     .setAutocomplete(true))
     ).addSubcommand(subcommand =>
-        subcommand.setName("create")
+        subcommand.setName("create_achievement")
             .setDescription('Создать достижение')
             .addStringOption(option =>
                 option.setName("name")
@@ -44,7 +44,7 @@ export default [
                     .setDescription("Иконка достижения (только формат png)")
                     .setRequired(true))
     ).addSubcommand(subcommand =>
-        subcommand.setName("edit")
+        subcommand.setName("edit_achievement")
             .setDescription('Редактировать достижение')
             .addStringOption(option =>
                 option.setName("name")
@@ -76,7 +76,7 @@ export default [
                     .setDescription("Загрузите новую иконку")
                     .setRequired(true))
     ).addSubcommand(subcommand =>
-        subcommand.setName("delete")
+        subcommand.setName("delete_achievement")
             .setDescription('Удалить достижение')
             .addStringOption(option =>
                 option.setName("name")
