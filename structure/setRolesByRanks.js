@@ -38,7 +38,7 @@ export default async function (pool, guild) {
                 }
             }
             await member.roles.add(roleToAssign).catch(() => null);
-            console.log(`✅ Назначена роль ${bestRole.role_name} пользователю ${member.user.username}`);
+            // console.log(`✅ Назначена роль ${bestRole.role_name} пользователю ${member.user.username}`);
         }
     }
 

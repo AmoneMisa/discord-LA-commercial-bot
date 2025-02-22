@@ -1,4 +1,5 @@
 import {EmbedBuilder, MessageFlags} from "discord.js";
+import sendCharacterList from "../../generateCharactersListImage.js";
 
 export default async function handleProfileView(interaction, pool) {
     const userId = interaction.options.getUser('user').id;
@@ -12,18 +13,17 @@ export default async function handleProfileView(interaction, pool) {
                                            FROM characters
                                            WHERE profile_id = $1`, [profile.rows[0].id]);
 
-    let characterListMessage = '';
     if (characters.rows.length) {
-        for (const character of characters.rows) {
-            characterListMessage += `[${character.class_name}] **${character.char_name}** - :crossed_swords: ${character.gear_score}\n`;
-        }
+        const data = profile.rows[0];
+        await sendCharacterList(interaction,
+            `📜 Профиль ${interaction.options.getUser('user').username}\n\n :peacock: **Имя:** ${data.name || 'Не указано'}\n**Роль:** ${data.role}\n**Прайм:** ${data.prime_start || 'Не указан'} - ${data.prime_end || 'Не указан'}\n**Рейдовый опыт:** ${data.raid_experience.join(', ') || 'Не указан'}\n**Опыт в продажах:** ${data.sales_experience || 'Не указан'}`,
+            characters.rows);
     }
-
-    const data = profile.rows[0];
-    const embed = new EmbedBuilder()
-        .setTitle(`📜 Профиль ${interaction.options.getUser('user').username}`)
-        .setDescription(`:peacock: **Имя:** ${data.name || 'Не указано'}\n**Роль:** ${data.role}\n**Прайм:** ${data.prime_start || 'Не указан'} - ${data.prime_end || 'Не указан'}\n**Рейдовый опыт:** ${data.raid_experience.join(', ') || 'Не указан'}\n**Опыт в продажах:** ${data.sales_experience || 'Не указан'}` + characterListMessage)
-        .setColor('#0099ff');
-
-    await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
+    //
+    // const embed = new EmbedBuilder()
+    //     .setTitle(`📜 Профиль ${interaction.options.getUser('user').username}`)
+    //     .setDescription(`:peacock: **Имя:** ${data.name || 'Не указано'}\n**Роль:** ${data.role}\n**Прайм:** ${data.prime_start || 'Не указан'} - ${data.prime_end || 'Не указан'}\n**Рейдовый опыт:** ${data.raid_experience.join(', ') || 'Не указан'}\n**Опыт в продажах:** ${data.sales_experience || 'Не указан'}` + characterListMessage)
+    //     .setColor('#0099ff');
+    //
+    // await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
 }
