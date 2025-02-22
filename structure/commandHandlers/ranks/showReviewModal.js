@@ -9,9 +9,9 @@ export default async function showReviewModal(interaction, action, userId) {
         .setCustomId('review_text')
         .setLabel('Введите ваш отзыв')
         .setStyle(TextInputStyle.Paragraph)
-        .setPlaceholder('Напишите здесь свой отзыв...')
+        .setPlaceholder('Напишите здесь свой отзыв')
         .setMinLength(10)
-        .setMaxLength(1000)
+        .setMaxLength(300)
         .setRequired(true);
 
     const actionRow = new ActionRowBuilder().addComponents(input);

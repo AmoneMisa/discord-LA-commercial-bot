@@ -55,7 +55,7 @@ export async function sendPaginatedReviews(interaction, pool, page = 1, isPositi
     let buttons = new ActionRowBuilder();
 
     reviews.rows.forEach((review, index) => {
-        message += `**${index + 1}.** <@${review.reviewer_id}>: ${review.is_positive ? '✅' : '❌'} "${review.review_text}" *(${formatDate(review.timestamp)})* \n`;
+        message += `**${index + 1}.** <@${review.reviewer_id}>: ${review.is_positive ? '✅' : '❌'} "${review.review_text.subStr(0, 300)}" *(${formatDate(review.timestamp)})* \n`;
 
         if (isAdmin) {
             buttons.addComponents(
