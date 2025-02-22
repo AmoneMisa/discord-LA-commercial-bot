@@ -12,7 +12,7 @@ const ACHIEVEMENTS_DIR = path.resolve('static/achievements'); // Папка с �
 
 registerFont(FONT_PATH, { family: 'Noto Sans', weight: '400', style: 'normal' });
 // 🎨 Функция отрисовки
-export async function drawCharacterList(characters, achievements) {
+export async function drawCharacterList(characters = [], achievements = []) {
     const WIDTH = 800;
     const HEIGHT = 500;
     const PADDING = 12;
@@ -22,7 +22,7 @@ export async function drawCharacterList(characters, achievements) {
     const FONT_SIZE = 15;
     const ROWS = 5;
     const COLS = 3;
-    const ACHIEVEMENT_ICON_SIZE = 20;
+    const ACHIEVEMENT_ICON_SIZE = 30;
     const ACHIEVEMENT_SPACING = 10; // Расстояние между иконками достижений
     const ACHIEVEMENT_ROW_Y = HEIGHT - 50; // Позиция достижений
 
@@ -98,11 +98,18 @@ export async function drawCharacterList(characters, achievements) {
         ctx.fillText(`${char.char_name} - ${char.gear_score}`, x + 50, y + 25);
     }
 
-    let achievementX = PADDING + INNER_PADDING;
+    // Разделительная линия
+    ctx.strokeStyle = '#FFFFFF';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(PADDING + INNER_PADDING, PADDING + 433);
+    ctx.lineTo(WIDTH - PADDING - INNER_PADDING, PADDING + 433);
+    ctx.stroke();
 
+    let achievementX = PADDING + INNER_PADDING;
     if (achievements.length) {
         for (const achievement of achievements) {
-            const achievementPath = path.join(ACHIEVEMENTS_DIR, `${achievement.icon}.png`);
+            const achievementPath = path.join(ACHIEVEMENTS_DIR, `${achievement.name.replaceAll(/\s/g, '_')}.png`);
 
             try {
                 const file = fs.readFileSync(achievementPath);
@@ -132,7 +139,7 @@ export async function drawCharacterList(characters, achievements) {
 }
 
 // 🚀 Отправка изображения в Discord и автоматическое удаление
-export default async function sendCharacterList(interaction, messageText, characters, user, achievements) {
+export default async function sendCharacterList(interaction, messageText, characters, user, achievements = []) {
     const filePath = await drawCharacterList(characters, achievements);
 
     if (user) {

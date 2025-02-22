@@ -13,7 +13,8 @@ export default async function (interaction, pool) {
         await interaction.respond(
             filtered.map(item => ({name: item.label, value: item.value.toString()}))
         );
-    } else if (interaction.options.getSubcommand().includes('give_user')) {
+    } else if (interaction.options.getSubcommand().includes('give_user') ||
+        interaction.options.getSubcommand().includes('give_role')) {
         await autocompleteAchievements(interaction, pool);
     }
 }

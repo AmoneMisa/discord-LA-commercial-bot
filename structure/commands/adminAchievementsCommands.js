@@ -5,7 +5,7 @@ export default [
         .setName("adm_achievement")
         .setDescription("Админ команды для достижений")
         .addSubcommand(subcommand =>
-            subcommand.setName("give_user")
+            subcommand.setName("give_achievement_to_user")
                 .setDescription('Выдать достижение пользователю')
                 .addUserOption(option =>
                     option.setName("user")
@@ -17,7 +17,7 @@ export default [
                         .setRequired(true)
                         .setAutocomplete(true))
         ).addSubcommand(subcommand =>
-        subcommand.setName("give_role")
+        subcommand.setName("give_achievement_to_role")
             .setDescription('Выдать достижение роли')
             .addRoleOption(option =>
                 option.setName("role")

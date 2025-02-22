@@ -5,7 +5,6 @@ import {toCamelCase} from "../utils.js";
 
 export default async function (interaction, pool, guild) {
     const subcommand = interaction.options.getSubcommand();
-
     if (!interaction.member.permissions.has('Administrator')) {
         return await interaction.reply({
             content: '🚫 У вас нет прав администратора для выполнения этой команды.',
