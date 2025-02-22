@@ -1,11 +1,11 @@
 export const up = (pgm) => {
-    pgm.addColumns("roles", {
+    pgm.addColumns("profiles", {
         server: {type: "varchar", default: 'кратос', notNull: true},
     });
 };
 
 export const down = (pgm) => {
-    pgm.dropColumns("roles",
+    pgm.dropColumns("profiles",
         ["server"]
     );
 };
