@@ -255,14 +255,14 @@ export default [
                         .setRequired(true)
                 )
         ).addSubcommand(subcommand =>
-            subcommand.setName('send_notification')
-                .setDescription('Уведомление подписчикам о сборе рейда')
-                .addStringOption(option =>
-                    option.setName('raid')
-                        .setDescription('Выберите рейд')
-                        .setRequired(true)
-                        .setAutocomplete(true))
-        ),
+        subcommand.setName('send_notification')
+            .setDescription('Уведомление подписчикам о сборе рейда')
+            .addStringOption(option =>
+                option.setName('raid')
+                    .setDescription('Выберите рейд')
+                    .setRequired(true)
+                    .setAutocomplete(true))
+    ),
     new SlashCommandBuilder()
         .setName('inventory')
         .setDescription('Инвентарь')
@@ -275,21 +275,21 @@ export default [
                     .setRequired(true)
                     .setAutocomplete(true)
                 ).addStringOption(option => option
-                    .setName('type')
-                    .setDescription('Тип сделки')
-                    .setRequired(true)
-                    .addChoices(
-                        {name: 'Обмен', value: 'WTT'},
-                        {name: 'Продажа', value: 'WTS'},
-                        {name: 'Покупка', value: 'WTB'}
-                    )
+                .setName('type')
+                .setDescription('Тип сделки')
+                .setRequired(true)
+                .addChoices(
+                    {name: 'Обмен', value: 'WTT'},
+                    {name: 'Продажа', value: 'WTS'},
+                    {name: 'Покупка', value: 'WTB'}
                 )
+            )
         ).addSubcommand(subcommand =>
         subcommand.setName('list')
             .setDescription('Список лотов'))
-            .addSubcommand(subcommand =>
-        subcommand.setName('remove')
-            .setDescription('Список лотов')),
+        .addSubcommand(subcommand =>
+            subcommand.setName('remove')
+                .setDescription('Список лотов')),
     new SlashCommandBuilder()
         .setName('profile')
         .setDescription('Анкета игрока')
@@ -345,28 +345,28 @@ export default [
                         {name: 'Камен 2.0 (нормал)', value: 'Камен (нормал)'},
                         {name: 'Камен 2.0 (хард)', value: 'Камен (хард)'}))
         ).addSubcommand(subcommand =>
-            subcommand.setName('edit')
-                .setDescription('Редактировать анкету')
-                .addStringOption(option =>
-                    option.setName('field')
-                        .setDescription('Выберите поле для редактирования')
-                        .setRequired(true)
-                        .addChoices(
-                            {name: 'Имя', value: 'name'},
-                            {name: 'Ник в оружейной (регистрозависимо)', value: 'main_nickname'},
-                            {name: 'Роль (нейтрал, продавец, покупатель)', value: 'role'},
-                            {name: 'Прайм с (формат 00:00)', value: 'prime_start'},
-                            {name: 'Прайм до (формат 00:00)', value: 'prime_end'},
-                            {name: 'Опыт в рейдах', value: 'raid_experience'},
-                            {name: 'Опыт в продажах', value: 'sales_experience'}
-                        ))
-                .addStringOption(option =>
-                    option.setName('value')
-                        .setDescription('Новое значение')
-                        .setRequired(true))
-        ).addSubcommand(subcommand =>
-            subcommand.setName('view').setDescription('Анкета пользователя')
-                .addUserOption(option =>
+        subcommand.setName('edit')
+            .setDescription('Редактировать анкету')
+            .addStringOption(option =>
+                option.setName('field')
+                    .setDescription('Выберите поле для редактирования')
+                    .setRequired(true)
+                    .addChoices(
+                        {name: 'Имя', value: 'name'},
+                        {name: 'Ник в оружейной (регистрозависимо)', value: 'main_nickname'},
+                        {name: 'Роль (нейтрал, продавец, покупатель)', value: 'role'},
+                        {name: 'Прайм с (формат 00:00)', value: 'prime_start'},
+                        {name: 'Прайм до (формат 00:00)', value: 'prime_end'},
+                        {name: 'Опыт в рейдах', value: 'raid_experience'},
+                        {name: 'Опыт в продажах', value: 'sales_experience'}
+                    ))
+            .addStringOption(option =>
+                option.setName('value')
+                    .setDescription('Новое значение')
+                    .setRequired(true))
+    ).addSubcommand(subcommand =>
+        subcommand.setName('view').setDescription('Анкета пользователя')
+            .addUserOption(option =>
                 option.setName('user')
                     .setDescription('Выберите пользователя')
                     .setRequired(true))),
@@ -382,39 +382,28 @@ export default [
         .setName("adm_achievement")
         .setDescription("🎖️ Выдать достижение пользователю")
         .addSubcommand(subcommand =>
-        subcommand.setName("give-user")
-            .addUserOption(option =>
-            option.setName("user")
-                .setDescription("Пользователь, которому выдается достижение")
-                .setRequired(true))
-            .addStringOption(option =>
-                option.setName("achievement")
-                    .setDescription("Название достижения")
-                    .setRequired(true)
-                    .setAutocomplete(true))
-        ).addSubcommand(subcommand =>
-        subcommand.setName("give-user")
-            .addUserOption(option =>
-            option.setName("user")
-                .setDescription("Пользователь, которому выдается достижение")
-                .setRequired(true))
-            .addStringOption(option =>
-                option.setName("achievement")
-                    .setDescription("Название достижения")
-                    .setRequired(true)
-                    .setAutocomplete(true))
+            subcommand.setName("give-user")
+                .addUserOption(option =>
+                    option.setName("user")
+                        .setDescription("Пользователь, которому выдается достижение")
+                        .setRequired(true))
+                .addStringOption(option =>
+                    option.setName("achievement")
+                        .setDescription("Название достижения")
+                        .setRequired(true)
+                        .setAutocomplete(true))
         ).addSubcommand(subcommand =>
         subcommand.setName("give-role")
-            .addUserOption(option =>
-            option.setName("role")
-                .setDescription("Роль, которой выдается достижение")
-                .setRequired(true))
+            .addRoleOption(option =>
+                option.setName("role")
+                    .setDescription("Роль, которой выдается достижение")
+                    .setRequired(true))
             .addStringOption(option =>
                 option.setName("achievement")
                     .setDescription("Название достижения")
                     .setRequired(true)
                     .setAutocomplete(true))
-        ).addSubcommand(subcommand =>
+    ).addSubcommand(subcommand =>
         subcommand.setName("create")
             .addStringOption(option =>
                 option.setName("name")
@@ -428,7 +417,7 @@ export default [
                 option.setName("icon")
                     .setDescription("Иконка достижения (только формат png)")
                     .setRequired(true))
-        ).addSubcommand(subcommand =>
+    ).addSubcommand(subcommand =>
         subcommand.setName("edit")
             .addStringOption(option =>
                 option.setName("name")
@@ -440,20 +429,30 @@ export default [
                     .setDescription("Какое поле редактировать")
                     .setRequired(true)
                     .addChoices(
-                        { name: "Название", value: "name" },
-                        { name: "Описание", value: "description" },
-                        { name: "Иконка", value: "icon" }
+                        {name: "Название", value: "name"},
+                        {name: "Описание", value: "description"}
                     ))
             .addStringOption(option =>
                 option.setName("value")
                     .setDescription("Новое значение")
                     .setRequired(true))
-        ).addSubcommand(subcommand =>
+    ).addSubcommand(subcommand =>
+        subcommand.setName("edit_icon")
+            .addStringOption(option =>
+                option.setName("name")
+                    .setDescription("Название достижения")
+                    .setRequired(true)
+                    .setAutocomplete(true))
+            .addAttachmentOption(option =>
+                option.setName("icon")
+                    .setDescription("Какое поле редактировать")
+                    .setRequired(true))
+    ).addSubcommand(subcommand =>
         subcommand.setName("delete")
             .addStringOption(option =>
                 option.setName("name")
                     .setDescription("Название достижения")
                     .setRequired(true)
                     .setAutocomplete(true))
-        ),
+    )
 ];
