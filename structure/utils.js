@@ -66,7 +66,7 @@ export async function sendPaginatedReviews(interaction, pool, page = 1, isPositi
     if (page > 1) {
         paginationButtons.addComponents(
             new ButtonBuilder()
-                .setCustomId(`prev_reviews_${member.id}_${page - 1}`)
+                .setCustomId(`prev_reviews_${member.id}_${page - 1}_${isPositive}`)
                 .setLabel('⬅️ Назад')
                 .setStyle(ButtonStyle.Secondary)
         );
@@ -74,7 +74,7 @@ export async function sendPaginatedReviews(interaction, pool, page = 1, isPositi
     if (page < totalPages) {
         paginationButtons.addComponents(
             new ButtonBuilder()
-                .setCustomId(`next_reviews_${member.id}_${page + 1}`)
+                .setCustomId(`next_reviews_${member.id}_${page + 1}_${isPositive}`)
                 .setLabel('➡️ Вперёд')
                 .setStyle(ButtonStyle.Secondary)
         );
