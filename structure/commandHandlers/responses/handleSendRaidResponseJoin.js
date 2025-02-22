@@ -14,12 +14,12 @@ export default async function (interaction, pool, client) {
 
     const [, , sellerId] = interaction.customId.split('_');
 
-    // if (interaction.user.id === sellerId) {
-    //     return interaction.reply({
-    //         content: '🚫 Вы не можете отправить заявку самому себе.',
-    //         flags: MessageFlags.Ephemeral
-    //     });
-    // }
+    if (interaction.user.id === sellerId) {
+        return interaction.reply({
+            content: '🚫 Вы не можете отправить заявку самому себе.',
+            flags: MessageFlags.Ephemeral
+        });
+    }
 
     const userProfile = await getUserProfile(pool, interaction.user.id);
 
