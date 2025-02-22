@@ -26,8 +26,8 @@ export default async function (interaction, pool, client) {
     }
 
     if (interaction.customId.startsWith('prev_reviews_') || interaction.customId.startsWith('next_reviews_')) {
-        const [, , page] = interaction.customId.split('_');
-        await sendPaginatedReviews(interaction, pool, parseInt(page));
+        const [, , memberId, page, isPositive] = interaction.customId.split('_');
+        await sendPaginatedReviews(interaction, pool, parseInt(page), isPositive, memberId);
     }
 
     if (interaction.customId.startsWith('delete_review_')) {
