@@ -6,6 +6,7 @@ export default async function handleProfileFill(interaction, pool) {
 
     const userId = interaction.user.id;
     const name = interaction.options.getString('name') || null;
+    const server = interaction.options.getString('server') || "кратос";
     const mainNickname = interaction.options.getString('main_nickname').toLowerCase();
     const role = interaction.options.getString('role');
     const primeStart = interaction.options.getString('prime_start') || null;
@@ -34,7 +35,8 @@ export default async function handleProfileFill(interaction, pool) {
                 primeStart,
                 primeEnd,
                 raidExperience,
-                salesExperience});
+                salesExperience,
+                server});
         }
 
         await interaction.editReply({content: '✅ Анкета успешно заполнена!', flags: MessageFlags.Ephemeral});

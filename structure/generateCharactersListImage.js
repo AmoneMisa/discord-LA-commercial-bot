@@ -6,8 +6,9 @@ import {MessageFlags} from "discord.js";
 // 📌 Пути к папкам
 const ICONS_DIR = path.resolve('static/classIcons'); // Папка с иконками классов
 const OUTPUT_DIR = path.resolve('static/generated'); // Папка для временных изображений
-const FONT_PATH = path.resolve('static/fonts/JosefinSans-VariableFont_wght.ttf');
-registerFont(FONT_PATH, { family: 'Josefin Sans', weight: '400', style: 'normal' });
+const FONT_PATH = path.resolve('static/fonts/NotoSans-VariableFont_wdth,wght.ttf');
+console.log("FONT_PATH", FONT_PATH)
+registerFont(FONT_PATH, { family: 'Noto Sans', weight: '400', style: 'normal' });
 // 🎨 Функция отрисовки
 export async function drawCharacterList(characters) {
     const WIDTH = 800;
@@ -44,12 +45,12 @@ export async function drawCharacterList(characters) {
     }
 
     ctx.fillStyle = '#ffe176';
-    ctx.font = '18px Josefin Sans';
+    ctx.font = '18px Noto Sans';
     ctx.fillText(`${characters[0].char_name}`,
         headerX, headerY);
 
     ctx.fillStyle = '#FFFFFF';
-    ctx.font = '18px Josefin Sans';
+    ctx.font = '18px Noto Sans';
     ctx.fillText(characters[0].gear_score,
         WIDTH - PADDING - INNER_PADDING - 70, headerY);
 
@@ -88,7 +89,7 @@ export async function drawCharacterList(characters) {
 
         // Текст персонажа
         ctx.fillStyle = '#FFFFFF';
-        ctx.font = `${FONT_SIZE}px Josefin Sans`;
+        ctx.font = `${FONT_SIZE}px Noto Sans`;
         ctx.fillText(`${char.char_name} - ${char.gear_score}`, x + 50, y + 25);
     }
 
@@ -97,7 +98,7 @@ export async function drawCharacterList(characters) {
         fs.mkdirSync(OUTPUT_DIR, { recursive: true });
     }
 
-    const outputFile = path.join(OUTPUT_DIR, `profile_${Date.now()}.webp`);
+    const outputFile = path.join(OUTPUT_DIR, `profile_${Date.now()}.png`);
     const out = fs.createWriteStream(outputFile);
     const stream = canvas.createPNGStream();
 
@@ -108,14 +109,21 @@ export async function drawCharacterList(characters) {
 }
 
 // 🚀 Отправка изображения в Discord и автоматическое удаление
-export default async function sendCharacterList(interaction, messageText, characters) {
+export default async function sendCharacterList(interaction, messageText, characters, user) {
     const filePath = await drawCharacterList(characters);
 
-    await interaction.reply({
-        content: messageText,
-        files: [filePath],
-        flags: MessageFlags.Ephemeral
-    });
+    if (user) {
+        await user.send({
+            content: messageText,
+            files: [filePath],
+            flags: MessageFlags.Ephemeral});
+    } else {
+        await interaction.reply({
+            content: messageText,
+            files: [filePath],
+            flags: MessageFlags.Ephemeral
+        });
+    }
 
     // Удаляем файл через 5 секунд
     setTimeout(() => {

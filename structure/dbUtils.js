@@ -256,12 +256,24 @@ export async function getWTTMatching(pool) {
 
 export async function getUserProfile(pool, userId) {
     const profile = await pool.query(
-        `SELECT p.main_nickname,
-                array_agg(c.class_name || ' - ' || c.gear_score) as characters
-         FROM profiles p 
-         LEFT JOIN characters c ON p.id = c.profile_id
-         WHERE p.user_id = $1 
-         GROUP BY p.main_nickname`,
+        `SELECT p.*,
+                COALESCE(
+                                JSON_AGG(
+                                JSON_BUILD_OBJECT(
+                                        'id', c.id,
+                                        'profile_id', c.profile_id,
+                                        'class_name', c.class_name,
+                                        'char_name', c.char_name,
+                                        'gear_score', c.gear_score
+                                )
+                                        ) FILTER (WHERE c.id IS NOT NULL),
+                                '[]'::json
+                ) AS characters
+         FROM profiles p
+                  LEFT JOIN characters c ON p.id = c.profile_id
+         WHERE p.user_id = $1
+         GROUP BY p.id;
+        `,
         [userId]
     );
 

@@ -1,5 +1,6 @@
 import {getUserProfile} from "../../dbUtils.js";
-import {EmbedBuilder, MessageFlags} from "discord.js";
+import {MessageFlags} from "discord.js";
+import sendCharacterList from "../../generateCharactersListImage.js";
 
 const tempMessageStorage = new Map();
 
@@ -13,12 +14,12 @@ export default async function (interaction, pool, client) {
 
     const [, , sellerId] = interaction.customId.split('_');
 
-    if (interaction.user.id === sellerId) {
-        return interaction.reply({
-            content: '🚫 Вы не можете отправить заявку самому себе.',
-            flags: MessageFlags.Ephemeral
-        });
-    }
+    // if (interaction.user.id === sellerId) {
+    //     return interaction.reply({
+    //         content: '🚫 Вы не можете отправить заявку самому себе.',
+    //         flags: MessageFlags.Ephemeral
+    //     });
+    // }
 
     const userProfile = await getUserProfile(pool, interaction.user.id);
 
@@ -35,25 +36,10 @@ export default async function (interaction, pool, client) {
         return;
     }
 
-    let characterListMessage = `${userProfile.main_nickname}\n`;
-
-    for (const character of userProfile.characters) {
-        characterListMessage += `${character}\n`;
-    }
-
-    const embed = new EmbedBuilder()
-        .setTitle(`📜 Профиль ${interaction.user.username}`)
-        .setDescription(
-            `:peacock: **Имя:** ${userProfile.name || 'Не указано'}\n` +
-            characterListMessage
-        )
-        .setColor('#0099ff');
-
-    // Отправляем сообщение автору оригинального сообщения
     const seller = await client.users.fetch(sellerId);
 
     if (seller) {
-        await seller.send({embeds: [embed]}).catch(console.error);
+        await sendCharacterList(interaction, `Игрок: <@${interaction.user.id}> отправил запрос на вступление в рейд\n:peacock: **Имя:** ${userProfile.name || 'Не указано'}\n`, userProfile.characters, seller);
         interaction.reply({content: "Запрос отправлен", flags: MessageFlags.Ephemeral});
         tempMessageStorage.set(interaction.message.id, []);
         tempMessageStorage.get(interaction.message.id).push(interaction.user.id);

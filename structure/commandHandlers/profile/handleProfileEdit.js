@@ -9,6 +9,14 @@ export default async function handleProfileEdit(interaction, pool) {
     const field = interaction.options.getString('field');
     let value = interaction.options.getString('value');
 
+    if (field === 'server') {
+        value = value.toLowerCase();
+
+        if (!['кратос', 'альдеран'].includes(value)) {
+            return await interaction.reply('Сервер должен быть одним из: Кратос, Альдеран');
+        }
+    }
+
     if (field === 'main_nickname') {
         value = value.toLowerCase();
         await saveProfileToDB(pool, {userId, [toCamelCase(field)]: value});
