@@ -83,5 +83,19 @@ export default [
                     .setDescription("Название достижения")
                     .setRequired(true)
                     .setAutocomplete(true))
+    ).addSubcommand(subcommand =>
+        subcommand.setName("achievement_give_mentions")
+            .setDescription("Выдать достижение всем, кто упомянут в сообщении")
+            .addStringOption(option =>
+                option.setName("message_id")
+                    .setDescription("ID сообщения с упоминаниями")
+                    .setRequired(true)
+            )
+            .addStringOption(option =>
+                option.setName("achievement")
+                    .setDescription("Название достижения")
+                    .setRequired(true)
+                    .setAutocomplete(true)
+            )
     )
 ]

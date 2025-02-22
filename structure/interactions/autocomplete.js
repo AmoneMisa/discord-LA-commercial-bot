@@ -14,7 +14,8 @@ export default async function (interaction, pool) {
             filtered.map(item => ({name: item.label, value: item.value.toString()}))
         );
     } else if (interaction.options.getSubcommand().includes('give_user') ||
-        interaction.options.getSubcommand().includes('give_role')) {
+        interaction.options.getSubcommand().includes('give_role')||
+        interaction.options.getSubcommand().includes('achievement_give_mentions')) {
         await autocompleteAchievements(interaction, pool);
     }
 }
