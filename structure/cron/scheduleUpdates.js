@@ -48,7 +48,7 @@ export async function scheduleRankUpdates(frequency, pool, guild) {
     }
 
     cron.schedule(scheduleTime, async () => {
-        setRolesByRanks(pool, guild);
+       await setRolesByRanks(pool, guild);
     });
 }
 

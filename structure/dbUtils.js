@@ -643,7 +643,7 @@ export async function updateFactionLeaderboard(pool, client) {
     try {
         // Получаем ID канала для вывода статистики
         const channelRes = await pool.query(`
-            SELECT value FROM settings WHERE setting_name = 'faction_leaderboard_channel'
+            SELECT value FROM settings WHERE key = 'faction_leaderboard_channel_id'
         `);
 
         if (channelRes.rows.length === 0) {
