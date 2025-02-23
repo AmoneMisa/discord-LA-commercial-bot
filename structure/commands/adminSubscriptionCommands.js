@@ -11,7 +11,10 @@ export default [
                     option.setName('user')
                         .setDescription('Выберите пользователя')
                         .setRequired(true)
-                )
+                ).addStringOption(option =>
+                    option.setName('block_type')
+                        .addChoices({name: 'Запрет получать подписки', value: 'receiver'},
+                            {name: 'Запрет подписываться', value: 'reviewer'}))
         ).addSubcommand(subcommand =>
         subcommand.setName('temp_block_subscription')
             .setDescription('Временно запрещает пользователю подписываться (в часах)')
