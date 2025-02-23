@@ -491,3 +491,98 @@ export async function getUserAchievements(pool, userId) {
         return [];
     }
 }
+
+/**
+ * Determines whether a user can join a specified faction based on the faction's current membership
+ * and a predefined threshold of maximum allowed members.
+ *
+ * @param {string} userId - The unique identifier of the user attempting to join the faction.
+ * @param {string} factionId - The unique identifier of the faction the user wants to join.
+ * @param {object} pool - The database connection pool used to execute queries.
+ * @return {Promise<boolean>} A promise that resolves to a boolean indicating whether the user is allowed to join the faction.
+ */
+async function canJoinFaction(userId, factionId, pool) {
+    const { rows: totalUsers } = await pool.query(`SELECT COUNT(*) FROM users_factions`);
+    const { rows: factionUsers } = await pool.query(`SELECT COUNT(*) FROM users_factions WHERE faction_id = $1`, [factionId]);
+
+    const total = totalUsers[0].count;
+    const factionCount = factionUsers[0].count;
+    const maxAllowed = total * 1.05; // 5% разница
+
+    return factionCount < maxAllowed;
+}
+
+/**
+ * Allows a user to join a specific faction. Updates the faction if the user is already a member of another one.
+ *
+ * @param {string} userId - The unique identifier of the user attempting to join a faction.
+ * @param {string} factionId - The unique identifier of the faction the user wants to join.
+ * @param {object} pool - The database connection pool used to execute the database query.
+ * @return {Promise<object>} Returns an object containing the success status and a message indicating the result of the action.
+ */
+async function joinFaction(userId, factionId, pool) {
+    if (!(await canJoinFaction(userId, factionId, pool))) {
+        return { success: false, message: "Эта фракция переполнена, выберите другую." };
+    }
+
+    await pool.query(`
+        INSERT INTO users_factions (user_id, faction_id, joined_at)
+        VALUES ($1, $2, NOW())
+        ON CONFLICT (user_id)
+        DO UPDATE SET faction_id = EXCLUDED.faction_id, joined_at = NOW();
+    `, [userId, factionId]);
+
+    return { success: true, message: "Вы успешно вступили во фракцию!" };
+}
+
+/**
+ * Adds activity points to a user's account. If the user already has an entry,
+ * their points will be updated by adding the new points to the existing total.
+ * If the user does not have an entry, a new record will be created.
+ *
+ * @param {string} userId - The unique ID of the user to add activity points to.
+ * @param {number} points - The number of activity points to add to the user's account.
+ * @param {Object} pool - The database connection pool used to execute the query.
+ * @return {Promise<void>} A promise that resolves when the points have been successfully added or updated.
+ */
+async function addActivityPoints(userId, points, pool) {
+    await pool.query(`
+        INSERT INTO activity_points (user_id, points, last_reset)
+        VALUES ($1, $2, NOW())
+        ON CONFLICT (user_id)
+        DO UPDATE SET points = activity_points.points + EXCLUDED.points;
+    `, [userId, points]);
+}
+
+/**
+ * Retrieves the faction leaderboard, which consists of the top users in each faction
+ * according to their activity points, ordered by faction name and points in descending order.
+ *
+ * @param {object} pool - The database connection pool to execute the query.
+ * @return {Promise<Array>} A promise that resolves to an array of leaderboard records. Each record includes the faction name, user ID, and activity points.
+ */
+async function getFactionLeaderboard(pool) {
+    const { rows } = await pool.query(`
+        SELECT f.name AS faction, u.user_id, ap.points
+        FROM users_factions uf
+        JOIN factions f ON uf.faction_id = f.id
+        JOIN users u ON uf.user_id = u.user_id
+        JOIN activity_points ap ON u.user_id = ap.user_id
+        ORDER BY f.name, ap.points DESC
+        LIMIT 5;
+    `);
+
+    return rows;
+}
+
+/**
+ * Resets the activity points for all users by setting the `points` to 0
+ * and updating the `last_reset` timestamp to the current time.
+ *
+ * @param {Object} pool - The database connection pool used to execute the query.
+ * @return {Promise<void>} A promise that resolves when the activity points
+ * have been successfully reset.
+ */
+async function resetActivityPoints(pool) {
+    await pool.query(`UPDATE activity_points SET points = 0, last_reset = NOW()`);
+}
