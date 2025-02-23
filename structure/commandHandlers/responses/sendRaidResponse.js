@@ -1,14 +1,11 @@
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from "discord.js";
 
 /**
- * Sends a response to a raid-related message by adding action buttons for users to interact with.
+ * Sends a response message with interactive buttons in a specific category channel.
  *
- * @param {Object} message - The message object to which the response will be sent.
- * It contains metadata about the message, including the author and channel.
- * @param {Object} pool - The database connection pool used to query settings information.
- * It is required to fetch configuration values related to the handling of the message.
- * @return {Promise<void>} Resolves when the message has been successfully processed and the response sent.
- * If conditions are not met for sending the response, the function resolves immediately without sending anything.
+ * @param {Message} message - The message object representing the initial user message.
+ * @param {Pool} pool - The database connection pool used to retrieve category settings.
+ * @return {Promise<void>} Resolves when the response message is successfully sent. If conditions are not met, no action is taken.
  */
 export default async function sendRaidResponse(message, pool) {
     // отправка сообщения с кнопками
@@ -37,8 +34,12 @@ export default async function sendRaidResponse(message, pool) {
 
     const row = new ActionRowBuilder().addComponents(
         new ButtonBuilder()
-            .setCustomId(`join_raid_${sellerId}`)
-            .setLabel('Хочу в рейд')
+            .setCustomId(`join_raid_${sellerId}_dd`)
+            .setLabel('+dd')
+            .setStyle(ButtonStyle.Success),
+        new ButtonBuilder()
+            .setCustomId(`join_raid_${sellerId}_sup`)
+            .setLabel('+sup')
             .setStyle(ButtonStyle.Success),
         new ButtonBuilder()
             .setCustomId(`response_raid_buy_${sellerId}`)

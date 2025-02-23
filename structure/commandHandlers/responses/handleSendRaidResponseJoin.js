@@ -25,11 +25,11 @@ export default async function (interaction, pool, client) {
     // Кнопка "Хочу в рейд"
     if (tempMessageStorage.has(interaction.message.id)
         && tempMessageStorage.get(interaction.message.id).includes(interaction.user.id)) {
-        await interaction.reply({content: "Вы уже взаимодействовали с этим сообщением", flags: MessageFlags.Ephemeral});
-        return console.log("Пользователь уже взаимодействовал с этим сообщением", interaction.message.id, interaction.user.id);
+        console.log("Пользователь уже взаимодействовал с этим сообщением", interaction.message.id, interaction.user.id)
+        return await interaction.reply({content: "Вы уже взаимодействовали с этим сообщением", flags: MessageFlags.Ephemeral});
     }
 
-    const [, , sellerId] = interaction.customId.split('_');
+    const [, , sellerId, type] = interaction.customId.split('_');
 
     if (interaction.user.id === sellerId) {
         return interaction.reply({
@@ -57,7 +57,7 @@ export default async function (interaction, pool, client) {
 
     if (seller) {
         const achievements = await getUserAchievements(pool, interaction.user.id);
-        await sendCharacterList(interaction, `Игрок: <@${interaction.user.id}> отправил запрос на вступление в рейд\n:peacock: **Имя:** ${userProfile.name || 'Не указано'}\n`, userProfile.characters, seller, achievements);
+        await sendCharacterList(interaction, `Игрок: <@${interaction.user.id}> отправил запрос на вступление в рейд в качестве ${type === 'dd' ? 'ДД' : 'Саппорта'}\n:peacock: **Имя:** ${userProfile.name || 'Не указано'}\n`, userProfile.characters, seller, achievements);
         interaction.reply({content: "Запрос отправлен", flags: MessageFlags.Ephemeral});
         tempMessageStorage.set(interaction.message.id, []);
         tempMessageStorage.get(interaction.message.id).push(interaction.user.id);
