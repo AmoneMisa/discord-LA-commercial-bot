@@ -57,5 +57,20 @@ export default [
             .setDescription('Список лотов'))
         .addSubcommand(subcommand =>
             subcommand.setName('remove')
-                .setDescription('Список лотов'))
+                .setDescription('Список лотов')),
+    new SlashCommandBuilder()
+        .setName("get_codex")
+        .setDescription("🔍 Получить информацию из кодекса")
+        .addStringOption(option =>
+            option.setName("category")
+                .setDescription("Выберите категорию")
+                .setRequired(true)
+                .setAutocomplete(true)
+        )
+        .addStringOption(option =>
+            option.setName("title")
+                .setDescription("Выберите название")
+                .setRequired(true)
+                .setAutocomplete(true)
+        )
 ]

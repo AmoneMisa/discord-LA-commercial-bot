@@ -29,6 +29,9 @@ import editAchievement from "./editAchievement.js";
 import giveAchievementToUser from "./giveAchievementToUser.js";
 import giveAchievementToRole from "./giveAchievementToRole.js";
 import achievementGiveMentions from "./achievementGiveMentions.js";
+import codexAdd from "./codexAdd.js";
+import codexEdit from "./codexEdit";
+import codexDelete from "./codexDelete";
 
 export default {
     setCooldown,
@@ -61,5 +64,8 @@ export default {
     editAchievement,
     giveAchievementToRole,
     giveAchievementToUser,
-    achievementGiveMentions
+    achievementGiveMentions,
+    codexAdd,
+    codexEdit,
+    codexDelete,
 }

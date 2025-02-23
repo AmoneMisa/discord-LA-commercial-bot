@@ -5,6 +5,7 @@ import adminSubscriptionCommands from "./adminSubscriptionCommands.js";
 import userCommands from "./userCommands.js";
 import userProfileCommands from "./userProfileCommands.js";
 import userSubscriptionCommands from "./userSubscriptionCommands.js";
+import adminCodexCommands from "./adminCodexCommands.js";
 
 export default [
     ...userCommands,
@@ -13,5 +14,6 @@ export default [
     ...adminSettingsCommands,
     ...adminAchievementsCommands,
     ...adminRankCommands,
-    ...adminSubscriptionCommands
+    ...adminSubscriptionCommands,
+    ...adminCodexCommands
 ]
