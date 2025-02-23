@@ -5,6 +5,7 @@ import cron from 'node-cron';
 import {saveProfileToDB} from "../../scrapping/parser.js";
 import checkMatching from "../commandHandlers/tradeSystem/checkMatching.js";
 import removeExpiredLots from "../commandHandlers/tradeSystem/removeExpiredLots.js";
+import {cleanOldData, givePointsForActivity, resetActivityPoints, updateFactionLeaderboard} from "../dbUtils.js";
 
 /**
  * Schedules rank updates based on the provided frequency or the default stored in the database.
@@ -51,6 +52,15 @@ export async function scheduleRankUpdates(frequency, pool, guild) {
     });
 }
 
+/**
+ * Schedules various cron jobs for handling periodic tasks related to profile updates, leaderboard maintenance,
+ * expiring lots, activity resets, and cleaning old data.
+ *
+ * @param {Object} pool - Database connection pool used for executing queries.
+ * @param {Object} client - Client instance to facilitate operations with external systems (e.g., bots).
+ * @param {Object} guild - Guild instance required for performing guild-specific updates and operations.
+ * @return {void} This function does not return any value. It sets up scheduled tasks to run at defined intervals.
+ */
 export function schedulersList(pool, client, guild) {
     cron.schedule('0 0 * * *', async () => {
         console.log('🔄 Обновление данных профилей из оружейной...');
@@ -66,7 +76,19 @@ export function schedulersList(pool, client, guild) {
     });
 
     cron.schedule('* * * * *', async () => {
-        await removeExpiredLots(pool);
+        await removeExpiredLots(pool, client);
         await checkMatching(pool, client);
+    });
+
+    cron.schedule('0 0 * * 1', async () => {
+        console.log("🔄 Сбрасываем очки активности...");
+        await resetActivityPoints(pool);
+        console.log("✅ Очки сброшены!");
+    });
+
+    cron.schedule('0 3 1 * *', async () => {
+        console.log("🗑️ Очищаем старые записи...");
+        await cleanOldData(pool);
+        console.log("✅ Очистка завершена!");
     });
 }

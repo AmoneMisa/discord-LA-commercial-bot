@@ -1,3 +1,5 @@
+import {EmbedBuilder} from "discord.js";
+
 /**
  * Retrieves the leaderboard channel ID from the settings table.
  *
@@ -501,7 +503,7 @@ export async function getUserAchievements(pool, userId) {
  * @param {object} pool - The database connection pool used to execute queries.
  * @return {Promise<boolean>} A promise that resolves to a boolean indicating whether the user is allowed to join the faction.
  */
-async function canJoinFaction(userId, factionId, pool) {
+export async function canJoinFaction(userId, factionId, pool) {
     const { rows: totalUsers } = await pool.query(`SELECT COUNT(*) FROM users_factions`);
     const { rows: factionUsers } = await pool.query(`SELECT COUNT(*) FROM users_factions WHERE faction_id = $1`, [factionId]);
 
@@ -520,7 +522,7 @@ async function canJoinFaction(userId, factionId, pool) {
  * @param {object} pool - The database connection pool used to execute the database query.
  * @return {Promise<object>} Returns an object containing the success status and a message indicating the result of the action.
  */
-async function joinFaction(userId, factionId, pool) {
+export async function joinFaction(userId, factionId, pool) {
     if (!(await canJoinFaction(userId, factionId, pool))) {
         return { success: false, message: "Эта фракция переполнена, выберите другую." };
     }
@@ -545,7 +547,7 @@ async function joinFaction(userId, factionId, pool) {
  * @param {Object} pool - The database connection pool used to execute the query.
  * @return {Promise<void>} A promise that resolves when the points have been successfully added or updated.
  */
-async function addActivityPoints(userId, points, pool) {
+export async function addActivityPoints(userId, points, pool) {
     await pool.query(`
         INSERT INTO activity_points (user_id, points, last_reset)
         VALUES ($1, $2, NOW())
@@ -561,7 +563,7 @@ async function addActivityPoints(userId, points, pool) {
  * @param {object} pool - The database connection pool to execute the query.
  * @return {Promise<Array>} A promise that resolves to an array of leaderboard records. Each record includes the faction name, user ID, and activity points.
  */
-async function getFactionLeaderboard(pool) {
+export async function getFactionLeaderboard(pool) {
     const { rows } = await pool.query(`
         SELECT f.name AS faction, u.user_id, ap.points
         FROM users_factions uf
@@ -583,6 +585,109 @@ async function getFactionLeaderboard(pool) {
  * @return {Promise<void>} A promise that resolves when the activity points
  * have been successfully reset.
  */
-async function resetActivityPoints(pool) {
+export async function resetActivityPoints(pool) {
     await pool.query(`UPDATE activity_points SET points = 0, last_reset = NOW()`);
+}
+
+/**
+ * Resets the activity points to 0 and updates the last reset timestamp in the database.
+ *
+ * @param {object} pool - Database connection pool used to execute queries.
+ * @return {Promise<void>} - A promise that resolves when the operation is completed.
+ */
+export async function cleanOldData(pool) {
+    try {
+        await pool.query(`
+            UPDATE activity_points
+            SET points = 0, last_reset = NOW()
+        `);
+        console.log("✅ Очки активности сброшены.");
+    } catch (err) {
+        console.error("❌ Ошибка при сбросе очков активности:", err);
+    }
+}
+
+/**
+ * Adds points for a specific user in the activity_points table. If the user already exists in the table,
+ * the points will be updated by adding the new value to the existing points.
+ *
+ * @param {Object} pool - The database connection pool used to execute the query.
+ * @param {string|number} userId - The unique identifier of the user to whom the points will be added.
+ * @param {number} points - The number of points to be added for the specified user.
+ * @return {Promise<void>} A promise that resolves when the operation is completed.
+ */
+export async function givePointsForActivity(pool, userId, points) {
+    try {
+        await pool.query(`
+            INSERT INTO activity_points (user_id, points)
+            VALUES ($1, $2)
+            ON CONFLICT (user_id) DO UPDATE
+                SET points = activity_points.points + EXCLUDED.points
+        `, [userId, points]);
+
+        console.log(`✅ Игроку ${userId} начислено ${points} очков активности.`);
+    } catch (err) {
+        console.error("❌ Ошибка при начислении очков:", err);
+    }
+}
+
+/**
+ * Updates the faction leaderboard by fetching the top players from the database
+ * and displaying the leaderboard in a designated Discord channel.
+ *
+ * @param {Pool} pool - Database connection pool used to execute queries.
+ * @param {Client} client - Discord client used to interact with Discord API and fetch the channel.
+ * @return {Promise<void>} Resolves when the leaderboard is successfully updated or if an error occurs.
+ */
+export async function updateFactionLeaderboard(pool, client) {
+    try {
+        // Получаем ID канала для вывода статистики
+        const channelRes = await pool.query(`
+            SELECT value FROM settings WHERE setting_name = 'faction_leaderboard_channel'
+        `);
+
+        if (channelRes.rows.length === 0) {
+            console.error("❌ Канал для таблицы лидеров фракций не установлен!");
+            return;
+        }
+
+        const channelId = channelRes.rows[0].value;
+        const channel = await client.channels.fetch(channelId);
+
+        if (!channel) {
+            console.error("❌ Канал не найден!");
+            return;
+        }
+
+        // Получаем ТОП-5 игроков каждой фракции
+        const leaderboardRes = await pool.query(`
+            SELECT u.user_id, f.name AS faction_name, ap.points
+            FROM activity_points ap
+            JOIN users_factions uf ON ap.user_id = uf.user_id
+            JOIN factions f ON uf.faction_id = f.id
+            ORDER BY f.name, ap.points DESC
+            LIMIT 5
+        `);
+
+        if (leaderboardRes.rows.length === 0) {
+            await channel.send("📊 Таблица лидеров пуста. Очки активности еще не начислялись.");
+            return;
+        }
+
+        let message = "**🏆 Топ-5 игроков по фракциям:**\n";
+        let currentFaction = null;
+
+        for (const row of leaderboardRes.rows) {
+            if (currentFaction !== row.faction_name) {
+                message += `\n🛡 **${row.faction_name}**\n`;
+                currentFaction = row.faction_name;
+            }
+            message += `👤 <@${row.user_id}> — **${row.points}** очков\n`;
+        }
+
+        await channel.send(message);
+        console.log("✅ Таблица лидеров обновлена.");
+    } catch (err) {
+        console.error("❌ Ошибка при обновлении таблицы лидеров:", err);
+    }
 }
