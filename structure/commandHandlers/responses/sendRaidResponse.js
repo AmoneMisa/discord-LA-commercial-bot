@@ -1,11 +1,14 @@
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from "discord.js";
+import {givePointsForActivity} from "../../dbUtils.js";
 
 /**
- * Sends a response message with interactive buttons in a specific category channel.
+ * Sends a response message with interactive buttons in a specific channel category
+ * if the conditions are met, such as message age and channel category.
+ * It also awards points to the message author for activity.
  *
- * @param {Message} message - The message object representing the initial user message.
- * @param {Pool} pool - The database connection pool used to retrieve category settings.
- * @return {Promise<void>} Resolves when the response message is successfully sent. If conditions are not met, no action is taken.
+ * @param {import('discord.js').Message} message - The Discord message object where the response will be sent.
+ * @param {import('pg').Pool} pool - The PostgreSQL connection pool used for querying and updating data.
+ * @return {Promise<void>} Resolves when the response message is sent and points are awarded.
  */
 export default async function sendRaidResponse(message, pool) {
     // отправка сообщения с кнопками
@@ -52,4 +55,6 @@ export default async function sendRaidResponse(message, pool) {
         components: [row],
         flags: MessageFlags.SuppressNotifications
     });
+
+    await givePointsForActivity(pool, message.author.id, 5);
 }

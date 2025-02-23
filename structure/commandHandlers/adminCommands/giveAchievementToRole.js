@@ -1,4 +1,5 @@
 import {MessageFlags} from "discord.js";
+import {givePointsForActivity} from "../../dbUtils.js";
 
 /**
  * Assigns an achievement to all members with a specified role in a guild.
@@ -25,6 +26,8 @@ export default async function giveAchievementToRole(interaction, pool, guild) {
             `INSERT INTO user_achievements (user_id, achievement_id, assigned_by) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING`,
             [member.id, achievement.rows[0].id, interaction.user.id]
         );
+
+        await givePointsForActivity(pool, member.id, 50);
     }
 
     await interaction.reply({ content: `✅ Достижение **${achievementName}** выдано всем с ролью ${role.name}!`, flags: MessageFlags.Ephemeral });

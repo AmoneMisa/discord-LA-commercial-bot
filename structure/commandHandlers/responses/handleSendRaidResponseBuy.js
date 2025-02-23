@@ -1,5 +1,6 @@
 import {MessageFlags} from "discord.js";
 import createModalBuyResponse from "./createModalBuyResponse.js";
+import {givePointsForActivity} from "../../dbUtils.js";
 
 /**
  * Handles the "I want to buy" button interaction.
@@ -25,4 +26,5 @@ export default async function (interaction, pool, client) {
     }
 
     await createModalBuyResponse(interaction);
+    await givePointsForActivity(pool, interaction.user.id, 2);
 }

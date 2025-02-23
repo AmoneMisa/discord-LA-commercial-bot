@@ -608,16 +608,22 @@ export async function cleanOldData(pool) {
 }
 
 /**
- * Adds points for a specific user in the activity_points table. If the user already exists in the table,
- * the points will be updated by adding the new value to the existing points.
+ * Awards activity points to a user. Adds points if the user exists in the faction.
  *
- * @param {Object} pool - The database connection pool used to execute the query.
- * @param {string|number} userId - The unique identifier of the user to whom the points will be added.
- * @param {number} points - The number of points to be added for the specified user.
- * @return {Promise<void>} A promise that resolves when the operation is completed.
+ * @param {Object} pool - The database connection pool.
+ * @param {number} userId - The ID of the user to whom points are awarded.
+ * @param {number} points - The number of points to be awarded to the user.
+ * @return {Promise<void>} A promise that resolves when the operation is complete.
  */
 export async function givePointsForActivity(pool, userId, points) {
     try {
+        const isExist = await pool.query(`SELECT * FROM users_factions WHERE user_id = $1`, [userId]);
+
+        if (!isExist.rows.length) {
+            console.log("У пользователя не выбрана фракция", userId);
+            return ;
+        }
+
         await pool.query(`
             INSERT INTO activity_points (user_id, points)
             VALUES ($1, $2)

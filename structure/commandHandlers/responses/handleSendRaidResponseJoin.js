@@ -1,4 +1,4 @@
-import {getUserAchievements, getUserProfile} from "../../dbUtils.js";
+import {getUserAchievements, getUserProfile, givePointsForActivity} from "../../dbUtils.js";
 import {MessageFlags} from "discord.js";
 import sendCharacterList from "../../generateCharactersListImage.js";
 
@@ -57,10 +57,11 @@ export default async function (interaction, pool, client) {
 
     if (seller) {
         const achievements = await getUserAchievements(pool, interaction.user.id);
-        await sendCharacterList(interaction, `Игрок: <@${interaction.user.id}> отправил запрос на вступление в рейд в качестве ${type === 'dd' ? 'ДД' : 'Саппорта'}\n:peacock: **Имя:** ${userProfile.name || 'Не указано'}\n`, userProfile.characters, seller, achievements);
+        await sendCharacterList(interaction, `Игрок: <@${interaction.user.id}> отправил запрос на вступление в рейд в качестве ${type === 'dd' ? '**ДД**' : '**Саппорта**'}\n:peacock: **Имя:** ${userProfile.name || 'Не указано'}\n`, userProfile.characters, seller, achievements);
         interaction.reply({content: "Запрос отправлен", flags: MessageFlags.Ephemeral});
         tempMessageStorage.set(interaction.message.id, []);
         tempMessageStorage.get(interaction.message.id).push(interaction.user.id);
+        await givePointsForActivity(pool, interaction.user.id, 3);
     }
 
     setTimeout(() => tempMessageStorage.delete(interaction.message.id), 5 * 60 * 1000);
