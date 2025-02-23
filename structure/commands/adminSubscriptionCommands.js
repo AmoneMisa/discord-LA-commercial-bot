@@ -13,6 +13,7 @@ export default [
                         .setRequired(true)
                 ).addStringOption(option =>
                     option.setName('block_type')
+                        .setDescription("Выберите тип блокировки")
                         .addChoices({name: 'Запрет получать подписки', value: 'receiver'},
                             {name: 'Запрет подписываться', value: 'reviewer'}))
         ).addSubcommand(subcommand =>

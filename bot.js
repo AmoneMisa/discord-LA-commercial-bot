@@ -12,7 +12,7 @@ import buttons from "./structure/interactions/buttons.js";
 import modals from "./structure/interactions/modals.js";
 import commands from "./structure/interactions/commands.js";
 import autocomplete from "./structure/interactions/autocomplete.js";
-import {addUserIfNotExists} from "./structure/dbUtils.js";
+import {addUserIfNotExists, givePointsForActivity} from "./structure/dbUtils.js";
 import sendRaidResponse from "./structure/commandHandlers/responses/sendRaidResponse.js";
 import createRoles from "./structure/createRoles.js";
 
@@ -76,6 +76,10 @@ client.on('interactionCreate', async interaction => {
 
 client.on(Events.MessageCreate, async message => {
     try {
+        if (!message.author.bot) {
+            await givePointsForActivity(pool, message.author.id, 1);
+        }
+
         await handleMessageSubscription(message, pool, client);
         await sendRaidResponse(message, pool);
     } catch (e) {
