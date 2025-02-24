@@ -97,5 +97,19 @@ export default [
                     .setRequired(true)
                     .setAutocomplete(true)
             )
+    ).addSubcommand(subcommand =>
+        subcommand.setName("achievement_remove_user")
+            .setDescription("Забрать достижение у пользователя")
+            .addUserOption(option =>
+                option.setName("user")
+                    .setDescription("Пользователь")
+                    .setRequired(true)
+            )
+            .addStringOption(option =>
+                option.setName("achievement")
+                    .setDescription("Название достижения")
+                    .setRequired(true)
+                    .setAutocomplete(true)
+            )
     )
 ];

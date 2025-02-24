@@ -2,22 +2,22 @@ import {getItemsList} from "../dbUtils.js";
 import autocompleteAchievements from "../commandHandlers/achievements/autocompleteAchievements.js";
 
 /**
- * Handles an interaction event by responding with data dynamically based on the subcommand provided in the interaction options.
+ * Handles interaction events for Discord commands related to `inventory` and achievements.
  *
- * If the subcommand includes 'create', the function filters and provides an autocomplete response for items that match
- * the input text. If the subcommand includes 'give_user', 'give_role', or 'achievement_give_mentions', it triggers
- * the corresponding autocomplete logic for achievements.
+ * This function processes command interactions from Discord, supporting autocompletion
+ * for inventory-related commands and delegation to a separate handler for achievement-related
+ * commands. When the command name includes 'inventory', it filters and formats a list of
+ * items from the database for autocompletion suggestions. Commands matching `adm_achievement_`
+ * or `achievement_` patterns are routed to a dedicated handler function for achievements.
  *
  * @async
- * @param {Object} interaction - The interaction object received from the Discord API.
- * @param {Object} interaction.options - Contains options related to the interaction.
- * @param {Function} interaction.options.getSubcommand - Retrieves the subcommand associated with the interaction.
- * @param {Function} interaction.options.getFocused - Returns the currently focused option in the autocomplete input.
- * @param {Function} interaction.respond - Sends a response back to complete the interaction.
- * @param {Object} pool - The database connection pool used to fetch data.
+ * @function
+ * @param {Object} interaction - The interaction object representing the user command from Discord.
+ * @param {Object} pool - The database connection pool used to fetch item or achievement data.
+ * @returns {Promise<void>} A promise that resolves when interaction responses are successfully processed.
  */
 export default async function (interaction, pool) {
-    if (interaction.options.getSubcommand().includes('create')) {
+    if (interaction.commandName.includes('inventory')) {
         const focusedOption = interaction.options.getFocused(true);
         const items = await getItemsList(pool); // Получаем предметы из базы
 
@@ -38,9 +38,7 @@ export default async function (interaction, pool) {
         await interaction.respond(
             filtered.map(item => ({name: item.label, value: item.value.toString()}))
         );
-    } else if (interaction.options.getSubcommand().includes('give_user') ||
-        interaction.options.getSubcommand().includes('give_role')||
-        interaction.options.getSubcommand().includes('achievement_give_mentions')) {
+    } else if (/^(adm_achievement_|achievement_)/.test(interaction.commandName)) {
         await autocompleteAchievements(interaction, pool);
     }
 }
