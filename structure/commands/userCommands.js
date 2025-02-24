@@ -72,5 +72,38 @@ export default [
                 .setDescription("Выберите название")
                 .setRequired(true)
                 .setAutocomplete(true)
+        ),
+    new SlashCommandBuilder()
+        .setName("flip_coin")
+        .setDescription("🪙 Подбросить монетку (Орел или Решка)"),
+    new SlashCommandBuilder()
+        .setName("roll_dice")
+        .setDescription("🎲 Бросить кубик")
+        .addIntegerOption(option =>
+            option.setName("sides")
+                .setDescription("Количество граней (по умолчанию 6)")
+                .setRequired(false)
+                .setMinValue(2)
+        ),
+    new SlashCommandBuilder()
+        .setName("random_number")
+        .setDescription("🔢 Сгенерировать случайное число")
+        .addIntegerOption(option =>
+            option.setName("min")
+                .setDescription("Минимальное значение")
+                .setRequired(true)
+        )
+        .addIntegerOption(option =>
+            option.setName("max")
+                .setDescription("Максимальное значение")
+                .setRequired(true)
+        ),
+    new SlashCommandBuilder()
+        .setName("pick_random")
+        .setDescription("🎯 Выбрать случайного игрока")
+        .addStringOption(option =>
+            option.setName("participants")
+                .setDescription("Список участников через запятую")
+                .setRequired(true)
         )
 ]

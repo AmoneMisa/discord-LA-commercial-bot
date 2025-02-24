@@ -16,6 +16,10 @@ import handleProfileFill from "../commandHandlers/profile/handleProfileFill.js";
 import reviewNotificationsToggle from "../commandHandlers/ranks/reviewNotificationsToggle.js";
 import manualSendNotificationsToBuyers from "../commandHandlers/subscribe/manualSendNotificationsToBuyers.js";
 import getAchievementInfo from "../commandHandlers/achievements/getAchievementInfo.js";
+import flipCoin from "../commandHandlers/randomGames/flipCoin.js";
+import pickRandom from "../commandHandlers/randomGames/pickRandom.js";
+import randomNumber from "../commandHandlers/randomGames/randomNumber.js";
+import rollDice from "../commandHandlers/randomGames/rollDice.js";
 
 export default async function (interaction, pool, client) {
     if (interaction.commandName === 'info') {
@@ -94,5 +98,21 @@ export default async function (interaction, pool, client) {
 
     if (interaction.commandName === 'achievement-info') {
         await getAchievementInfo(interaction, pool);
+    }
+
+    if (interaction.commandName === 'flip_coin') {
+        await flipCoin(interaction);
+    }
+
+    if (interaction.commandName === 'pick_random') {
+        await pickRandom(interaction, pool);
+    }
+
+    if (interaction.commandName === 'random_number') {
+        await randomNumber(interaction, pool);
+    }
+
+    if (interaction.commandName === 'roll_dice') {
+        await rollDice(interaction, pool);
     }
 }
