@@ -17,14 +17,49 @@ import sendRaidResponse from "./structure/commandHandlers/responses/sendRaidResp
 import createRoles from "./structure/createRoles.js";
 
 const {Pool} = pkg;
+/**
+ * Represents a database connection pool.
+ *
+ * This instance is used to manage multiple connections to the database defined
+ * by the connection string from the `DATABASE_URL` environment variable.
+ * It allows efficient connection pooling for executing queries and managing resources.
+ *
+ * @type {Pool}
+ */
 const pool = new Pool({connectionString: process.env.DATABASE_URL});
 
 dotenv.config();
 
+/**
+ * Represents an instance of a Discord client.
+ * The client is used to interact with the Discord API and manage bot functionality.
+ * It is instantiated with specific intents to define the events and data the bot can access.
+ *
+ * Intents included:
+ * - Guilds: Access to guild-level events and data.
+ * - GuildMembers: Access to member-related events and data within guilds.
+ * - GuildMessages: Access to messages sent in guild channels.
+ *
+ * This instance serves as the core for handling and interacting with Discord's gateway and REST API.
+ */
 const client = new Client({intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages]});
 
 client.once('ready', async () => {
     console.log(`Logged in as ${client.user.tag}`);
+    /**
+     * Represents a Discord guild (server) fetched from the client's guild cache.
+     * The guild is retrieved using the unique identifier specified in the
+     * `GUILD_ID` environment variable.
+     *
+     * This variable is used to interact with the specific guild, enabling various
+     * guild-related operations such as fetching members, channels, roles, and other
+     * server-specific data once it is successfully retrieved.
+     *
+     * Note: Ensure that the `GUILD_ID` environment variable contains a valid
+     * guild ID and that the bot is a member of the respective guild.
+     *
+     * @type {Guild | undefined}
+     */
     const guild = client.guilds.cache.get(process.env.GUILD_ID);
     if (!guild) {
         console.error('❌ Guild not found. Проверьте GUILD_ID в .env');
@@ -40,7 +75,30 @@ client.once('ready', async () => {
     await createRoles(pool, guild);
 });
 
-client.on('interactionCreate', async interaction => {
+client.on('interactionCreate', /**
+ * Handles different types of interactions in a Discord bot client.
+ *
+ * Based on the type of interaction (command, button, modal, or autocomplete),
+ * it processes the interaction and executes the corresponding logic. It also
+ * ensures that certain commands or actions are not applicable to bots and handles
+ * them accordingly.
+ *
+ * Interaction types supported:
+ * - Command: Processes commands issued by users.
+ * - Button: Handles button interactions.
+ * - ModalSubmit: Manages modal submissions.
+ * - Autocomplete: Handles autocomplete suggestions.
+ * - MessageComponent: Reserved for future implementations.
+ *
+ * If the interaction type is unknown, it throws an error with the interaction type.
+ * Errors during execution are logged to the console for debugging purposes.
+ *
+ * @async
+ * @param {Object} interaction - The interaction object received from Discord's API.
+ * @returns {Promise<void>} Resolves after processing the interaction.
+ * @throws {Error} Throws an error for unsupported or unknown interaction types.
+ */
+async interaction => {
     try {
         const targetUser = interaction?.options?.getUser('member');
         await addUserIfNotExists(pool, interaction.user);
@@ -74,7 +132,16 @@ client.on('interactionCreate', async interaction => {
     }
 });
 
-client.on(Events.MessageCreate, async message => {
+client.on(Events.MessageCreate, /**
+ * Handles the incoming message event, performing several operations such as awarding points for activity,
+ * managing message-based subscriptions, and sending raid response if applicable.
+ *
+ * @param {Object} message - The message object from the client, representing the user's message.
+ * @throws Logs an error to the console if any of the internal operations fail.
+ *
+ * @async
+ */
+async message => {
     try {
         if (!message.author.bot) {
             await givePointsForActivity(pool, message.author.id, 1);

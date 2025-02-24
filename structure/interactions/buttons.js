@@ -12,6 +12,31 @@ import handleSendRaidResponseJoin from "../commandHandlers/responses/handleSendR
 import handleBuyButtonsResponse from "../commandHandlers/responses/createModalBuyResponse.js";
 import handleSendRaidResponseBuy from "../commandHandlers/responses/handleSendRaidResponseBuy.js";
 
+/**
+ * Handles various types of button interactions in a Discord bot and delegates
+ * them to the appropriate handler function based on the customId of the interaction.
+ *
+ * @async
+ * @function
+ * @param {Object} interaction - The interaction object that triggered the event. Contains data such as the customId and message details.
+ * @param {Object} pool - The database connection pool used for executing database operations.
+ * @param {Object} client - The Discord bot client instance.
+ * @returns {Promise<void>} Resolves when the interaction is fully processed.
+ *
+ * The function processes the following types of interactions:
+ * - If the interaction is older than 5 minutes, it sends an error message indicating the interaction is outdated.
+ * - Handles upvote or downvote actions, passing the interaction to `reviewVote`.
+ * - Handles pagination for reviews, passing parameters to `sendPaginatedReviews`.
+ * - Processes review deletion requests and calls `deleteReview`.
+ * - Manages raid creation or deletion actions through `handleEditRaidsButtons`.
+ * - Processes raid buy actions with `handleBuyButtons`.
+ * - Handles seller responses (accept or reject) through `sellerAnswerToBuyer`.
+ * - Manages lot removal requests by calling `handleRemoveLotButtons`.
+ * - Processes requests to extend a lot's duration using `handleExtendLot`.
+ * - Handles auction-specific interactions through `handleAuctionButtons`.
+ * - Manages "join raid" interactions by invoking `handleSendRaidResponseJoin`.
+ * - Handles responses to raid buy actions via `handleSendRaidResponseBuy`.
+ */
 export default async function (interaction, pool, client) {
     if (Date.now() - interaction.message.createdTimestamp > 5 * 60 * 1000) {
         return await interaction.update({

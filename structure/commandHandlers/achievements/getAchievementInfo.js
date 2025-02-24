@@ -3,8 +3,8 @@ import {EmbedBuilder, MessageFlags} from "discord.js";
 /**
  * Retrieves information about a specific achievement and sends an embedded response to the user.
  *
- * @param {CommandInteraction} interaction - The interaction object containing user input and context.
- * @param {Pool} pool - The database connection pool for querying achievement data.
+ * @param {Object} interaction - The interaction object containing user input and context.
+ * @param {Object} pool - The database connection pool for querying achievement data.
  * @return {Promise<void>} A promise that resolves when the reply has been sent to the user.
  */
 export default async function getAchievementInfo(interaction, pool) {

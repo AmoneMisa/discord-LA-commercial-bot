@@ -20,7 +20,44 @@ import flipCoin from "../commandHandlers/randomGames/flipCoin.js";
 import pickRandom from "../commandHandlers/randomGames/pickRandom.js";
 import randomNumber from "../commandHandlers/randomGames/randomNumber.js";
 import rollDice from "../commandHandlers/randomGames/rollDice.js";
+import {handleGetCodex} from "../commandHandlers/codex/handleGetCodex.js";
 
+/**
+ * Handles multiple interaction commands based on the command name and subcommand provided in the interaction object.
+ *
+ * Executes specific functions based on the command name, utilizing different handlers for different features.
+ *
+ * @param {Object} interaction - The interaction object from the discord bot containing command details.
+ * @param {Object} pool - The database connection pool used for database operations.
+ * @param {Object} client - The discord bot client for accessing bot-specific functionalities.
+ *
+ * Command names and their handlers:
+ * - 'info': Calls the `handleInfoCommand` function.
+ * - 'last_positive_reviews': Calls the `lastPositiveReviewsCommand` function.
+ * - 'last_negative_reviews': Calls the `lastNegativeReviewsCommand` function.
+ * - 'last_reviews': Calls the `lastReviewsCommand` function.
+ * - Commands starting with 'adm_' and where the subcommand is not 'remove_bots': Calls the `handleAdminSettingsCommand` function.
+ * - 'worst_sellers': Calls the `worstSellers` function.
+ * - 'auction_house': Calls the `auctionHouseHandler` function.
+ * - 'subscribe': Calls various subscription-related functions based on the subcommand:
+ *   - 'to_buy': Calls the `subscribeToBuy` function.
+ *   - 'list': Calls the `subscribeList` function.
+ *   - 'unsubscribe': Calls the `unSubscribeToBuy` function.
+ *   - 'send_notification': Calls the `manualSendNotificationsToBuyers` function.
+ * - 'inventory': Calls inventory-related functions based on the subcommand:
+ *   - 'create': Calls the `createLotHandler` function.
+ *   - 'list': Calls the `removeLotHandler` function.
+ * - 'profile': Calls profile-related functions based on the subcommand:
+ *   - 'view': Calls the `handleProfileView` function.
+ *   - 'edit': Calls the `handleProfileEdit` function.
+ *   - 'fill': Calls the `handleProfileFill` function.
+ * - 'review_notifications_toggle': Calls the `reviewNotificationsToggle` function.
+ * - 'achievement-info': Calls the `getAchievementInfo` function.
+ * - 'flip_coin': Calls the `flipCoin` function.
+ * - 'pick_random': Calls the `pickRandom` function.
+ * - 'random_number': Calls the `randomNumber` function.
+ * - 'roll_dice': Calls the `rollDice` function.
+ */
 export default async function (interaction, pool, client) {
     if (interaction.commandName === 'info') {
         await handleInfoCommand(interaction, pool);
@@ -105,14 +142,18 @@ export default async function (interaction, pool, client) {
     }
 
     if (interaction.commandName === 'pick_random') {
-        await pickRandom(interaction, pool);
+        await pickRandom(interaction);
     }
 
     if (interaction.commandName === 'random_number') {
-        await randomNumber(interaction, pool);
+        await randomNumber(interaction);
     }
 
     if (interaction.commandName === 'roll_dice') {
-        await rollDice(interaction, pool);
+        await rollDice(interaction);
+    }
+
+    if (interaction.commandName === 'get_codex') {
+        await handleGetCodex(interaction, pool);
     }
 }

@@ -34,7 +34,7 @@ export async function handleGetCodex(interaction, pool) {
         const embed = new EmbedBuilder()
             .setTitle(entry.title)
             .setDescription(entry.content)
-            .setColor("#FFD700")
+            .setColor("#49f106")
             .setFooter({ text: `Категория: ${entry.category_name} | Язык: ${entry.language}` });
 
         if (entry.source_url) {

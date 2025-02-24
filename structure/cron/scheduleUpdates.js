@@ -53,13 +53,13 @@ export async function scheduleRankUpdates(frequency, pool, guild) {
 }
 
 /**
- * Schedules various cron jobs for handling periodic tasks related to profile updates, leaderboard maintenance,
- * expiring lots, activity resets, and cleaning old data.
+ * Configures and schedules various tasks for maintaining profiles, updating leaderboards,
+ * resetting activity points, and cleaning old data in the application.
  *
- * @param {Object} pool - Database connection pool used for executing queries.
- * @param {Object} client - Client instance to facilitate operations with external systems (e.g., bots).
- * @param {Object} guild - Guild instance required for performing guild-specific updates and operations.
- * @return {void} This function does not return any value. It sets up scheduled tasks to run at defined intervals.
+ * @param {Pool} pool - The database connection pool used to execute queries for profiles, ratings, and leaderboard updates.
+ * @param {Client} client - The Discord bot client used for interacting with Discord channels.
+ * @param {Guild} guild - The Discord guild object for performing operations tied to a specific server.
+ * @return {void} Does not return a value. The function sets up scheduled tasks that run automatically.
  */
 export function schedulersList(pool, client, guild) {
     cron.schedule('0 0 * * *', async () => {

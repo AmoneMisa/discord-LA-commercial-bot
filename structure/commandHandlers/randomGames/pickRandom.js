@@ -1,4 +1,10 @@
-export default async function pickRandom(interaction, pool) {
+/**
+ * Selects a random participant from a list provided in the interaction options and replies with the chosen participant.
+ *
+ * @param {object} interaction - The interaction object containing the command details and user input.
+ * @return {Promise<void>} A promise that resolves after the reply is sent to the interaction.
+ */
+export default async function pickRandom(interaction) {
     const participants = interaction.options.getString("participants").split(",").map(p => p.trim());
 
     if (participants.length < 2) {
