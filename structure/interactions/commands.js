@@ -26,56 +26,29 @@ import pickOnlineFromChannel from "../commandHandlers/randomGames/pickOnlineFrom
 import pickFromMentions from "../commandHandlers/randomGames/pickFromMentions.js";
 
 /**
- * Handles multiple interaction commands based on the command name and subcommand provided in the interaction object.
+ * Handles various Discord interaction commands based on the command name and subcommands.
+ * Executes specific functions for each recognized command or subcommand to provide the corresponding functionality.
  *
- * Executes specific functions based on the command name, utilizing different handlers for different features.
- *
- * @param {Object} interaction - The interaction object from the discord bot containing command details.
- * @param {Object} pool - The database connection pool used for database operations.
- * @param {Object} client - The discord bot client for accessing bot-specific functionalities.
- *
- * Command names and their handlers:
- * - 'info': Calls the `handleInfoCommand` function.
- * - 'last_positive_reviews': Calls the `lastPositiveReviewsCommand` function.
- * - 'last_negative_reviews': Calls the `lastNegativeReviewsCommand` function.
- * - 'last_reviews': Calls the `lastReviewsCommand` function.
- * - Commands starting with 'adm_' and where the subcommand is not 'remove_bots': Calls the `handleAdminSettingsCommand` function.
- * - 'worst_sellers': Calls the `worstSellers` function.
- * - 'auction_house': Calls the `auctionHouseHandler` function.
- * - 'subscribe': Calls various subscription-related functions based on the subcommand:
- *   - 'to_buy': Calls the `subscribeToBuy` function.
- *   - 'list': Calls the `subscribeList` function.
- *   - 'unsubscribe': Calls the `unSubscribeToBuy` function.
- *   - 'send_notification': Calls the `manualSendNotificationsToBuyers` function.
- * - 'inventory': Calls inventory-related functions based on the subcommand:
- *   - 'create': Calls the `createLotHandler` function.
- *   - 'list': Calls the `removeLotHandler` function.
- * - 'profile': Calls profile-related functions based on the subcommand:
- *   - 'view': Calls the `handleProfileView` function.
- *   - 'edit': Calls the `handleProfileEdit` function.
- *   - 'fill': Calls the `handleProfileFill` function.
- * - 'review_notifications_toggle': Calls the `reviewNotificationsToggle` function.
- * - 'achievement-info': Calls the `getAchievementInfo` function.
- * - 'flip_coin': Calls the `flipCoin` function.
- * - 'pick_random': Calls the `pickRandom` function.
- * - 'random_number': Calls the `randomNumber` function.
- * - 'roll_dice': Calls the `rollDice` function.
+ * @async
+ * @param {Object} interaction - The interaction object representing the incoming Discord command interaction.
+ * @param {Object} pool - The database connection pool object used for database operations.
+ * @param {Object} client - The Discord client instance (optional, used in specific commands).
  */
 export default async function (interaction, pool, client) {
     if (interaction.commandName === 'info') {
-        await handleInfoCommand(interaction, pool, false);
+        await handleInfoCommand(interaction, pool, false, false);
     }
 
     if (interaction.commandName === 'last_positive_reviews') {
-        await lastPositiveReviewsCommand(interaction, pool);
+        await lastPositiveReviewsCommand(interaction, pool, false, false);
     }
 
     if (interaction.commandName === 'last_negative_reviews') {
-        await lastNegativeReviewsCommand(interaction, pool);
+        await lastNegativeReviewsCommand(interaction, pool, false, false);
     }
 
     if (interaction.commandName === 'last_reviews') {
-        await lastReviewsCommand(interaction, pool);
+        await lastReviewsCommand(interaction, pool, false, false);
     }
 
     if (interaction.commandName.startsWith("adm_") && interaction.options.getSubcommand() !== 'remove_bots') {
@@ -104,7 +77,7 @@ export default async function (interaction, pool, client) {
         }
 
         if (interaction.options.getSubcommand() === 'send_notification') {
-            await manualSendNotificationsToBuyers(interaction, pool);
+            await manualSendNotificationsToBuyers(interaction, pool, client);
         }
     }
 
@@ -120,7 +93,7 @@ export default async function (interaction, pool, client) {
 
     if (interaction.commandName === 'profile') {
         if (interaction.options.getSubcommand() === 'view') {
-            await handleProfileView(interaction, pool);
+            await handleProfileView(interaction, pool, false, false);
         }
 
         if (interaction.options.getSubcommand() === 'edit') {
@@ -172,7 +145,28 @@ export default async function (interaction, pool, client) {
         await handleGetCodex(interaction, pool);
     }
 
+    // обработчики команд контекстного меню
     if (interaction.commandName === "Получить инфо или оставить отзыв") {
-        await handleInfoCommand(interaction, pool, true);
+        await handleInfoCommand(interaction, pool, true, interaction.isMessageContextMenuCommand());
+    }
+
+    if (interaction.commandName === "Подписаться на продавца") {
+        await subscribeToBuy(interaction, pool, true, interaction.isMessageContextMenuCommand());
+    }
+
+    if (interaction.commandName === "Просмотреть профиль игрока") {
+        await handleProfileView(interaction, pool, true, interaction.isMessageContextMenuCommand());
+    }
+
+    if (interaction.commandName === 'Последние положительные отзывы пользователя') {
+        await lastPositiveReviewsCommand(interaction, pool, true, interaction.isMessageContextMenuCommand());
+    }
+
+    if (interaction.commandName === 'Последние отрицательные отзывы пользователя') {
+        await lastNegativeReviewsCommand(interaction, pool, true, interaction.isMessageContextMenuCommand());
+    }
+
+    if (interaction.commandName === 'Последние отзывы пользователя') {
+        await lastReviewsCommand(interaction, pool, true, interaction.isMessageContextMenuCommand());
     }
 }

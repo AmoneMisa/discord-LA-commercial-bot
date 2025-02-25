@@ -214,3 +214,29 @@ export async function delay(ms) {
 export function shuffleArray(array) {
     return array.sort(() => Math.random() - 0.5);
 }
+
+/**
+ * Retrieves a member or user based on the provided parameters and interaction context.
+ *
+ * @param {Object} interaction - The interaction object containing the context and options.
+ * @param {boolean} isContextMenu - Indicates whether the command is triggered from a context menu.
+ * @param {boolean} isMessageContentMenuCommand - Indicates whether the context menu is targeting message content.
+ * @param {string} [getType='member'] - Specifies the type of entity to retrieve ("user" or "member").
+ * @return {Object} The retrieved user or member object, determined by the interaction context and parameters.
+ */
+export function getMember(interaction, isContextMenu, isMessageContentMenuCommand, getType = 'member') {
+    if (isContextMenu) {
+        if (isMessageContentMenuCommand) {
+           return interaction.targetMessage.author;
+        } else {
+            return interaction.targetUser;
+        }
+    }
+    else {
+        if (getType === 'user') {
+            return interaction.options.getUser('user');
+        } else {
+            return interaction.options.getUser('member');
+        }
+    }
+}

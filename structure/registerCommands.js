@@ -3,13 +3,12 @@ import commands from "./commands/index.js";
 import contextMenuCommands from "./contextMenuCommands.js";
 
 /**
- * Registers or updates bot commands for the specified guild using the Discord API.
- * This function utilizes the provided bot token and client/guild IDs from environment variables,
- * and updates the commands based on the current configuration.
+ * Registers and updates commands for the bot in the specified guild.
+ * This function uses the Discord REST API to push the commands defined
+ * in the `commands` and `contextMenuCommands` collections to the Discord server.
  *
- * @async
- * @return {Promise<void>} Resolves when the commands are successfully registered or updated,
- * or logs an error if the operation fails.
+ * @return {Promise<void>} A promise that resolves when the commands have been successfully registered
+ * or rejects with an error if the update fails.
  */
 export default async function registerCommands() {
     const rest = new REST({ version: '10' }).setToken(process.env.BOT_TOKEN);

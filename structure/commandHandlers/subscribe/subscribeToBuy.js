@@ -1,16 +1,20 @@
 import {MessageFlags} from "discord.js";
 import {getSubscriptions} from "../../dbUtils.js";
+import {getMember} from "../../utils.js";
 
 /**
- * Handles the subscription process for a user to receive notifications about a seller's raids.
- * This includes validation of the user's ability to subscribe, checking if the seller and raid exist,
- * and properly associating the subscription in the database.
+ * Handles the user's subscription to notifications for a specific seller and raid.
+ * The method interacts with the database to ensure the subscription is valid, checks for restrictions,
+ * and prevents duplicates. Triggered by a Discord interaction.
  *
- * @param {Object} interaction - The interaction object containing information about the user action in the Discord context.
- * @param {Object} pool - The database connection pool used to query and manipulate data.
- * @return {Promise<void>} A promise that resolves when the subscription process is complete, either successfully or with an appropriate error message.
+ * @param {Object} interaction - The Discord interaction object representing the user's action.
+ * @param {Object} pool - The database connection pool to execute queries.
+ * @param {boolean} [isContextMenu=false] - Indicates if the method is triggered via a context menu interaction.
+ * @param {boolean} [isMessageContentMenuCommand=false] - Indicates if the method is triggered via a message content menu command.
+ * @return {Promise<Object>} Resolves with the interaction reply, indicating the subscription status.
+ *                           Returns an error message in case of issues or restrictions.
  */
-export default async function subscribeToBuy(interaction, pool) {
+export default async function subscribeToBuy(interaction, pool, isContextMenu = false, isMessageContentMenuCommand = false) {
     const categoryResult = await pool.query('SELECT value FROM settings WHERE key = $1', ['bus_category']);
 
     if (categoryResult.rows.length === 0) {
@@ -18,7 +22,12 @@ export default async function subscribeToBuy(interaction, pool) {
         return interaction.reply("Администратор не выбрал категорию для отслеживания рейдов. Пожалуйста, свяжитесь с ним.");
     }
 
-    const seller = interaction.options.getUser('user');
+    let seller =  getMember(interaction, isContextMenu, isMessageContentMenuCommand, 'user');
+
+    if (seller.bot) {
+        return await interaction.reply({content: "Эту команду нельзя применять на ботах", flags: MessageFlags.Ephemeral});
+    }
+
     const buyerId = interaction.user.id;
     const raid = interaction.options.getString('raid');
 

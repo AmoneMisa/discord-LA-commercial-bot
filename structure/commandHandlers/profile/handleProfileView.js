@@ -1,18 +1,26 @@
 import {MessageFlags} from "discord.js";
 import sendCharacterList from "../../generateCharactersListImage.js";
 import {getUserAchievements} from "../../dbUtils.js";
+import {getMember} from "../../utils.js";
 
 /**
- * Handles the profile view for a specified user, retrieving and displaying their profile, associated characters, and achievements.
+ * Handles the profile view interaction, retrieves profile details and associated characters,
+ * and sends back the appropriate response with the profile and character information.
  *
- * @param {Object} interaction - The interaction object associated with the command, used to retrieve user input and respond to the user.
- * @param {Object} pool - The database connection pool to query user profiles, characters, and achievements.
- *
- * @return {Promise<void>} A promise that resolves when the profile view is handled and the response is sent.
- *                          Returns early if the user does not have a profile.
+ * @param {object} interaction - The interaction object containing user input and context.
+ * @param {object} pool - The database connection pool used to query the database.
+ * @param {boolean} [isContextMenu=false] - Indicates if the command was triggered through a context menu.
+ * @param {boolean} [isMessageContentMenuCommand=false] - Indicates if the interaction was invoked through a message content menu command.
+ * @return {Promise<void>} Resolves when the interaction has been successfully processed and a response is sent.
  */
-export default async function handleProfileView(interaction, pool) {
-    const userId = interaction.options.getUser('user').id;
+export default async function handleProfileView(interaction, pool, isContextMenu = false, isMessageContentMenuCommand = false) {
+    let member = getMember(interaction, isContextMenu, isMessageContentMenuCommand);
+
+    if (member.bot) {
+        return await interaction.reply({content: "Эту команду нельзя применять на ботах", flags: MessageFlags.Ephemeral});
+    }
+
+    const userId = member.id;
     const profile = await pool.query(`SELECT *
                                       FROM profiles
                                       WHERE user_id = $1`, [userId]);
