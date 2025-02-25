@@ -1,5 +1,4 @@
 import {ButtonStyle, MessageFlags} from "discord.js";
-
 import subcommands from './adminCommands/index.js';
 import {toCamelCase} from "../utils.js";
 

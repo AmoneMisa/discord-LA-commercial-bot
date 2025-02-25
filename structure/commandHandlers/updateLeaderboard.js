@@ -38,7 +38,7 @@ export default async function updateLeaderboard(client, pool) {
             },
             {
                 name: 'Rating',
-                value: topSellers.map((user, index) => `${user.rating.toFixed(2)}% (👍 ${user.positive_reviews} / 👎 ${user.negative_reviews})` + '` `\n').join(''),
+                value: topSellers.map((user, index) => `${user.rating.toFixed(2)}% (✔ ${user.positive_reviews} / ✘ ${user.negative_reviews})` + '` `\n').join(''),
                 inline: true
             }
         )
