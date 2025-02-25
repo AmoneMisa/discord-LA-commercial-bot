@@ -7,6 +7,7 @@ import userProfileCommands from "./userProfileCommands.js";
 import userSubscriptionCommands from "./userSubscriptionCommands.js";
 import adminCodexCommands from "./adminCodexCommands.js";
 import adminBetsCommands from "./adminBetsCommands.js";
+import adminRegistrationCommands from "./adminRegistrationCommands.js";
 
 export default [
     ...userCommands,
@@ -17,5 +18,6 @@ export default [
     ...adminRankCommands,
     ...adminSubscriptionCommands,
     ...adminCodexCommands,
-    ...adminBetsCommands
+    ...adminBetsCommands,
+    ...adminRegistrationCommands,
 ]
