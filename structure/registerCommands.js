@@ -1,5 +1,6 @@
 import {REST, Routes} from "discord.js";
 import commands from "./commands/index.js";
+import contextMenuCommands from "./contextMenuCommands.js";
 
 /**
  * Registers or updates bot commands for the specified guild using the Discord API.
@@ -14,7 +15,7 @@ export default async function registerCommands() {
     const rest = new REST({ version: '10' }).setToken(process.env.BOT_TOKEN);
     try {
         console.log('Обновление (регистрация) команд...');
-        await rest.put(Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID), { body: commands.map(cmd => {
+        await rest.put(Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID), { body: [...commands, ...contextMenuCommands].map(cmd => {
             try {
                 return cmd.toJSON();
             } catch (e) {

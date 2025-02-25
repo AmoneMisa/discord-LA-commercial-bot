@@ -1,5 +1,7 @@
 import {ButtonStyle, Events, Client, GatewayIntentBits, InteractionType, MessageFlags, TextInputStyle} from 'discord.js';
 import dotenv from 'dotenv';
+dotenv.config();
+
 import pkg from 'pg';
 import registerCommands from "./structure/registerCommands.js";
 import updateRatings from "./structure/updateRatings.js";
@@ -28,7 +30,6 @@ const {Pool} = pkg;
  */
 const pool = new Pool({connectionString: process.env.DATABASE_URL});
 
-dotenv.config();
 
 /**
  * Represents an instance of a Discord client.

@@ -19,8 +19,15 @@ dotenv.config();
  *  - Creates and attaches upvote and downvote buttons to the response for further user interaction.
  *  - Sends the response message with the provided statistics and button components as ephemeral.
  */
-export default async function (interaction, pool) {
-    const member = interaction.options.getUser('member');
+export default async function (interaction, pool, isContextMenu = false) {
+    let member;
+
+    if (isContextMenu) {
+        member = interaction.targetMessage.author;
+    } else {
+        member = interaction.options.getUser('member');
+    }
+
     if (!member) return interaction.reply({ content: 'Выберите участника.', flags: MessageFlags.Ephemeral });
 
     const userStats = await pool.query('SELECT * FROM users WHERE user_id = $1', [member.id]);

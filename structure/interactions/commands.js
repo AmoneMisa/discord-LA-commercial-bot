@@ -63,7 +63,7 @@ import pickFromMentions from "../commandHandlers/randomGames/pickFromMentions.js
  */
 export default async function (interaction, pool, client) {
     if (interaction.commandName === 'info') {
-        await handleInfoCommand(interaction, pool);
+        await handleInfoCommand(interaction, pool, false);
     }
 
     if (interaction.commandName === 'last_positive_reviews') {
@@ -170,5 +170,9 @@ export default async function (interaction, pool, client) {
 
     if (interaction.commandName === 'get_codex') {
         await handleGetCodex(interaction, pool);
+    }
+
+    if (interaction.commandName === "Получить инфо или оставить отзыв") {
+        await handleInfoCommand(interaction, pool, true);
     }
 }
