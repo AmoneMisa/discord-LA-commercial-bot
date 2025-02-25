@@ -8,7 +8,7 @@ import reviewNotificationsToggle from "../commandHandlers/ranks/reviewNotificati
 
 export default async function (interaction, pool) {
     if (interaction.commandName === 'info') {
-        await handleInfoCommand(interaction, pool);
+        await handleInfoCommand(interaction, pool, false);
     }
 
     if (interaction.commandName === 'last_positive_reviews') {
@@ -36,5 +36,9 @@ export default async function (interaction, pool) {
 
     if (interaction.commandName === 'review_notifications_toggle') {
         await reviewNotificationsToggle(interaction, pool);
+    }
+
+    if (interaction.commandName === "Получить инфо или оставить отзыв") {
+        await handleInfoCommand(interaction, pool, true);
     }
 }

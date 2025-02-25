@@ -1,10 +1,15 @@
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from "discord.js";
 import {formatDate} from "../../utils.js";
-import dotenv from 'dotenv';
-dotenv.config();
 
-export default async function (interaction, pool) {
-    const member = interaction.options.getUser('member');
+export default async function (interaction, pool, isContextMenu = false) {
+    let member;
+
+    if (isContextMenu) {
+        member = interaction.targetMessage.author;
+    } else {
+        member = interaction.options.getUser('member');
+    }
+
     if (!member) return interaction.reply({ content: 'Выберите участника.', flags: MessageFlags.Ephemeral });
 
     const userStats = await pool.query('SELECT * FROM users WHERE user_id = $1', [member.id]);
