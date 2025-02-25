@@ -21,17 +21,17 @@ export default async function updateLeaderboard(client, pool) {
         .setFields(
             {
                 name: 'Ранг',
-                value: topSellers.map((user, index) => (index + 1).toString() + '` `\n').join(''),
+                value: topSellers.map((user, index) => (index + 1).toString() + '\n').join(''),
                 inline: true,
             },
             {
                 name: 'User',
-                value: topSellers.map((user, index) =>  `<@${user.user_id}>` + '` `\n').join(''),
+                value: topSellers.map((user, index) =>  `<@${user.user_id}>` + '\n').join(''),
                 inline: true
             },
             {
                 name: 'Rating',
-                value: topSellers.map((user, index) => `${user.rating.toFixed(2)}% (✔ ${user.positive_reviews} / ✘ ${user.negative_reviews})` + '` `\n').join(''),
+                value: topSellers.map((user, index) => `${user.rating.toFixed(2)}% (✔ ${user.positive_reviews} / ✘ ${user.negative_reviews})` + '\n').join(''),
                 inline: true
             }
         )
