@@ -28,6 +28,13 @@
  * @param {object} pgm - Migration builder object provided by the database migration framework.
  */
 export const up = (pgm) => {
+    // Таблица предметов для ставок
+    pgm.createTable("bet_items", {
+        id: { type: "serial", primaryKey: true },
+        name: { type: "varchar", notNull: true },
+        available: { type: "boolean", notNull: true, default: true },
+    });
+
     // Таблица событий ставок
     pgm.createTable("bet_events", {
         id: { type: "serial", primaryKey: true },
@@ -59,17 +66,9 @@ export const up = (pgm) => {
         created_at: { type: "timestamp", default: pgm.func("NOW()"), notNull: true }
     });
 
-    // Таблица предметов для ставок
-    pgm.createTable("bet_items", {
-        id: { type: "serial", primaryKey: true },
-        name: { type: "varchar", notNull: true },
-        available: { type: "boolean", notNull: true, default: true },
-    });
-
     pgm.sql(`
         INSERT INTO settings (key, value)
-        VALUES ('bet_leaderboard_channel_id', ''),
-               ('bet_leaderboard_message_id', '')
+        VALUES ('bet_leaderboard_message_id', '')
     `);
 };
 
