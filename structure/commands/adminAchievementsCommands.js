@@ -1,9 +1,10 @@
-import {SlashCommandBuilder} from "discord.js";
+import {PermissionFlagsBits, SlashCommandBuilder} from "discord.js";
 
 export default [
     new SlashCommandBuilder()
         .setName("adm_achievement")
         .setDescription("Админ команды для достижений")
+        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
         .addSubcommand(subcommand =>
             subcommand.setName("give_achievement_to_user")
                 .setDescription('Выдать достижение пользователю')

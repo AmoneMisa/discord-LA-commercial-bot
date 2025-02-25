@@ -1,9 +1,10 @@
-import {SlashCommandBuilder} from "discord.js";
+import {PermissionFlagsBits, SlashCommandBuilder} from "discord.js";
 
 export default [
     new SlashCommandBuilder()
         .setName('adm_subscription')
         .setDescription('Управление правилами подписок')
+        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
         .addSubcommand(subcommand =>
             subcommand.setName('block_subscription')
                 .setDescription('Запрещает пользователю подписываться на других')
