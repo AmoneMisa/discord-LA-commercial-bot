@@ -28,6 +28,10 @@ export default async function subscribeToBuy(interaction, pool, isContextMenu = 
         return await interaction.reply({content: "Эту команду нельзя применять на ботах", flags: MessageFlags.Ephemeral});
     }
 
+    if (seller.id === interaction.user.id) {
+        return await interaction.reply({content: "Эту команду нельзя применять на самого себя", flags: MessageFlags.Ephemeral});
+    }
+
     const buyerId = interaction.user.id;
     const raid = interaction.options.getString('raid');
 
