@@ -1,7 +1,5 @@
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from "discord.js";
 import {formatDate} from "../../utils.js";
-import dotenv from 'dotenv';
-dotenv.config();
 
 /**
  * Handles an interaction to retrieve and display user statistics, role information, and manage voting buttons.
@@ -19,16 +17,27 @@ dotenv.config();
  *  - Creates and attaches upvote and downvote buttons to the response for further user interaction.
  *  - Sends the response message with the provided statistics and button components as ephemeral.
  */
-export default async function (interaction, pool, isContextMenu = false) {
+export default async function (interaction, pool, isContextMenu = false, isMessageContentMenuCommand = false) {
     let member;
 
     if (isContextMenu) {
-        member = interaction.targetMessage.author;
+        if (isMessageContentMenuCommand) {
+            member = interaction.targetMessage.author;
+        } else {
+            member = interaction.targetUser;
+        }
+
     } else {
         member = interaction.options.getUser('member');
     }
 
-    if (!member) return interaction.reply({ content: 'Выберите участника.', flags: MessageFlags.Ephemeral });
+    if (member.bot) {
+        return await interaction.reply({content: "Эту команду нельзя применять на ботах", flags: MessageFlags.Ephemeral});
+    }
+
+    if (!member) {
+        return await interaction.reply({ content: 'Пользователь не выбран или не найден', flags: MessageFlags.Ephemeral });
+    }
 
     const userStats = await pool.query('SELECT * FROM users WHERE user_id = $1', [member.id]);
     let userData = userStats.rows[0];
