@@ -4,12 +4,10 @@ export default async function worstSellers(interaction, pool) {
     const worstUsers = await pool.query(
         `SELECT user_id, rating, positive_reviews, negative_reviews
          FROM users
-         WHERE user_id IN (
-             SELECT DISTINCT target_user 
-             FROM reviews 
-             WHERE timestamp >= NOW() - INTERVAL '30 days'
-         )
-         ORDER BY rating ASC
+         WHERE user_id IN (SELECT DISTINCT target_user
+                           FROM reviews
+                           WHERE timestamp >= NOW() - INTERVAL '30 days')
+         ORDER BY rating, negative_reviews DESC
          LIMIT 5`
     );
 
@@ -19,7 +17,7 @@ export default async function worstSellers(interaction, pool) {
 
     let message = `📉 **Топ 5 худших продавцов** 📉\n\n`;
     worstUsers.rows.forEach((user, index) => {
-        message += `**${index + 1}.** <@${user.user_id}> - **${user.rating}** рейтинга\n`;
+        message += `**${index + 1}.** <@${user.user_id}> - **${user.negative_reviews}** негативных отзывов из ${user.positive_reviews + user.negative_reviews}\n`;
     });
 
     await interaction.reply({ content: message, flags: MessageFlags.Ephemeral });
