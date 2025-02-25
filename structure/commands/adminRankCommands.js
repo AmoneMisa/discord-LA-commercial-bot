@@ -4,7 +4,7 @@ export default [
     new SlashCommandBuilder()
         .setName('adm_ranks')
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
-        .setDescription('Административные настройки рейтинга')
+        .setDescription('Админ настройки рейтинга')
         .addSubcommand(subcommand =>
             subcommand.setName('set_cooldown')
                 .setDescription('Установить кулдаун на голосование (в минутах)')
@@ -117,4 +117,12 @@ export default [
                 .setDescription('Удалить роль продавца')
                 .addStringOption(option => option.setName('name').setDescription('Название роли').setRequired(true))
         )
+        .addSubcommand(subcommand =>
+        subcommand.setName('set_leaderboard_channel')
+            .setDescription('Устанавливает канал для таблицы лидеров')
+            .addChannelOption(option =>
+                option.setName('channel')
+                    .setDescription('Выберите текстовый канал')
+                    .setRequired(true)
+            ))
 ]

@@ -697,3 +697,7 @@ export async function updateFactionLeaderboard(pool, client) {
         console.error("❌ Ошибка при обновлении таблицы лидеров:", err);
     }
 }
+
+export function getModulesSettings(pool) {
+    return pool.query(`SELECT name, description FROM modules_settings WHERE active = true`);
+}

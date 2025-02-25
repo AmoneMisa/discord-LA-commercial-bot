@@ -8,13 +8,5 @@ export default [
         .addSubcommand(subcommand =>
             subcommand.setName('remove_bots')
                 .setDescription('Удаляет всех ботов из базы данных')
-        ).addSubcommand(subcommand =>
-        subcommand.setName('set_leaderboard_channel')
-            .setDescription('Устанавливает канал для таблицы лидеров')
-            .addChannelOption(option =>
-                option.setName('channel')
-                    .setDescription('Выберите текстовый канал')
-                    .setRequired(true)
-            )
-    )
+        )
 ]

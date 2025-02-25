@@ -1,5 +1,14 @@
-import {ButtonStyle, Events, Client, GatewayIntentBits, InteractionType, MessageFlags, TextInputStyle} from 'discord.js';
+import {
+    ButtonStyle,
+    Events,
+    Client,
+    GatewayIntentBits,
+    InteractionType,
+    MessageFlags,
+    TextInputStyle
+} from 'discord.js';
 import dotenv from 'dotenv';
+
 dotenv.config();
 
 import pkg from 'pg';
@@ -14,7 +23,7 @@ import buttons from "./structure/interactions/buttons.js";
 import modals from "./structure/interactions/modals.js";
 import commands from "./structure/interactions/commands.js";
 import autocomplete from "./structure/interactions/autocomplete.js";
-import {addUserIfNotExists, givePointsForActivity} from "./structure/dbUtils.js";
+import {addUserIfNotExists, getModulesSettings, givePointsForActivity} from "./structure/dbUtils.js";
 import sendRaidResponse from "./structure/commandHandlers/responses/sendRaidResponse.js";
 import createRoles from "./structure/createRoles.js";
 
@@ -46,37 +55,37 @@ const pool = new Pool({connectionString: process.env.DATABASE_URL});
 const client = new Client({intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages]});
 
 client.once('ready', async () => {
-    try{
-    console.log(`Logged in as ${client.user.tag}`);
-    /**
-     * Represents a Discord guild (server) fetched from the client's guild cache.
-     * The guild is retrieved using the unique identifier specified in the
-     * `GUILD_ID` environment variable.
-     *
-     * This variable is used to interact with the specific guild, enabling various
-     * guild-related operations such as fetching members, channels, roles, and other
-     * server-specific data once it is successfully retrieved.
-     *
-     * Note: Ensure that the `GUILD_ID` environment variable contains a valid
-     * guild ID and that the bot is a member of the respective guild.
-     *
-     * @type {Guild | undefined}
-     */
-    const guild = client.guilds.cache.get(process.env.GUILD_ID);
-    if (!guild) {
-        console.error('❌ Guild not found. Проверьте GUILD_ID в .env');
-        return;
-    }
+    try {
+        console.log(`Logged in as ${client.user.tag}`);
+        /**
+         * Represents a Discord guild (server) fetched from the client's guild cache.
+         * The guild is retrieved using the unique identifier specified in the
+         * `GUILD_ID` environment variable.
+         *
+         * This variable is used to interact with the specific guild, enabling various
+         * guild-related operations such as fetching members, channels, roles, and other
+         * server-specific data once it is successfully retrieved.
+         *
+         * Note: Ensure that the `GUILD_ID` environment variable contains a valid
+         * guild ID and that the bot is a member of the respective guild.
+         *
+         * @type {Guild | undefined}
+         */
+        const guild = client.guilds.cache.get(process.env.GUILD_ID);
+        if (!guild) {
+            console.error('❌ Guild not found. Проверьте GUILD_ID в .env');
+            return;
+        }
 
-    await registerCommands();
-    schedulersList(pool, client, guild);
+        await registerCommands(pool);
+        schedulersList(pool, client, guild);
 
         await updateRatings(pool);
         await setRolesByRanks(pool, guild);
         await updateLeaderboard(client, pool);
         await createRoles(pool, guild);
     } catch (e) {
-        console.error('ready:',e);
+        console.error('ready:', e);
     }
 });
 
@@ -133,10 +142,11 @@ async interaction => {
             throw new Error(`Unknown type of interaction: ${interaction.type}`);
         }
     } catch (e) {
-        console.error('interactionCreate:',e);
+        console.error('interactionCreate:', e);
     }
 });
 
+const settings = await getModulesSettings(pool);
 client.on(Events.MessageCreate, /**
  * Handles the incoming message event, performing several operations such as awarding points for activity,
  * managing message-based subscriptions, and sending raid response if applicable.
@@ -148,12 +158,22 @@ client.on(Events.MessageCreate, /**
  */
 async message => {
     try {
-        if (!message.author.bot) {
+        if (message.author.bot) {
+            return
+        }
+
+        if (settings.rows.find(setting => setting.name === 'factions')) {
             await givePointsForActivity(pool, message.author.id, 1);
         }
 
-        await handleMessageSubscription(message, pool, client);
-        await sendRaidResponse(message, pool);
+        if (settings.rows.find(setting => setting.name === 'subscriptions')) {
+            await handleMessageSubscription(message, pool, client);
+        }
+
+        if (settings.rows.find(setting => setting.name === 'fastResponse')) {
+            await sendRaidResponse(message, pool);
+        }
+
     } catch (e) {
         console.error('messageCreate:', e);
     }

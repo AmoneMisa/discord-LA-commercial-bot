@@ -59,6 +59,7 @@ export const up = (pgm) => {
                     ('randomGames', 'Рандомайзер', false),
                     ('registration', 'Система регистрации на ивенты', false),
                     ('achievements', 'Система достижений', false),
+                    ('trade', 'Система обмена', false),
                     ('codex', 'Кодекс - система знаний', false)`);
 
     pgm.sql(`
