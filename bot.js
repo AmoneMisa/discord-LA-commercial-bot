@@ -21,20 +21,24 @@ dotenv.config();
 const client = new Client({intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages]});
 
 client.once('ready', async () => {
-    console.log(`Logged in as ${client.user.tag}`);
-    const guild = client.guilds.cache.get(process.env.GUILD_ID);
-    if (!guild) {
-        console.error('❌ Guild not found. Проверьте GUILD_ID в .env');
-        return;
+    try{
+        console.log(`Logged in as ${client.user.tag}`);
+        const guild = client.guilds.cache.get(process.env.GUILD_ID);
+        if (!guild) {
+            console.error('❌ Guild not found. Проверьте GUILD_ID в .env');
+            return;
+        }
+
+        await registerCommands();
+        schedulersList(pool, client, guild);
+
+        await updateRatings(pool);
+        await setRolesByRanks(pool, guild);
+        await updateLeaderboard(client, pool);
+        await createRoles(pool, guild);
+    } catch (e) {
+        console.error('ready:',e);
     }
-
-    await registerCommands();
-    schedulersList(pool, client, guild);
-
-    await updateRatings(pool);
-    await setRolesByRanks(pool, guild);
-    await updateLeaderboard(client, pool);
-    await createRoles(pool, guild);
 });
 
 client.on('interactionCreate', async interaction => {

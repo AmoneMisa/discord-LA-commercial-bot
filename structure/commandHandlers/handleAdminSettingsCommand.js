@@ -1,7 +1,4 @@
 import {ButtonStyle, MessageFlags} from "discord.js";
-import dotenv from 'dotenv';
-dotenv.config();
-
 import subcommands from './adminCommands/index.js';
 import {toCamelCase} from "../utils.js";
 
