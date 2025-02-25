@@ -21,6 +21,9 @@ import pickRandom from "../commandHandlers/randomGames/pickRandom.js";
 import randomNumber from "../commandHandlers/randomGames/randomNumber.js";
 import rollDice from "../commandHandlers/randomGames/rollDice.js";
 import {handleGetCodex} from "../commandHandlers/codex/handleGetCodex.js";
+import pickFromChannel from "../commandHandlers/randomGames/pickFromChannel.js";
+import pickOnlineFromChannel from "../commandHandlers/randomGames/pickOnlineFromChannel.js";
+import pickFromMentions from "../commandHandlers/randomGames/pickFromMentions.js";
 
 /**
  * Handles multiple interaction commands based on the command name and subcommand provided in the interaction object.
@@ -143,6 +146,18 @@ export default async function (interaction, pool, client) {
 
     if (interaction.commandName === 'pick_random') {
         await pickRandom(interaction);
+    }
+
+    if (interaction.commandName === 'pick_from_channel') {
+        await pickFromChannel(interaction);
+    }
+
+    if (interaction.commandName === 'pick_online_from_channel') {
+        await pickOnlineFromChannel(interaction);
+    }
+
+    if (interaction.commandName === 'pick_from_mentions') {
+        await pickFromMentions(interaction);
     }
 
     if (interaction.commandName === 'random_number') {

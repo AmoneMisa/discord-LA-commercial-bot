@@ -204,3 +204,13 @@ export async function delay(ms) {
     const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
     await delay(1000);
 }
+
+/**
+ * Randomly shuffles the elements of an array in place.
+ *
+ * @param {Array} array - The array to be shuffled.
+ * @return {Array} The shuffled array.
+ */
+export function shuffleArray(array) {
+    return array.sort(() => Math.random() - 0.5);
+}
