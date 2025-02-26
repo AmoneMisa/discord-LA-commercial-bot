@@ -1,5 +1,6 @@
 import {MessageFlags, PermissionsBitField} from "discord.js";
 import {sendPaginatedReviews} from "../../utils.js";
+import updateRatings from "../../updateRatings.js";
 
 /**
  * Handles an interaction to delete a review from the database and updates the user's review statistics.
@@ -64,7 +65,7 @@ export default async function (interaction, pool) {
         await pool.query('UPDATE users SET negative_reviews = negative_reviews - 1 WHERE user_id = $1 AND negative_reviews > 0', [userId]);
     }
 
-    await pool.query('UPDATE users SET rating = positive_reviews - negative_reviews WHERE user_id = $1', [userId]);
+    await updateRatings(pool);
 
-    await sendPaginatedReviews(interaction, pool, parsedPage, userId);
+    await sendPaginatedReviews(interaction, pool, parsedPage, isPositive || null, userId);
 }
