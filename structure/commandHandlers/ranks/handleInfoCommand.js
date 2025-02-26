@@ -15,12 +15,12 @@ export default async function (interaction, pool, isContextMenu = false, isMessa
         member = interaction.options.getUser('member');
     }
 
-    if (member.bot) {
-        return await interaction.reply({content: "Эту команду нельзя применять на ботах", flags: MessageFlags.Ephemeral});
-    }
-
     if (!member) {
         return await interaction.reply({ content: 'Пользователь не выбран или не найден', flags: MessageFlags.Ephemeral });
+    }
+
+    if (member.bot) {
+        return await interaction.reply({content: "Эту команду нельзя применять на ботах", flags: MessageFlags.Ephemeral});
     }
 
     const userStats = await pool.query('SELECT * FROM users WHERE user_id = $1', [member.id]);
