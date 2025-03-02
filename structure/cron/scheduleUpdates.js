@@ -19,10 +19,13 @@ import {cleanOldData, givePointsForActivity, resetActivityPoints, updateFactionL
  *                         the frequency is invalid.
  */
 export async function scheduleRankUpdates(frequency, pool, guild) {
-    frequency = frequency || await pool.query('SELECT value FROM settings WHERE key = \'rank_update_frequency\'');
+    if (!frequency) {
+        frequency = await pool.query('SELECT value FROM settings WHERE key = \'rank_update_frequency\'');
+    }
+
     let scheduleTime;
 
-    if (frequency) {
+    if (frequency.rows[0].value) {
         switch (frequency) {
             case '1d':
                 scheduleTime = '0 0 * * *';
@@ -72,8 +75,9 @@ export function schedulersList(pool, client, guild) {
 
         await updateRatings(pool);
         await updateLeaderboard(client, pool);
-        await scheduleRankUpdates(null, pool, guild);
     });
+
+    scheduleRankUpdates(null, pool, guild);
 
     cron.schedule('* * * * *', async () => {
         await removeExpiredLots(pool, client);
