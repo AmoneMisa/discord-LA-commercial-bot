@@ -1,15 +1,15 @@
-import schedule from 'node-schedule';
+import schedule from 'node-cron';
 import setRolesByRanks from "../setRolesByRanks.js";
 import updateRatings from "../updateRatings.js";
 import updateLeaderboard from "../commandHandlers/updateLeaderboard.js";
 
 export async function scheduleRankUpdates(frequency, pool, guild) {
-    await schedule.gracefulShutdown(); // Очищаем старые задачи
-
-    frequency = frequency || await pool.query('SELECT value FROM settings WHERE key = \'rank_update_frequency\'');
+    if (!frequency) {
+        frequency = await pool.query('SELECT value FROM settings WHERE key = \'rank_update_frequency\'');
+    }
     let scheduleTime;
-
-    if (frequency) {
+    console.log(frequency.rows[0]);
+    if (frequency.rows[0]) {
         switch (frequency) {
             case '1d':
                 scheduleTime = '0 0 * * *';
@@ -43,6 +43,7 @@ export function schedulersList(pool, client, guild) {
     schedule.scheduleJob('0 0 * * *', async () => {
         await updateRatings(pool);
         await updateLeaderboard(client, pool);
-        await scheduleRankUpdates(null, pool, guild);
     });
+
+    scheduleRankUpdates(null, pool, guild);
 }
