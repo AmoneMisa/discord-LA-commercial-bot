@@ -19,8 +19,8 @@ export default async function sendReviewNotification(pool, targetUserId, reviewe
         if (targetUser) {
             await targetUser.send({
                 content: `${emoji} **Вы получили ${type} отзыв от <@${reviewer.id}>!**\n\n> ${reviewText || "_Без комментария_"}`
-            }).catch(() => {
-                console.log(`Не удалось отправить уведомление пользователю ${targetUserId}`);
+            }).catch((e) => {
+                console.log(`Не удалось отправить уведомление пользователю: ${targetUserId}`, `Объект пользователя: ${targetUser}`, e);
             });
         }
     } catch (err) {

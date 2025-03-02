@@ -9,8 +9,8 @@ export async function scheduleRankUpdates(frequency, pool, guild) {
     }
 
     let scheduleTime;
-    console.log(frequency.rows[0]);
-    if (frequency.rows[0]) {
+
+    if (frequency.rows[0].value) {
         switch (frequency) {
             case '1d':
                 scheduleTime = '0 0 * * *';
@@ -36,7 +36,7 @@ export async function scheduleRankUpdates(frequency, pool, guild) {
     }
 
     cron.schedule(scheduleTime, async () => {
-        setRolesByRanks(pool, guild);
+        await setRolesByRanks(pool, guild);
     });
 }
 

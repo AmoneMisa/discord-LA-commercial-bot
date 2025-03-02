@@ -18,7 +18,6 @@ import createRoles from "./structure/createRoles.js";
 const {Pool} = pkg;
 const pool = new Pool({connectionString: process.env.DATABASE_URL});
 
-
 const client = new Client({intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages]});
 
 client.once('ready', async () => {
