@@ -1,4 +1,4 @@
-import schedule from 'node-cron';
+import cron from "node-cron";
 import setRolesByRanks from "../setRolesByRanks.js";
 import updateRatings from "../updateRatings.js";
 import updateLeaderboard from "../commandHandlers/updateLeaderboard.js";
@@ -7,6 +7,7 @@ export async function scheduleRankUpdates(frequency, pool, guild) {
     if (!frequency) {
         frequency = await pool.query('SELECT value FROM settings WHERE key = \'rank_update_frequency\'');
     }
+
     let scheduleTime;
     console.log(frequency.rows[0]);
     if (frequency.rows[0]) {
@@ -34,13 +35,13 @@ export async function scheduleRankUpdates(frequency, pool, guild) {
         }
     }
 
-    schedule.scheduleJob(scheduleTime, async () => {
+    cron.schedule(scheduleTime, async () => {
         setRolesByRanks(pool, guild);
     });
 }
 
 export function schedulersList(pool, client, guild) {
-    schedule.scheduleJob('0 0 * * *', async () => {
+    cron.schedule('0 0 * * *', async () => {
         await updateRatings(pool);
         await updateLeaderboard(client, pool);
     });
