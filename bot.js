@@ -26,6 +26,7 @@ import autocomplete from "./structure/interactions/autocomplete.js";
 import {addUserIfNotExists, getModulesSettings, givePointsForActivity} from "./structure/dbUtils.js";
 import sendRaidResponse from "./structure/commandHandlers/responses/sendRaidResponse.js";
 import createRoles from "./structure/createRoles.js";
+import errorsHandler from "./errorsHandler.js";
 
 const {Pool} = pkg;
 /**
@@ -55,6 +56,7 @@ const pool = new Pool({connectionString: process.env.DATABASE_URL});
 const client = new Client({intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages]});
 
 client.once('ready', async () => {
+    try{
     try {
         console.log(`Logged in as ${client.user.tag}`);
         /**
@@ -85,7 +87,8 @@ client.once('ready', async () => {
         await updateLeaderboard(client, pool);
         await createRoles(pool, guild);
     } catch (e) {
-        console.error('ready:', e);
+        console.error('ready:',e);
+        errorsHandler.error(e.message);
     }
 });
 
@@ -142,7 +145,8 @@ async interaction => {
             throw new Error(`Unknown type of interaction: ${interaction.type}`);
         }
     } catch (e) {
-        console.error('interactionCreate:', e);
+        console.error('interactionCreate:',e);
+        errorsHandler.error(e.message);
     }
 });
 
