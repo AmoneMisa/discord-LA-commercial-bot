@@ -19,7 +19,6 @@
     "node-cron": "^3.0.3",
     "node-html-parser": "^7.0.1",
     "node-pg-migrate": "^7.9.1",
-    "node-schedule": "^2.1.1",
     "path": "^0.12.7",
     "pg": "^8.13.3"
   }
