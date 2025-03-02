@@ -31,35 +31,35 @@ export default async function getCommands(pool) {
 
     for (const module of settings.rows) {
         if (module.name === 'ranks') {
-            commandsArray.push([...adminRankCommands, ...userRanksCommands]);
+            commandsArray = [...commandsArray, ...adminRankCommands, ...userRanksCommands];
         }
 
         if (module.name === 'trade') {
-            commandsArray.push([...userTradeCommands]);
+            commandsArray = [...commandsArray, ...userTradeCommands];
         }
 
         if (module.name === 'bets') {
-            commandsArray.push([...adminBetsCommands]);
+            commandsArray = [...commandsArray, ...adminBetsCommands];
         }
 
         if (module.name === 'subscriptions') {
-            commandsArray.push([...userSubscriptionCommands, ...adminSubscriptionCommands]);
+            commandsArray = [...commandsArray, ...userSubscriptionCommands, ...adminSubscriptionCommands];
         }
 
         if (module.name === 'profiles') {
-            commandsArray.push([...userProfileCommands]);
+            commandsArray = [...commandsArray, ...userProfileCommands];
         }
 
         if (module.name === 'registration') {
-            commandsArray.push([...adminRegistrationCommands]);
+            commandsArray = [...commandsArray, ...adminRegistrationCommands];
         }
 
         if (module.name === 'achievements') {
-            commandsArray.push([...adminAchievementsCommands]);
+            commandsArray = [...commandsArray, ...adminAchievementsCommands];
         }
 
         if (module.name === 'codex') {
-            commandsArray.push([...adminCodexCommands, ...userCodexCommands]);
+            commandsArray = [...commandsArray, ...adminCodexCommands, ...userCodexCommands];
         }
     }
 

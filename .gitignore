@@ -3,3 +3,4 @@ node_modules
 .idea
 discord-commercions-bot.iml
 /static/achievements
+logs

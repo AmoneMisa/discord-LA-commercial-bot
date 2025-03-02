@@ -1,6 +1,6 @@
 import {REST, Routes} from "discord.js";
-import commands from "./commands/index.js";
 import contextMenuCommands from "./contextMenuCommands.js";
+import getCommands from "./commands/index.js";
 
 /**
  * Registers and updates application commands (slash commands and context menu commands) for the Discord bot.
@@ -13,7 +13,7 @@ export default async function registerCommands(pool) {
 
     try {
         console.log('Обновление (регистрация) команд...');
-        await rest.put(Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID), { body: [...commands, ...contextMenuCommands].map(cmd => {
+        await rest.put(Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID), { body: [...await getCommands(pool), ...contextMenuCommands].map(cmd => {
             try {
                 return cmd.toJSON();
             } catch (e) {
