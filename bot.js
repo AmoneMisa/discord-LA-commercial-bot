@@ -56,7 +56,6 @@ const pool = new Pool({connectionString: process.env.DATABASE_URL});
 const client = new Client({intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages]});
 
 client.once('ready', async () => {
-    try{
     try {
         console.log(`Logged in as ${client.user.tag}`);
         /**
@@ -90,7 +89,7 @@ client.once('ready', async () => {
         console.error('ready:',e);
         errorsHandler.error(e.message);
     }
-});
+})
 
 client.on('interactionCreate', /**
  * Handles different types of interactions in a Discord bot client.
@@ -180,6 +179,7 @@ async message => {
 
     } catch (e) {
         console.error('messageCreate:', e);
+        errorsHandler.error(e.message);
     }
 });
 
