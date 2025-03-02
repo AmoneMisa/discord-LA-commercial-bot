@@ -1,6 +1,6 @@
 import {ButtonBuilder, ButtonStyle, ActionRowBuilder, MessageFlags} from "discord.js";
 
-export async function handleCreateEvent(interaction, pool) {
+export default async function (interaction, pool) {
     const messageId = interaction.options.getString("message_id");
     const startTime = interaction.options.getString("start_time");
     const endTime = interaction.options.getString("end_time");

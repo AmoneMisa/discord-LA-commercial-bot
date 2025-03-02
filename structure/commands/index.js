@@ -11,6 +11,7 @@ import userRanksCommands from "./userRanksCommands.js";
 import userTradeCommands from "./userTradeCommands.js";
 import userCodexCommands from "./userCodexCommands.js";
 import {getModulesSettings} from "../dbUtils.js";
+import userBetsCommands from "./userBetsCommands.js";
 
 /***
  ('ranks', 'Система рейтинга', true),
@@ -39,7 +40,7 @@ export default async function getCommands(pool) {
         }
 
         if (module.name === 'bets') {
-            commandsArray = [...commandsArray, ...adminBetsCommands];
+            commandsArray = [...commandsArray, ...adminBetsCommands, ...userBetsCommands];
         }
 
         if (module.name === 'subscriptions') {

@@ -24,6 +24,8 @@ import {handleGetCodex} from "../commandHandlers/codex/handleGetCodex.js";
 import pickFromChannel from "../commandHandlers/randomGames/pickFromChannel.js";
 import pickOnlineFromChannel from "../commandHandlers/randomGames/pickOnlineFromChannel.js";
 import pickFromMentions from "../commandHandlers/randomGames/pickFromMentions.js";
+import createBetHandler from "../commandHandlers/bets/createBetHandler.js";
+import updateBet from "../commandHandlers/bets/updateBet.js";
 
 /**
  * Handles various Discord interaction commands based on the command name and subcommands.
@@ -168,5 +170,13 @@ export default async function (interaction, pool, client) {
 
     if (interaction.commandName === 'Последние отзывы пользователя') {
         await lastReviewsCommand(interaction, pool, true, interaction.isMessageContextMenuCommand());
+    }
+
+    if (interaction.commandName === 'create_bet') {
+        await createBetHandler(interaction, pool);
+    }
+
+    if (interaction.commandName === 'update_bet') {
+        await updateBet(interaction, pool);
     }
 }

@@ -32,6 +32,10 @@ import achievementGiveMentions from "./achievementGiveMentions.js";
 import codexAdd from "./codexAdd.js";
 import codexEdit from "./codexEdit.js";
 import codexDelete from "./codexDelete.js";
+import createBetEvent from "./createBetEvent.js";
+import deleteBetEvent from "./deleteBetEvent.js";
+import createRegistrationEvent from "./createRegistrationEvent.js";
+import setBetNotificationChannel from "./setBetNotificationChannel.js";
 
 export default {
     setCooldown,
@@ -68,4 +72,8 @@ export default {
     codexAdd,
     codexEdit,
     codexDelete,
+    createBetEvent,
+    deleteBetEvent,
+    createRegistrationEvent,
+    setBetNotificationChannel
 }

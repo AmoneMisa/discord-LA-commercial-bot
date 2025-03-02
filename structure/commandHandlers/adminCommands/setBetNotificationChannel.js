@@ -1,3 +1,5 @@
+import {MessageFlags} from "discord.js";
+
 /**
  * Updates or inserts a record in the `bet_settings` table with the specified guild and channel IDs,
  * setting the notification channel for bet updates. If a record for the given guild already exists,
@@ -11,15 +13,12 @@
  * @throws {Error} Throws an error if the database query fails.
  */
 export default async function (interaction, pool) {
-    const guildId = interaction.guild.id;
     const channelId = interaction.options.getChannel("channel").id;
 
     await pool.query(
-        `INSERT INTO bet_settings (guild_id, channel_id) 
-         VALUES ($1, $2)
-         ON CONFLICT (guild_id) DO UPDATE SET channel_id = EXCLUDED.channel_id`,
-        [guildId, channelId]
+        `UPDATE settings SET value = $1 WHERE key = 'bet_leaderboard_channel_id';`,
+        [channelId]
     );
 
-    await interaction.reply({ content: `📢 Канал для уведомлений о ставках установлен: <#${channelId}>`, ephemeral: false });
+    await interaction.reply({ content: `📢 Канал для уведомлений о ставках установлен: <#${channelId}>`, flags: MessageFlags.Ephemeral });
 }

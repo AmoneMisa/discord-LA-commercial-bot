@@ -54,6 +54,7 @@ export const up = (pgm) => {
         item_id: { type: "integer", references: "bet_items(id)", onDelete: "SET NULL", notNull: false },
         amount: { type: "integer", notNull: true, check: "amount > 0" },
         odds: { type: "decimal(5,2)", notNull: true, check: "odds > 0" },
+        server: { type: "varchar", check: "server IN (Кратос, Альдеран)", default: "Кратос" },
         created_at: { type: "timestamp", default: pgm.func("NOW()"), notNull: true }
     });
 
@@ -68,7 +69,8 @@ export const up = (pgm) => {
 
     pgm.sql(`
         INSERT INTO settings (key, value)
-        VALUES ('bet_leaderboard_message_id', '')
+        VALUES ('bet_leaderboard_message_id', ''),
+               ('bet_leaderboard_channel_id', '')
     `);
 };
 

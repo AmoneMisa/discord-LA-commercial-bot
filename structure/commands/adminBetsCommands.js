@@ -27,7 +27,11 @@ export default [
                     option.setName("end_time")
                         .setDescription("Дата и время завершения (YYYY-MM-DD HH:MM)")
                         .setRequired(true)
-                )
+                ) .addStringOption(option =>
+                option.setName("participants")
+                    .setDescription("Ники игроков, на которых можно ставить (через запятую)")
+                    .setRequired(true)
+            )
         )
         .addSubcommand(subcommand =>
             subcommand.setName("delete")

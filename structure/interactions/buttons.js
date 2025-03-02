@@ -11,6 +11,10 @@ import reviewVote from "../commandHandlers/ranks/reviewVote.js";
 import handleSendRaidResponseJoin from "../commandHandlers/responses/handleSendRaidResponseJoin.js";
 import handleBuyButtonsResponse from "../commandHandlers/responses/createModalBuyResponse.js";
 import handleSendRaidResponseBuy from "../commandHandlers/responses/handleSendRaidResponseBuy.js";
+import betContinueHandler from "../commandHandlers/bets/betContinueHandler.js";
+import betTargetHandler from "../commandHandlers/bets/betTargetHandler.js";
+import handleBetActionButton from "../commandHandlers/bets/handleBetActionButton.js";
+import handleBetPagination from "../commandHandlers/bets/handleBetPagination.js";
 
 /**
  * Handles various types of button interactions in a Discord bot and delegates
@@ -89,5 +93,21 @@ export default async function (interaction, pool, client) {
 
     if (interaction.customId.startsWith("response_raid_buy_")) {
         await handleSendRaidResponseBuy(interaction, pool, client);
+    }
+
+    if (interaction.customId.startsWith("bet_continue")) {
+        await betContinueHandler(interaction, pool);
+    }
+
+    if (interaction.customId.startsWith("bet_target")) {
+        await betTargetHandler(interaction, pool);
+    }
+
+    if (interaction.customId.startsWith("bet_accept") || interaction.customId.startsWith("bet_reject")) {
+        await handleBetActionButton(interaction, pool);
+    }
+
+    if (interaction.customId.startsWith("bet_page_")) {
+        await handleBetPagination(interaction, pool);
     }
 }
