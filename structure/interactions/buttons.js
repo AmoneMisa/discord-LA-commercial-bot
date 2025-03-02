@@ -51,6 +51,18 @@ export default async function (interaction, pool, client) {
     }
 
     if (interaction.customId.startsWith('upvote_') || interaction.customId.startsWith('downvote_')) {
+        const [action, userId] = interaction.customId.split('_');
+        const reviewerId = interaction.user.id;
+
+        const blockedReviewer = await pool.query('SELECT * FROM blocked_reviewers WHERE user_id = $1', [reviewerId]);
+        if (blockedReviewer.rows.length > 0) {
+            return interaction.reply({
+                content: '🚫 Вы не можете оставлять отзывы, так как вам это запрещено.',
+                flags: MessageFlags.Ephemeral
+            });
+        }
+
+    if (interaction.customId.startsWith('upvote_') || interaction.customId.startsWith('downvote_')) {
         await reviewVote(interaction, pool);
     }
 
@@ -94,6 +106,13 @@ export default async function (interaction, pool, client) {
     if (interaction.customId.startsWith("response_raid_buy_")) {
         await handleSendRaidResponseBuy(interaction, pool, client);
     }
+        if (interaction.customId.startsWith("bet_continue")) {
+            await betContinueHandler(interaction, pool);
+        }
+
+        if (interaction.customId.startsWith("bet_target")) {
+            await betTargetHandler(interaction, pool);
+        }
 
     if (interaction.customId.startsWith("bet_accept") || interaction.customId.startsWith("bet_reject")) {
         await handleBetActionButton(interaction, pool);
@@ -102,4 +121,4 @@ export default async function (interaction, pool, client) {
     if (interaction.customId.startsWith("bet_page_")) {
         await handleBetPagination(interaction, pool);
     }
-}
+}}

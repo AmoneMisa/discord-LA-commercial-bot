@@ -1,6 +1,5 @@
 import {MessageFlags} from "discord.js";
-import {getActiveEvent, parseDateToTimestamp} from "../../utils.js";
-import moment from "moment";
+
 /**
  * Creates a new bet event and saves it in the database, then sends a reply to the interaction.
  *
@@ -11,10 +10,11 @@ import moment from "moment";
  * @return {Promise<void>} A promise that resolves once the bet event is created and a response is sent.
  */
 export default async function (interaction, pool) {
-    const isEventExist = await getActiveEvent(pool, true);
+    const result = await pool.query("SELECT * FROM bets_events");
+    const isEventExist = result.rows.find(_event => _event.end_time < new Date().getTime());
 
     if (isEventExist) {
-        await interaction.reply({content: "Событие уже существует", flags: MessageFlags.Ephemeral });
+        await interaction.reply("Событие уже существует");
         return;
     }
 
@@ -28,12 +28,12 @@ export default async function (interaction, pool) {
     participants = [...new Set(participants)];
 
     if (participants.length === 0) {
-        return interaction.reply({ content: "⚠ Ошибка: Список участников не может быть пустым.", flags: MessageFlags.Ephemeral });
+        return interaction.reply({ content: "⚠ Ошибка: Список участников не может быть пустым.", ephemeral: true });
     }
     await pool.query(
-        `INSERT INTO bet_events (name, description, start_time, end_time, participants) 
-         VALUES ($1, $2, to_timestamp($3), to_timestamp($4), $5)`,
-        [name, description, parseDateToTimestamp(startTime) / 1000, parseDateToTimestamp(endTime) / 1000, participants]
+        `INSERT INTO bet_events (name, description, start_time, end_time) 
+         VALUES ($1, $2, $3, $4)`,
+        [name, description, startTime, endTime]
     );
 
     await interaction.reply({ content: `✅ **Событие "${name}" создано!**\n📌 **Описание:** ${description}\n🕒 **Срок:** ${startTime} - ${endTime}\n👥 **Участники:** ${participants.join(", ")}`,

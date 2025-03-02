@@ -1,13 +1,9 @@
-import {getActiveEvent} from "../../utils.js";
-
 export default async function (pool, channel, eventId) {
-    const event = await getActiveEvent(pool);
-    if (!event) {
-        return;
-    }
+    const event = await pool.query("SELECT * FROM bets_events WHERE id = $1", [eventId]);
+    if (event.rowCount === 0) return;
 
     const winners = await pool.query(
-        "SELECT user_id, target, amount FROM bets WHERE event_id = $1 ORDER BY amount DESC",
+        "SELECT user_id, choice, amount FROM bets WHERE event_id = $1 ORDER BY amount DESC",
         [eventId]
     );
 
