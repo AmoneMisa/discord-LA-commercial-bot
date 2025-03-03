@@ -62,7 +62,6 @@ export default async function (interaction, pool, client) {
             });
         }
 
-    if (interaction.customId.startsWith('upvote_') || interaction.customId.startsWith('downvote_')) {
         await reviewVote(interaction, pool);
     }
 
@@ -106,13 +105,13 @@ export default async function (interaction, pool, client) {
     if (interaction.customId.startsWith("response_raid_buy_")) {
         await handleSendRaidResponseBuy(interaction, pool, client);
     }
-        if (interaction.customId.startsWith("bet_continue")) {
-            await betContinueHandler(interaction, pool);
-        }
+    if (interaction.customId.startsWith("bet_continue")) {
+        await betContinueHandler(interaction, pool);
+    }
 
-        if (interaction.customId.startsWith("bet_target")) {
-            await betTargetHandler(interaction, pool);
-        }
+    if (interaction.customId.startsWith("bet_target")) {
+        await betTargetHandler(interaction, pool);
+    }
 
     if (interaction.customId.startsWith("bet_accept") || interaction.customId.startsWith("bet_reject")) {
         await handleBetActionButton(interaction, pool);
@@ -121,4 +120,4 @@ export default async function (interaction, pool, client) {
     if (interaction.customId.startsWith("bet_page_")) {
         await handleBetPagination(interaction, pool);
     }
-}}
+}

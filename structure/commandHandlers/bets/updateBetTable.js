@@ -4,7 +4,7 @@ export default async function (pool, channel, page = 1) {
     const messageIdResult = pool.query(`SELECT * FROM settings WHERE key = 'bet_leaderboard_message_id'`);
     const messageId = messageIdResult.rows[0].value;
 
-    const event = await pool.query("SELECT * FROM bets_events");
+    const event = await pool.query("SELECT * FROM bet_events");
     if (event.rows[event.rows.length - 1].end_time < new Date().getTime()) {
         return;
     }

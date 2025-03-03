@@ -1,35 +1,37 @@
-import {ActionRowBuilder, ButtonBuilder, ButtonStyle} from "discord.js";
+import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from "discord.js";
+import {getActiveEvent} from "../../utils.js";
+import {getCurrentUserOdd} from "../../dbUtils.js";
 
 export default async function (interaction, pool) {
-    const targetId = interaction.values[0];
     const userId = interaction.user.id;
-    const nickname = interaction.message.content.match(/ник: \*\*(.+?)\*\*/)[1];
-    const server = interaction.message.content.match(/сервер: \*\*(.+?)\*\*/)[1];
-    const betAmount = parseInt(interaction.message.content.match(/ставка: \*\*(\d+)\*\*/)[1], 10);
-
-    await pool.query(`INSERT INTO bets (user_id, target_user_id, amount, server) VALUES ($1, $2, $3, $4, $5)`,
-        [userId, nickname, targetId, betAmount, server]);
+    const [, , nickname, betAmount, server] = interaction.customId.split("_");
+    const target = interaction.values[0];
+    const event = await getActiveEvent(pool);
+    await pool.query(`INSERT INTO bets (event_id, user_id, nickname, amount, server, target, odds) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+        [event.id, userId, nickname, betAmount, server, target, await getCurrentUserOdd(pool, event.id, userId)]);
 
     await interaction.update({
-        content: `✅ Ваша ставка в **${betAmount}** на **${nickname}** (сервер **${server}**) принята!`,
-        components: []
+        content: `✅ Ваша ставка в **${betAmount}** с персонажа **${nickname}** (сервер **${server}**) на игрока ${target} отправлена в обработку!`,
+        components: [],
+        flags: MessageFlags.Ephemeral
     });
 
-    const settings = await pool.query("SELECT bet_info_private_channel_id FROM settings WHERE key = 'bet_info_private_channel_id'");
+    const settings = await pool.query("SELECT * FROM settings WHERE key = 'bet_info_private_channel_id'");
     const channelId = settings.rows[0].value;
 
     if (channelId) {
         const adminChannel = interaction.guild.channels.fetch(channelId);
+
         await adminChannel.send({
-            content: `🔔 **Новая ставка!**\n\n**Игрок:** <@${userId}>\n**Ник:** ${nickname}\n**Сервер:** ${server}\n**Ставка:** ${betAmount}\n**Цель:** <@${targetId}>`,
+            content: `🔔 **Новая ставка!**\n\n**Игрок:** <@${userId}>\n**Ник:** ${nickname}\n**Сервер:** ${server}\n**Ставка:** ${betAmount}\n**Цель:** ${target}`,
             components: [
                 new ActionRowBuilder().addComponents(
-                    new ButtonBuilder().setCustomId(`accept_bet_${userId}`).setLabel("✅ Принять").setStyle(ButtonStyle.Success),
-                    new ButtonBuilder().setCustomId(`reject_bet_${userId}`).setLabel("❌ Отклонить").setStyle(ButtonStyle.Danger)
+                    new ButtonBuilder().setCustomId(`bet_accept_${userId}_${event.id}`).setLabel("✅ Принять").setStyle(ButtonStyle.Success),
+                    new ButtonBuilder().setCustomId(`bet_reject_${userId}_${event.id}`).setLabel("❌ Отклонить").setStyle(ButtonStyle.Danger)
                 )
             ]
         });
     } else {
-        await interaction.user.send(`🔔 Ваша ставка в **${betAmount}** была отправлена на рассмотрение.`);
+        throw new Error("Не найден канал с таким id:", channelId);
     }
 }
