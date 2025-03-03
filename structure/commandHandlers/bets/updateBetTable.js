@@ -1,19 +1,24 @@
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle} from "discord.js";
+import {formatDateToCustomString, getActiveEvent} from "../../utils.js";
 
 export default async function (pool, channel, page = 1) {
     const messageIdResult = pool.query(`SELECT * FROM settings WHERE key = 'bet_leaderboard_message_id'`);
-    const messageId = messageIdResult.rows[0].value;
+    let messageId;
 
-    const event = await pool.query("SELECT * FROM bet_events");
-    if (event.rows[event.rows.length - 1].end_time < new Date().getTime()) {
+    if (messageIdResult?.rows?.length && messageIdResult?.rows[0]?.value) {
+        messageId = messageIdResult.rows[0].value;
+    }
+
+    const event = await getActiveEvent(pool);
+    if (!event) {
         return;
     }
 
-    const bets = await pool.query("SELECT user_id, choice, amount FROM bets WHERE event_id = $1 ORDER BY amount DESC", [event.id]);
-    const targets = await pool.query("SELECT DISTINCT choice FROM bets WHERE event_id = $1", [event.id]);
+    const bets = await pool.query("SELECT user_id, target, amount FROM bets WHERE event_id = $1 ORDER BY amount DESC", [event.id]);
+    const targets = await pool.query("SELECT DISTINCT target FROM bets WHERE event_id = $1", [event.id]);
 
     if (bets.rowCount === 0) {
-        const emptyMsg = `🎲 **${event.rows[0].name}**\n📅 **Ставки открыты с ${event.rows[0].start_time} по ${event.rows[0].end_time}**\n\n❌ **Пока нет ставок.**`;
+        const emptyMsg = `🎲 **${event.name}**\n📅 **Ставки открыты с ${formatDateToCustomString(event.start_time)} по ${formatDateToCustomString(event.end_time)}**\n\n❌ **Пока нет ставок.**`;
         if (messageId) {
             const msg = await channel.messages.fetch(messageId);
             await msg.edit(emptyMsg);
@@ -27,8 +32,8 @@ export default async function (pool, channel, page = 1) {
     let totalBets = bets.rows.reduce((sum, b) => sum + b.amount, 0);
     let targetOdds = {};
     targets.rows.forEach(target => {
-        let sumOnTarget = bets.rows.filter(b => b.choice === target.choice).reduce((sum, b) => sum + b.amount, 0);
-        targetOdds[target.choice] = (totalBets / sumOnTarget).toFixed(2);
+        let sumOnTarget = bets.rows.filter(b => b.target === target.target).reduce((sum, b) => sum + b.amount, 0);
+        targetOdds[target.target] = (totalBets / sumOnTarget).toFixed(2);
     });
 
     const perPage = 20;
@@ -37,7 +42,7 @@ export default async function (pool, channel, page = 1) {
     const endIndex = startIndex + perPage;
     const paginatedBets = bets.rows.slice(startIndex, endIndex);
 
-    let embedContent = `🎲 **${event.rows[0].name}**\n📅 **Ставки открыты с ${event.rows[0].start_time} по ${event.rows[0].end_time}**\n\n`;
+    let embedContent = `🎲 **${event.name}**\n📅 **Ставки открыты с ${formatDateToCustomString(event.start_time)} по ${formatDateToCustomString(event.end_time)}**\n\n`;
     embedContent += "**Текущие коэффициенты:**\n";
 
     for (const [target, odds] of Object.entries(targetOdds)) {
@@ -47,14 +52,14 @@ export default async function (pool, channel, page = 1) {
     embedContent += `\n💰 **Таблица ставок (стр. ${page}/${totalPages})**:\n`;
 
     paginatedBets.forEach((bet, index) => {
-        embedContent += `**${startIndex + index + 1}.** <@${bet.user_id}> поставил **${bet.amount}** на **${bet.choice}** (возможный выигрыш: ${(bet.amount * targetOdds[bet.choice]).toFixed(2)})\n`;
+        embedContent += `**${startIndex + index + 1}.** <@${bet.user_id}> поставил **${bet.amount}** на **${bet.target}** (возможный выигрыш: ${(Math.ceil(bet.amount * targetOdds[bet.target]))})\n`;
     });
 
     const row = new ActionRowBuilder();
     if (page > 1) {
         row.addComponents(
             new ButtonBuilder()
-                .setCustomId(`bet_page_${eventId}_${page - 1}`)
+                .setCustomId(`bet_page_${page - 1}`)
                 .setLabel("⬅️ Назад")
                 .setStyle(ButtonStyle.Primary)
         );
@@ -62,7 +67,7 @@ export default async function (pool, channel, page = 1) {
     if (page < totalPages) {
         row.addComponents(
             new ButtonBuilder()
-                .setCustomId(`bet_page_${eventId}_${page + 1}`)
+                .setCustomId(`bet_page_${page + 1}`)
                 .setLabel("➡️ Вперёд")
                 .setStyle(ButtonStyle.Primary)
         );
@@ -72,6 +77,7 @@ export default async function (pool, channel, page = 1) {
         const msg = await channel.messages.fetch(messageId);
         await msg.edit({ content: embedContent, components: row.components.length ? [row] : [] });
     } else {
-        await channel.send({ content: embedContent, components: row.components.length ? [row] : [] });
+        const newMessage = await channel.send({ content: embedContent, components: row.components.length ? [row] : [] });
+        await pool.query(`UPDATE settings SET value = $1 WHERE key = 'bet_leaderboard_message_id'`, [newMessage.id]);
     }
 }

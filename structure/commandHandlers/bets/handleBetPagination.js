@@ -1,7 +1,7 @@
 import updateBetTable from "./updateBetTable.js";
 
 export default async function (interaction, pool) {
-    const [_, eventId, page] = interaction.customId.split("_");
-    await updateBetTable(pool, interaction.channel, eventId, parseInt(page), interaction.message.id);
+    const [_, page] = interaction.customId.split("_");
+    await updateBetTable(pool, interaction.channel, parseInt(page));
     await interaction.deferUpdate();
 }
