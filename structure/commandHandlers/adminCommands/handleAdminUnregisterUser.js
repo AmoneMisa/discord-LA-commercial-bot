@@ -8,8 +8,8 @@ export default async function (interaction, pool) {
     );
 
     if (deleteResult.rowCount === 0) {
-        return interaction.reply({ content: "⚠️ Пользователь не был зарегистрирован.", ephemeral: true });
+        return interaction.reply({ content: "⚠️ Пользователь не был зарегистрирован.", flags: MessageFlags.Ephemeral });
     }
 
-    return interaction.reply({ content: `✅ Регистрация пользователя <@${userId}> удалена.`, ephemeral: true });
+    return interaction.reply({ content: `✅ Регистрация пользователя <@${userId}> удалена.`, flags: MessageFlags.Ephemeral });
 }

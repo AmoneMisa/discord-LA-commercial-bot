@@ -3,6 +3,7 @@ import handleCreateRaidModal from "../commandHandlers/subscribe/handleCreateRaid
 import notifySellerMessageSend from "../commandHandlers/subscribe/notifySellerMessageSend.js";
 import handleSellerAnswerToBuyerModal from "../commandHandlers/subscribe/handleSellerAnswerToBuyerModal.js";
 import notifySellerResponse from "../commandHandlers/responses/notifySellerResponse.js";
+import betContinueHandler from "../commandHandlers/bets/betContinueHandler.js";
 
 /**
  * Handles various interactions triggered by user input in a Discord modal.
@@ -43,5 +44,9 @@ export default async function (interaction, pool, client) {
 
     if (interaction.customId.startsWith('raid_buy_answer_')) {
         await handleSellerAnswerToBuyerModal(interaction, pool, client);
+    }
+
+    if (interaction.customId.startsWith('bet_modal')) {
+        await betContinueHandler(interaction, pool);
     }
 }

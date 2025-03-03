@@ -31,7 +31,7 @@ export default async function (interaction) {
         .filter(member => member && member.presence?.status === "online");
 
     if (membersArray.length < amount) {
-        return interaction.reply({ content: `⚠️ Недостаточно онлайн участников (${membersArray.length} доступно).`, ephemeral: true });
+        return interaction.reply({ content: `⚠️ Недостаточно онлайн участников (${membersArray.length} доступно).`, flags: MessageFlags.Ephemeral });
     }
 
     const chosen = shuffleArray(membersArray).slice(0, amount);

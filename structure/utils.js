@@ -240,3 +240,30 @@ export function getMember(interaction, isContextMenu, isMessageContentMenuComman
         }
     }
 }
+
+export async function getActiveEvent(pool, isCreateEvent = false) {
+    // Получаем текущую дату и время
+    const now = new Date();
+
+    // SQL-запрос для получения записей, где end_time больше текущего времени
+    const result = await pool.query(
+        "SELECT * FROM bet_events WHERE end_time > $1",
+        [now] // Передаём `Date`-объект напрямую
+    );
+
+    if (result.rowCount > 0) {
+        const activeEvent = result.rows[0];
+        const eventEndTime = new Date(activeEvent.end_time);
+
+        if (eventEndTime > now) {
+            console.log("✅ Событие активно!");
+            return activeEvent;
+        }
+    } else {
+        if (isCreateEvent) {
+            return null;
+        } else {
+            throw new Error("Активных событий для ставок не существует.");
+        }
+    }
+}

@@ -8,8 +8,8 @@ export default async function (interaction, pool) {
     );
 
     if (deleteResult.rowCount === 0) {
-        return interaction.reply({ content: "⚠️ Вы не зарегистрированы на этот ивент!", ephemeral: true });
+        return interaction.reply({ content: "⚠️ Вы не зарегистрированы на этот ивент!", flags: MessageFlags.Ephemeral });
     }
 
-    return interaction.reply({ content: "✅ Ваша регистрация отменена.", ephemeral: true });
+    return interaction.reply({ content: "✅ Ваша регистрация отменена.", flags: MessageFlags.Ephemeral });
 }

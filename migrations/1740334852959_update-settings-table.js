@@ -11,7 +11,8 @@ export const up = (pgm) => {
     pgm.sql(`
         INSERT INTO settings (key, value)
         VALUES ('faction_leaderboard_channel_id', ''),
-               ('faction_leaderboard_message_id', '')
+               ('faction_leaderboard_message_id', ''),
+               ('bet_info_private_channel_id', '')
     `);
 };
 
@@ -32,5 +33,11 @@ export const down = (pgm) => {
         DELETE
         FROM settings
         WHERE key = 'faction_leaderboard_message_id';
+    `);
+
+    pgm.sql(`
+        DELETE
+        FROM settings
+        WHERE key = 'bet_info_private_channel_id';
     `);
 };

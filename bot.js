@@ -27,6 +27,7 @@ import {addUserIfNotExists, getModulesSettings, givePointsForActivity} from "./s
 import sendRaidResponse from "./structure/commandHandlers/responses/sendRaidResponse.js";
 import createRoles from "./structure/createRoles.js";
 import errorsHandler from "./errorsHandler.js";
+import messageComponent from "./structure/interactions/messageComponent.js";
 
 const {Pool} = pkg;
 /**
@@ -139,6 +140,7 @@ async interaction => {
         } else if (interaction.isAutocomplete()) {
             await autocomplete(interaction, pool);
         } else if (interaction.isMessageComponent()) {
+            await messageComponent(interaction, pool, client);
             // console.log(interaction);
         } else {
             throw new Error(`Unknown type of interaction: ${interaction.type}`);

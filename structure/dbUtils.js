@@ -698,6 +698,44 @@ export async function updateFactionLeaderboard(pool, client) {
     }
 }
 
-export function getModulesSettings(pool) {
+export async function getModulesSettings(pool) {
     return pool.query(`SELECT name, description FROM modules_settings WHERE active = true`);
+}
+
+export async function getTotalBank(pool, eventId) {
+    const result = await pool.query(`SELECT * FROM bets WHERE event_id = $1`, [eventId]);
+    let totalBank = 0;
+
+    result.rows.forEach(bet => totalBank += parseInt(bet.amount));
+    return totalBank;
+}
+
+export async function getTotalBankByUser(pool, eventId, target) {
+    const result = await pool.query(`SELECT * FROM bets WHERE event_id = $1 AND target = $2`, [eventId, target]);
+    let totalBank = 0;
+
+    result.rows.forEach(bet => totalBank += parseInt(bet.amount));
+    return totalBank;
+}
+
+export async function getCurrentUserOdd(pool, eventId, userId, target) {
+    return await getTotalBank(pool, eventId) / await getTotalBankByUser(pool, eventId, target);
+}
+
+export async function updateUsersOdds(pool, eventId) {
+    await pool.query(`
+        WITH total_bank AS (
+            SELECT SUM(amount) AS total FROM bets WHERE event_id = $1
+        ),
+             target_bets AS (
+                 SELECT target, SUM(amount) AS total_bets
+                 FROM bets
+                 WHERE event_id = $1
+                 GROUP BY target
+             )
+        UPDATE bets
+        SET odds = tb.total / tbets.total_bets
+            FROM total_bank tb, target_bets tbets
+        WHERE bets.event_id = $1 AND bets.target_user_id = tbets.target_user_id;
+    `, [eventId]);
 }

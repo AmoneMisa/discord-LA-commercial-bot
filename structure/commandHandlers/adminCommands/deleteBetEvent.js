@@ -21,7 +21,7 @@ export default async function (interaction, pool) {
     const result = await pool.query(`DELETE FROM bet_events WHERE id = $1 RETURNING *`, [eventId]);
 
     if (result.rowCount === 0) {
-        return interaction.reply({ content: "🚫 Событие не найдено или уже удалено.", ephemeral: true });
+        return interaction.reply({ content: "🚫 Событие не найдено или уже удалено.", flags: MessageFlags.Ephemeral });
     }
 
     await interaction.reply({ content: `✅ Событие ставок **#${eventId}** удалено!`, ephemeral: false });

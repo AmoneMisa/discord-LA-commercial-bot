@@ -42,7 +42,8 @@ export const up = (pgm) => {
         description: { type: "text", notNull: true },
         start_time: { type: "timestamp", notNull: true },
         end_time: { type: "timestamp", notNull: true },
-        created_at: { type: "timestamp", default: pgm.func("NOW()"), notNull: true }
+        created_at: { type: "timestamp", default: pgm.func("NOW()"), notNull: true },
+        participants: { type: "varchar", notNull: true }
     });
 
     // Таблица ставок
@@ -50,11 +51,12 @@ export const up = (pgm) => {
         id: { type: "serial", primaryKey: true },
         event_id: { type: "integer", references: "bet_events(id)", onDelete: "CASCADE", notNull: true },
         user_id: { type: "varchar", references: "users(user_id)", onDelete: "CASCADE", notNull: true },
-        target_user_id: { type: "varchar", references: "users(user_id)", onDelete: "CASCADE", notNull: false },
+        nickname: { type: "varchar", notNull: true },
+        target: { type: "varchar", notNull: false },
         item_id: { type: "integer", references: "bet_items(id)", onDelete: "SET NULL", notNull: false },
         amount: { type: "integer", notNull: true, check: "amount > 0" },
         odds: { type: "decimal(5,2)", notNull: true, check: "odds > 0" },
-        server: { type: "varchar", check: "server IN (Кратос, Альдеран)", default: "Кратос" },
+        server: { type: "varchar", check: "server IN ('Кратос', 'Альдеран')", default: "Кратос" },
         created_at: { type: "timestamp", default: pgm.func("NOW()"), notNull: true }
     });
 

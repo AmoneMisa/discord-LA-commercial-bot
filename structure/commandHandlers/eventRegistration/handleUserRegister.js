@@ -10,7 +10,7 @@ export default async function (interaction, pool) {
     );
 
     if (existingRegistration.rowCount > 0) {
-        return interaction.reply({ content: "⚠️ Вы уже зарегистрированы!", ephemeral: true });
+        return interaction.reply({ content: "⚠️ Вы уже зарегистрированы!", flags: MessageFlags.Ephemeral });
     }
 
     await showRegistrationModal(interaction);

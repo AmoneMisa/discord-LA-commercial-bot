@@ -27,7 +27,7 @@ export default async function (interaction, pool) {
         );
 
         if (categoryResult.rows.length === 0) {
-            return interaction.reply({ content: "❌ Категория не найдена!", ephemeral: true });
+            return interaction.reply({ content: "❌ Категория не найдена!", flags: MessageFlags.Ephemeral });
         }
 
         const categoryId = categoryResult.rows[0].id;
@@ -49,10 +49,10 @@ export default async function (interaction, pool) {
             );
         }
 
-        interaction.reply({ content: "✅ Запись добавлена в кодекс!", ephemeral: true });
+        interaction.reply({ content: "✅ Запись добавлена в кодекс!", flags: MessageFlags.Ephemeral });
 
     } catch (error) {
         console.error("Ошибка при добавлении в кодекс:", error);
-        interaction.reply({ content: "❌ Ошибка при добавлении записи!", ephemeral: true });
+        interaction.reply({ content: "❌ Ошибка при добавлении записи!", flags: MessageFlags.Ephemeral });
     }
 }

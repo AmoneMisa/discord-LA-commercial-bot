@@ -1,5 +1,6 @@
 import {ButtonStyle, MessageFlags} from "discord.js";
 import subcommandsHandlers from './adminCommands/index.js';
+import setBetPrivateChannel from "./adminCommands/setBetPrivateChannel.js";
 
 const adminCommandMap = {
     // Достижения
@@ -53,6 +54,7 @@ const adminCommandMap = {
     "adm_bet_create": "createBetEvent",
     "adm_bet_delete": "deleteBetEvent",
     "adm_bet_channel": "setBetNotificationChannel",
+    "adm_bet_info_private_channel": "setBetPrivateChannel",
 
     // Регистрация на ивенты
     "adm_event_register": "registerEvent",

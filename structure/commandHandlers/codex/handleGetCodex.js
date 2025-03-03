@@ -21,7 +21,7 @@ export async function handleGetCodex(interaction, pool) {
         );
 
         if (codexResult.rows.length === 0) {
-            return interaction.reply({ content: "❌ Запись не найдена!", ephemeral: true });
+            return interaction.reply({ content: "❌ Запись не найдена!", flags: MessageFlags.Ephemeral });
         }
 
         const entry = codexResult.rows[0];
@@ -49,6 +49,6 @@ export async function handleGetCodex(interaction, pool) {
 
     } catch (error) {
         console.error("Ошибка при получении данных из кодекса:", error);
-        interaction.reply({ content: "❌ Ошибка при получении данных!", ephemeral: true });
+        interaction.reply({ content: "❌ Ошибка при получении данных!", flags: MessageFlags.Ephemeral });
     }
 }

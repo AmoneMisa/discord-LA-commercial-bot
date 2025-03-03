@@ -1,30 +1,35 @@
-import {
-    ActionRowBuilder,
-    ButtonBuilder,
-    ButtonStyle,
-    StringSelectMenuBuilder,
-    TextInputBuilder,
-    TextInputStyle
-} from "discord.js";
+import {ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, MessageFlags} from "discord.js";
+import {getActiveEvent} from "../../utils.js";
 
 export default async function (interaction, pool) {
-    const event = await pool.query("SELECT * FROM bet_events WHERE end_time > NOW()");
-    if (event.rowCount === 0) {
-        return interaction.reply({ content: "❌ Это событие либо не существует, либо уже завершилось.", ephemeral: true });
+    const event = await getActiveEvent(pool);
+    if (!event) {
+        return interaction.reply({ content: "❌ Это событие либо не существует, либо уже завершилось.", flags: MessageFlags.Ephemeral });
+    }
+
+    const isBetExist = await pool.query(`SELECT * FROM bets WHERE event_id = $1 AND user_id = $2`, [event.rows[0].id, interaction.user.id])
+    if (isBetExist) {
+        await interaction.reply({content: "Ставка уже создана!", flags: MessageFlags.Ephemeral});
+        return ;
     }
 
     // Проверяем, настроен ли закрытый канал
-    const settings = await pool.query("SELECT bet_info_private_channel_id FROM settings WHERE key = 'bet_info_private_channel_id'");
-    const channelId = settings.rows[0].value;
+    const settings = await pool.query("SELECT * FROM settings WHERE key = 'bet_info_private_channel_id'");
+    const channelId = settings.rows[0]?.value;
 
     if (!channelId) {
-        return await interaction.reply({ content: "⚠️ Канал для ставок не настроен администратором.", ephemeral: true });
+        return await interaction.reply({ content: "⚠️ Канал для ставок не настроен администратором.", flags: MessageFlags.Ephemeral });
     }
 
     const channel = await interaction.guild.channels.fetch(channelId);
     if (!channel) {
-        return await interaction.reply({ content: "⚠️ Ошибка: не найден канал для ставок.", ephemeral: true });
+        return await interaction.reply({ content: "⚠️ Ошибка: не найден канал для ставок.", flags: MessageFlags.Ephemeral });
     }
+
+    // Создание модального окна
+    const modal = new ModalBuilder()
+        .setCustomId("bet_modal")
+        .setTitle("🎲 Создание ставки");
 
     const nicknameInput = new TextInputBuilder()
         .setCustomId("bet_nickname")
@@ -38,28 +43,18 @@ export default async function (interaction, pool) {
         .setStyle(TextInputStyle.Short)
         .setRequired(true);
 
-    const serverSelect = new StringSelectMenuBuilder()
+    const serverInput = new TextInputBuilder()
         .setCustomId("bet_server")
-        .setPlaceholder("Выберите сервер")
-        .addOptions([
-            {label: "Кратос", value: "kratos"},
-            {label: "Альдеран", value: "alderan"},
-        ]);
-
-    const continueButton = new ButtonBuilder()
-        .setCustomId("bet_continue")
-        .setLabel("Продолжить")
-        .setStyle(ButtonStyle.Primary)
-        .setDisabled(true);
+        .setLabel("Введите ваш сервер (Кратос / Альдеран)")
+        .setStyle(TextInputStyle.Short)
+        .setRequired(true);
 
     const row1 = new ActionRowBuilder().addComponents(nicknameInput);
     const row2 = new ActionRowBuilder().addComponents(betAmountInput);
-    const row3 = new ActionRowBuilder().addComponents(serverSelect);
-    const row4 = new ActionRowBuilder().addComponents(continueButton);
+    const row3 = new ActionRowBuilder().addComponents(serverInput);
 
-    await interaction.reply({
-        content: "🎲 **Создание ставки**\nЗаполните информацию ниже и нажмите **'Продолжить'**",
-        components: [row1, row2, row3, row4],
-        ephemeral: true
-    });
+    modal.addComponents(row1, row2, row3);
+
+    // Открываем модальное окно
+    await interaction.showModal(modal);
 }

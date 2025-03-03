@@ -28,7 +28,7 @@ export default async function (interaction) {
     const membersArray = Array.from(membersSet).map(id => channel.guild.members.cache.get(id)).filter(Boolean);
 
     if (membersArray.length < amount) {
-        return interaction.reply({ content: `⚠️ Недостаточно участников (${membersArray.length} доступно).`, ephemeral: true });
+        return interaction.reply({ content: `⚠️ Недостаточно участников (${membersArray.length} доступно).`, flags: MessageFlags.Ephemeral });
     }
 
     const chosen = shuffleArray(membersArray).slice(0, amount);

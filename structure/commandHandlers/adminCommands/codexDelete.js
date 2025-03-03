@@ -21,12 +21,12 @@ export default async function (interaction, pool) {
         );
 
         if (result.rowCount === 0) {
-            return interaction.reply({ content: "❌ Запись не найдена.", ephemeral: true });
+            return interaction.reply({ content: "❌ Запись не найдена.", flags: MessageFlags.Ephemeral });
         }
 
-        interaction.reply({ content: "🗑️ Запись успешно удалена!", ephemeral: true });
+        interaction.reply({ content: "🗑️ Запись успешно удалена!", flags: MessageFlags.Ephemeral });
     } catch (error) {
         console.error("Ошибка при удалении записи кодекса:", error);
-        interaction.reply({ content: "❌ Ошибка при удалении записи.", ephemeral: true });
+        interaction.reply({ content: "❌ Ошибка при удалении записи.", flags: MessageFlags.Ephemeral });
     }
 }

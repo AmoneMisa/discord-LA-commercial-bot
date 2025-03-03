@@ -15,5 +15,5 @@ export default async function (interaction, pool) {
         [eventId, interaction.user.id]
     );
 
-    return interaction.reply({ content: "✅ Вы успешно зарегистрировались!", ephemeral: true });
+    return interaction.reply({ content: "✅ Вы успешно зарегистрировались!", flags: MessageFlags.Ephemeral });
 }

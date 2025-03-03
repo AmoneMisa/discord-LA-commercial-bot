@@ -27,13 +27,13 @@ export default async function (interaction) {
     const message = await channel.messages.fetch(messageId).catch(() => null);
 
     if (!message) {
-        return interaction.reply({ content: "❌ Сообщение не найдено!", ephemeral: true });
+        return interaction.reply({ content: "❌ Сообщение не найдено!", flags: MessageFlags.Ephemeral });
     }
 
     const mentions = message.mentions.members.filter(member => !member.user.bot);
 
     if (mentions.size < amount) {
-        return interaction.reply({ content: `⚠️ Недостаточно упомянутых участников (${mentions.size} доступно).`, ephemeral: true });
+        return interaction.reply({ content: `⚠️ Недостаточно упомянутых участников (${mentions.size} доступно).`, flags: MessageFlags.Ephemeral });
     }
 
     const chosen = shuffleArray(Array.from(mentions.values())).slice(0, amount);

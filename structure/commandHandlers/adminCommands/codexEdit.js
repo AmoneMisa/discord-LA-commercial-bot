@@ -32,12 +32,12 @@ export default async function editCodexEntry(interaction, pool) {
         );
 
         if (result.rowCount === 0) {
-            return interaction.reply({ content: "❌ Запись не найдена.", ephemeral: true });
+            return interaction.reply({ content: "❌ Запись не найдена.", flags: MessageFlags.Ephemeral });
         }
 
-        interaction.reply({ content: "✅ Запись в кодексе обновлена!", ephemeral: true });
+        interaction.reply({ content: "✅ Запись в кодексе обновлена!", flags: MessageFlags.Ephemeral });
     } catch (error) {
         console.error("Ошибка при редактировании записи кодекса:", error);
-        interaction.reply({ content: "❌ Ошибка при обновлении записи.", ephemeral: true });
+        interaction.reply({ content: "❌ Ошибка при обновлении записи.", flags: MessageFlags.Ephemeral });
     }
 }
