@@ -5,14 +5,14 @@ import {MessageFlags} from "discord.js";
 export default async function (interaction, pool) {
     const [, action, userId, eventId, amount, target, isUpdate] = interaction.customId.split("_");
 
-    if (!["bet_accept", "bet_reject"].includes(action)) {
+    if (!["accept", "reject"].includes(action)) {
         return;
     }
 
     const user = await interaction.guild.members.fetch(userId);
     if (!user) return interaction.reply({content: "❌ Пользователь не найден.", flags: MessageFlags.Ephemeral});
 
-    if (action === "bet_accept") {
+    if (action === "accept") {
         if (isUpdate) {
             await pool.query("UPDATE bets SET amount = $1 WHERE user_id = $2", [amount, userId]);
         } else {
@@ -32,12 +32,19 @@ export default async function (interaction, pool) {
         }
 
         await updateUsersOdds(pool, eventId);
-        await updateBetTable(pool, interaction.channel, eventId);
-        await interaction.update({content: `✅ **Ставка принята!**`, components: []});
+        await updateBetTable(pool, interaction.channel, 1);
+        await interaction.reply({
+            content: "✅ **Ставка принята!**",
+            flags: MessageFlags.Ephemeral
+        });
+
         return;
     }
 
-    if (action === "bet_reject") {
-        await interaction.update({content: `❌ **Ставка отклонена.**`, components: []});
+    if (action === "reject") {
+        await interaction.reply({
+            content: "❌ **Ставка отклонена.**",
+            flags: MessageFlags.Ephemeral
+        });
     }
 }

@@ -42,9 +42,9 @@ import handleBetPagination from "../commandHandlers/bets/handleBetPagination.js"
  * - Handles responses to raid buy actions via `handleSendRaidResponseBuy`.
  */
 export default async function (interaction, pool, client) {
-    if (Date.now() - interaction.message.createdTimestamp > 5 * 60 * 1000) {
+    if (Date.now() - interaction.message.createdTimestamp > 5 * 60 * 1000 && !interaction.customId.startsWith("bet")) {
         return await interaction.update({
-            content: "Время на использование контролов истекло. Пожалуйста, вызовите команду заново.",
+            content: "Время на использование кнопок истекло. Пожалуйста, вызовите команду заново.",
             components: [],
             flags: MessageFlags.Ephemeral
         });

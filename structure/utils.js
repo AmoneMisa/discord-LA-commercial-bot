@@ -242,13 +242,11 @@ export function getMember(interaction, isContextMenu, isMessageContentMenuComman
 }
 
 export async function getActiveEvent(pool, isCreateEvent = false) {
-    // Получаем текущую дату и время
     const now = new Date();
 
-    // SQL-запрос для получения записей, где end_time больше текущего времени
     const result = await pool.query(
         "SELECT * FROM bet_events WHERE end_time > $1",
-        [now] // Передаём `Date`-объект напрямую
+        [now]
     );
 
     if (result.rowCount > 0) {
@@ -256,7 +254,6 @@ export async function getActiveEvent(pool, isCreateEvent = false) {
         const eventEndTime = new Date(activeEvent.end_time);
 
         if (eventEndTime > now) {
-            console.log("✅ Событие активно!");
             return activeEvent;
         }
     } else {
@@ -266,4 +263,17 @@ export async function getActiveEvent(pool, isCreateEvent = false) {
             throw new Error("Активных событий для ставок не существует.");
         }
     }
+}
+
+export function formatDateToCustomString(dateString) {
+    const date = new Date(dateString);
+
+    // Получаем компоненты даты
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Месяцы с 0, поэтому +1
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    return `${day}/${month}/${year} ${hours}:${minutes} (GMT +3)`;
 }

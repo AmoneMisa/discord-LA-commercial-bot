@@ -736,6 +736,7 @@ export async function updateUsersOdds(pool, eventId) {
         UPDATE bets
         SET odds = tb.total / tbets.total_bets
             FROM total_bank tb, target_bets tbets
-        WHERE bets.event_id = $1 AND bets.target_user_id = tbets.target_user_id;
+        WHERE bets.event_id = $1
+          AND bets.target = tbets.target;
     `, [eventId]);
 }
