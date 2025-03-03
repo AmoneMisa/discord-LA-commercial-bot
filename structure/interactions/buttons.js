@@ -95,14 +95,6 @@ export default async function (interaction, pool, client) {
         await handleSendRaidResponseBuy(interaction, pool, client);
     }
 
-    if (interaction.customId.startsWith("bet_continue")) {
-        await betContinueHandler(interaction, pool);
-    }
-
-    if (interaction.customId.startsWith("bet_target")) {
-        await betTargetHandler(interaction, pool);
-    }
-
     if (interaction.customId.startsWith("bet_accept") || interaction.customId.startsWith("bet_reject")) {
         await handleBetActionButton(interaction, pool);
     }

@@ -50,11 +50,11 @@ export default [
                         .setRequired(true)
                 ))
         .addSubcommand(subcommand =>
-            subcommand.setName("message")
-                .setDescription("📢 Выбрать сообщение для уведомлений о ставках")
+            subcommand.setName("info_private_channel")
+                .setDescription("📢 Выбрать канал для запросов о ставках")
                 .addChannelOption(option =>
-                    option.setName("message")
-                        .setDescription("Введите id сообщения")
+                    option.setName("channel")
+                        .setDescription("Выберите текстовый канал")
                         .setRequired(true)
                 ))
 ];
