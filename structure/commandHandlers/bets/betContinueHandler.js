@@ -12,12 +12,12 @@ export default async function (interaction, pool) {
     const result = await pool.query("SELECT * FROM bet_events");
     const activeEvent = result.rows.find(_event => _event.end_time > new Date().getTime());
 
-    if (!convertParticipantsToArray(activeEvent.participants).length) {
+    if (!JSON.parse(activeEvent.participants).length) {
         await interaction.reply({ content: "Что-то пошло не так, пожалуйста, обратитесь к администрации", flags: MessageFlags.Ephemeral });
         throw new Error("⚠ Ошибка: Не указаны участники для ставки");
     }
 
-    const availableTargets = convertParticipantsToArray(activeEvent.participants).map(nick => ({
+    const availableTargets = JSON.parse(activeEvent.participants).map(nick => ({
         label: nick,
         value: nick
     }));
@@ -30,12 +30,8 @@ export default async function (interaction, pool) {
     const row = new ActionRowBuilder().addComponents(targetSelect);
 
     await interaction.reply({
-        content: `✅ Выберите, на кого поставить:\n📌 **Доступные цели:** ${convertParticipantsToArray(activeEvent.participants).join(", ")}`,
+        content: `✅ Выберите, на кого поставить:\n📌 **Доступные цели:** ${JSON.parse(activeEvent.participants).join(", ")}`,
         components: [row],
         flags: MessageFlags.Ephemeral
     });
-}
-
-function convertParticipantsToArray(participants) {
-    return participants.replace(/^\{|}$/g, "").split('","').map(s => s.replace(/^"|"$/g, ''));
 }

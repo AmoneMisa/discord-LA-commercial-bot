@@ -1,8 +1,11 @@
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle} from "discord.js";
 import {formatDateToCustomString, getActiveEvent} from "../../utils.js";
 
-export default async function (pool, channel, page = 1) {
-    const messageIdResult = pool.query(`SELECT * FROM settings WHERE key = 'bet_leaderboard_message_id'`);
+export default async function (interaction, pool, page = 1) {
+    const messageIdResult = await pool.query(`SELECT * FROM settings WHERE key = 'bet_leaderboard_message_id'`);
+    const channelIdResult = await pool.query(`SELECT * FROM settings WHERE key = 'bet_leaderboard_channel_id'`);
+    const channel = await interaction.guild.channels.fetch(channelIdResult.rows[0].value);
+
     let messageId;
 
     if (messageIdResult?.rows?.length && messageIdResult?.rows[0]?.value) {
@@ -14,8 +17,7 @@ export default async function (pool, channel, page = 1) {
         return;
     }
 
-    const bets = await pool.query("SELECT user_id, target, amount FROM bets WHERE event_id = $1 ORDER BY amount DESC", [event.id]);
-    const targets = await pool.query("SELECT DISTINCT target FROM bets WHERE event_id = $1", [event.id]);
+    const bets = await pool.query("SELECT user_id, target, amount, odds FROM bets WHERE event_id = $1 ORDER BY amount DESC", [event.id]);
 
     if (bets.rowCount === 0) {
         const emptyMsg = `🎲 **${event.name}**\n📅 **Ставки открыты с ${formatDateToCustomString(event.start_time)} по ${formatDateToCustomString(event.end_time)}**\n\n❌ **Пока нет ставок.**`;
@@ -29,13 +31,6 @@ export default async function (pool, channel, page = 1) {
         return;
     }
 
-    let totalBets = bets.rows.reduce((sum, b) => sum + b.amount, 0);
-    let targetOdds = {};
-    targets.rows.forEach(target => {
-        let sumOnTarget = bets.rows.filter(b => b.target === target.target).reduce((sum, b) => sum + b.amount, 0);
-        targetOdds[target.target] = (totalBets / sumOnTarget).toFixed(2);
-    });
-
     const perPage = 20;
     const totalPages = Math.ceil(bets.rowCount / perPage);
     const startIndex = (page - 1) * perPage;
@@ -43,16 +38,11 @@ export default async function (pool, channel, page = 1) {
     const paginatedBets = bets.rows.slice(startIndex, endIndex);
 
     let embedContent = `🎲 **${event.name}**\n📅 **Ставки открыты с ${formatDateToCustomString(event.start_time)} по ${formatDateToCustomString(event.end_time)}**\n\n`;
-    embedContent += "**Текущие коэффициенты:**\n";
-
-    for (const [target, odds] of Object.entries(targetOdds)) {
-        embedContent += `🔹 **${target}**: x${odds}\n`;
-    }
 
     embedContent += `\n💰 **Таблица ставок (стр. ${page}/${totalPages})**:\n`;
-
     paginatedBets.forEach((bet, index) => {
-        embedContent += `**${startIndex + index + 1}.** <@${bet.user_id}> поставил **${bet.amount}** на **${bet.target}** (возможный выигрыш: ${(Math.ceil(bet.amount * targetOdds[bet.target]))})\n`;
+        console.log(bet)
+        embedContent += `**${startIndex + index + 1}.** <@${bet.user_id}> поставил **${bet.amount}** на **${bet.target}** (возможный выигрыш: ${(Math.ceil(bet.amount * bet.odds))})\n`;
     });
 
     const row = new ActionRowBuilder();
@@ -73,7 +63,14 @@ export default async function (pool, channel, page = 1) {
         );
     }
 
-    if (messageId) {
+    let isMessageExist;
+    try {
+        isMessageExist = !!await channel.messages.fetch(messageId);
+    } catch (e) {
+        console.error(`В канале: ${channelIdResult.rows[0].value} не найдено сообщение: ${messageId}`);
+    }
+
+    if (messageId && isMessageExist) {
         const msg = await channel.messages.fetch(messageId);
         await msg.edit({ content: embedContent, components: row.components.length ? [row] : [] });
     } else {
