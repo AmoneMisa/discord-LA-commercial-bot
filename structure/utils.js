@@ -6,7 +6,6 @@ import {
     PermissionsBitField,
     TextInputStyle
 } from "discord.js";
-import {getItemName} from "./dbUtils.js";
 
 /**
  * Formats a date string into the format "DD/MM/YYYY HH:mm".
@@ -119,102 +118,6 @@ export async function sendPaginatedReviews(interaction, pool, page = 1, isPositi
 export function toCamelCase(str) {
     return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
 }
-
-/**
- * Sends a paginated list of items as an ephemeral message in response to an interaction.
- *
- * @param {object} interaction - The interaction object from Discord API, used for replying to the user.
- * @param {Array} rows - An array of data rows to paginate and display.
- * @param {object} pool - The database connection pool instance used for database operations.
- * @param {number} [page=1] - The current page number of the pagination, defaults to 1.
- * @return {Promise<void>} A promise that resolves when the reply is successfully sent.
- */
-export async function sendPaginatedList(interaction, rows, pool, page = 1) {
-    const totalPages = Math.ceil(rows.length / 5);
-    const startIndex = (page - 1) * 5;
-    const paginatedRows = rows.slice(startIndex, startIndex + 5);
-
-    let content = `📜 **Ваши фавориты (Страница ${page}/${totalPages})**\n\n`;
-    for (const row of paginatedRows) {
-        const seller = await interaction.client.users.fetch(row.seller_id);
-        content += `👤 **<@${seller.id}>** - 🏆 Рейтинг: ${row.rating || 0}\n`;
-    }
-
-    const actionRow = new ActionRowBuilder().addComponents(
-        new ButtonBuilder()
-            .setCustomId(`subscribe_prev_page_${page - 1}`)
-            .setLabel('⬅ Назад')
-            .setStyle(ButtonStyle.Primary)
-            .setDisabled(page === 1),
-        new ButtonBuilder()
-            .setCustomId(`subscribe_next_page_${page + 1}`)
-            .setLabel('Вперед ➡')
-            .setStyle(ButtonStyle.Primary)
-            .setDisabled(page === totalPages)
-    );
-
-    await interaction.reply({ content, components: [actionRow], flags: MessageFlags.Ephemeral });
-}
-
-/**
- * Generates a formatted message describing a lot item based on the provided type and options.
- *
- * @param {Object} pool - The database connection pool for retrieving item names.
- * @param {string} type - The type of the lot item message. Allowed values are "WTT", "WTS", and "WTB".
- * @param {Object} options - An object containing details about the lot item, including offers, requests, levels, amounts, prices, and expiration time.
- * @param {string} options.item_offer - The identifier of the item being offered (applicable for "WTT" and "WTB").
- * @param {string} options.item_request - The identifier of the item being requested (applicable for "WTT" and "WTS").
- * @param {number} options.amount_offer - The quantity of the item being offered (applicable for "WTT" and "WTB").
- * @param {number} options.amount_request - The quantity of the item being requested (applicable for "WTT" and "WTS").
- * @param {string} [options.offer_level] - The level of the offered item (optional, applicable for "WTT" and "WTB").
- * @param {string} [options.request_level] - The level of the requested item (optional, applicable for "WTT" and "WTS").
- * @param {number} [options.price] - The price in gold for the item (optional, applicable for "WTB" and "WTS").
- * @param {Date} options.expires_at - The date and time until the lot item is valid.
- * @return {Promise<string|undefined>} A promise that resolves to the formatted lot item message, or `undefined` if the type is invalid.
- */
-export async function createLotItemMessage(pool, type, options) {
-    if (type !== "WTT" && type !== "WTS" && type !== "WTB") {
-        console.error("Переданный тип некорректный", type);
-        return;
-    }
-
-    if (type === "WTT") {
-        const {item_offer, item_request, type, amount_offer, amount_request, offer_level, request_level, expires_at} = options;
-        return `${type} | Предложено: ${await getItemName(pool, item_offer)}, к-во: ${amount_offer}, уровень: ${offer_level ? offer_level : 'нет уровня'}\nЗапрошено: ${await getItemName(pool, item_request)}, к-во: ${amount_request}, уровень: ${request_level ? request_level : 'нет уровня'}.\n⏳ Предложение до: ${expires_at.toLocaleString()}`;
-    }
-
-    if (type === "WTS") {
-        const {item_request, type, amount_request, request_level, price, expires_at} = options;
-        return `${type} | Запрошено: ${await getItemName(pool, item_request)}, к-во: ${amount_request}, уровень: ${request_level ? request_level : 'нет уровня'}, стоимость: ${price}к золота.\n⏳ Предложение до: ${expires_at.toLocaleString()}`;
-    }
-
-    if (type === "WTB") {
-        const {item_offer, type, amount_offer, offer_level, price, expires_at} = options;
-        return `${type} | Предложено: ${await getItemName(pool, item_offer)}, к-во: ${amount_offer}, уровень: ${offer_level ? offer_level : 'нет уровня'}, стоимость: ${price}к золота.\n⏳ Предложение до: ${expires_at.toLocaleString()}`;
-    }
-}
-
-/**
- * Delays the execution for a specified amount of time in milliseconds.
- *
- * @param {number} ms - The amount of time in milliseconds to delay the execution.
- * @return {Promise<void>} A promise that resolves after the specified delay time.
- */
-export async function delay(ms) {
-    const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
-    await delay(1000);
-}
-
-/**
- * Randomly shuffles the elements of an array in place.
- *
- * @param {Array} array - The array to be shuffled.
- * @return {Array} The shuffled array.
- */
-export function shuffleArray(array) {
-    return array.sort(() => Math.random() - 0.5);
-}
-
 /**
  * Retrieves a member or user based on the provided parameters and interaction context.
  *
