@@ -28,13 +28,6 @@
  * @param {object} pgm - Migration builder object provided by the database migration framework.
  */
 export const up = (pgm) => {
-    // Таблица предметов для ставок
-    pgm.createTable("bet_items", {
-        id: { type: "serial", primaryKey: true },
-        name: { type: "varchar", notNull: true },
-        available: { type: "boolean", notNull: true, default: true },
-    });
-
     // Таблица событий ставок
     pgm.createTable("bet_events", {
         id: { type: "serial", primaryKey: true },
@@ -53,26 +46,17 @@ export const up = (pgm) => {
         user_id: { type: "varchar", references: "users(user_id)", onDelete: "CASCADE", notNull: true },
         nickname: { type: "varchar", notNull: true },
         target: { type: "varchar", notNull: false },
-        item_id: { type: "integer", references: "bet_items(id)", onDelete: "SET NULL", notNull: false },
-        amount: { type: "integer", notNull: true, check: "amount > 0" },
+        amount: { type: "integer", notNull: true, check: "50 < amount < 2001>" },
         odds: { type: "decimal(5,2)", notNull: true, check: "odds > 0" },
         server: { type: "varchar", check: "server IN ('Кратос', 'Альдеран')", default: "Кратос" },
-        created_at: { type: "timestamp", default: pgm.func("NOW()"), notNull: true }
-    });
-
-    // Таблица итогов ставок
-    pgm.createTable("bet_results", {
-        id: { type: "serial", primaryKey: true },
-        event_id: { type: "integer", references: "bet_events(id)", onDelete: "CASCADE", notNull: true },
-        winner_id: { type: "varchar", references: "users(user_id)", onDelete: "SET NULL", notNull: true },
-        prize_item_id: { type: "integer", references: "bet_items(id)", onDelete: "SET NULL", notNull: false },
         created_at: { type: "timestamp", default: pgm.func("NOW()"), notNull: true }
     });
 
     pgm.sql(`
         INSERT INTO settings (key, value)
         VALUES ('bet_leaderboard_message_id', ''),
-               ('bet_leaderboard_channel_id', '')
+               ('bet_leaderboard_channel_id', ''),
+               ('bet_info_private_channel_id', '')
     `);
 };
 

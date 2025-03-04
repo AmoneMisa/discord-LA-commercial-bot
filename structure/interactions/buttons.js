@@ -1,18 +1,7 @@
 import {MessageFlags} from "discord.js";
 import {sendPaginatedReviews} from "../utils.js";
 import deleteReview from "../commandHandlers/ranks/deleteReview.js";
-import handleEditRaidsButtons from "../commandHandlers/subscribe/handleEditRaidsButtons.js";
-import handleBuyButtons from "../commandHandlers/subscribe/handleBuyButtons.js";
-import sellerAnswerToBuyer from "../commandHandlers/subscribe/sellerAnswerToBuyerModal.js";
-import handleRemoveLotButtons from "../commandHandlers/tradeSystem/handleRemoveLotButtons.js";
-import handleExtendLot from "../commandHandlers/tradeSystem/handleExtendLot.js";
-import {handleAuctionButtons} from "../commandHandlers/tradeSystem/handleAuctionButtons.js";
 import reviewVote from "../commandHandlers/ranks/reviewVote.js";
-import handleSendRaidResponseJoin from "../commandHandlers/responses/handleSendRaidResponseJoin.js";
-import handleBuyButtonsResponse from "../commandHandlers/responses/createModalBuyResponse.js";
-import handleSendRaidResponseBuy from "../commandHandlers/responses/handleSendRaidResponseBuy.js";
-import betContinueHandler from "../commandHandlers/bets/betContinueHandler.js";
-import betTargetHandler from "../commandHandlers/bets/betTargetHandler.js";
 import handleBetActionButton from "../commandHandlers/bets/handleBetActionButton.js";
 import handleBetPagination from "../commandHandlers/bets/handleBetPagination.js";
 
@@ -61,38 +50,6 @@ export default async function (interaction, pool, client) {
 
     if (interaction.customId.startsWith('delete_review_')) {
         await deleteReview(interaction, pool);
-    }
-
-    if (interaction.customId === 'create_raid' || interaction.customId.startsWith('delete_raid')) {
-        await handleEditRaidsButtons(interaction, pool);
-    }
-
-    if (interaction.customId.startsWith('raid_buy')) {
-        await handleBuyButtons(interaction);
-    }
-
-    if (interaction.customId.startsWith('seller_answer_') || interaction.customId.startsWith('seller_reject_')) {
-        await sellerAnswerToBuyer(interaction, pool, client);
-    }
-
-    if (interaction.customId.startsWith('remove_lot_')) {
-        await handleRemoveLotButtons(interaction, pool);
-    }
-
-    if (interaction.customId.startsWith('extend_lot_')) {
-        await handleExtendLot(interaction, pool);
-    }
-
-    if (interaction.customId.startsWith("contact_")) {
-        await handleAuctionButtons(interaction, pool, client);
-    }
-
-    if (interaction.customId.startsWith("join_raid_")) {
-        await handleSendRaidResponseJoin(interaction, pool, client);
-    }
-
-    if (interaction.customId.startsWith("response_raid_buy_")) {
-        await handleSendRaidResponseBuy(interaction, pool, client);
     }
 
     if (interaction.customId.startsWith("bet_accept") || interaction.customId.startsWith("bet_reject")) {
