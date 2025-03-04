@@ -7,8 +7,9 @@ export default async function (interaction, pool) {
         return interaction.reply({ content: "❌ Это событие либо не существует, либо уже завершилось.", flags: MessageFlags.Ephemeral });
     }
 
-    const isBetExist = await pool.query(`SELECT * FROM bets WHERE event_id = $1 AND user_id = $2`, [event.rows[0].id, interaction.user.id])
-    if (isBetExist) {
+    const betsResult = await pool.query(`SELECT * FROM bets WHERE event_id = $1 AND user_id = $2`, [event.id, interaction.user.id]);
+
+    if (betsResult.rows.length) {
         await interaction.reply({content: "Ставка уже создана!", flags: MessageFlags.Ephemeral});
         return ;
     }
@@ -39,7 +40,7 @@ export default async function (interaction, pool) {
 
     const betAmountInput = new TextInputBuilder()
         .setCustomId("bet_amount")
-        .setLabel("Введите сумму ставки (1 - 2000)")
+        .setLabel("Введите сумму ставки (50 - 2000)")
         .setStyle(TextInputStyle.Short)
         .setRequired(true);
 
