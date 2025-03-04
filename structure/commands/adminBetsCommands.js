@@ -20,12 +20,12 @@ export default [
                 )
                 .addStringOption(option =>
                     option.setName("start_time")
-                        .setDescription("Дата и время начала (YYYY-MM-DD HH:MM)")
+                        .setDescription("Дата и время начала (DD.MM HH:MM)")
                         .setRequired(true)
                 )
                 .addStringOption(option =>
                     option.setName("end_time")
-                        .setDescription("Дата и время завершения (YYYY-MM-DD HH:MM)")
+                        .setDescription("Дата и время завершения (DD.MM HH:MM)")
                         .setRequired(true)
                 ) .addStringOption(option =>
                 option.setName("participants")

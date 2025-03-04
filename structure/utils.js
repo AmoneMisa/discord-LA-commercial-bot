@@ -7,6 +7,10 @@ import {
     TextInputStyle
 } from "discord.js";
 import {getItemName} from "./dbUtils.js";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat.js";
+import utc from "dayjs/plugin/utc.js";
+import timezone from "dayjs/plugin/timezone.js";
 
 /**
  * Formats a date string into the format "DD/MM/YYYY HH:mm".
@@ -153,7 +157,7 @@ export async function sendPaginatedList(interaction, rows, pool, page = 1) {
             .setDisabled(page === totalPages)
     );
 
-    await interaction.reply({ content, components: [actionRow], flags: MessageFlags.Ephemeral });
+    await interaction.reply({content, components: [actionRow], flags: MessageFlags.Ephemeral});
 }
 
 /**
@@ -179,7 +183,16 @@ export async function createLotItemMessage(pool, type, options) {
     }
 
     if (type === "WTT") {
-        const {item_offer, item_request, type, amount_offer, amount_request, offer_level, request_level, expires_at} = options;
+        const {
+            item_offer,
+            item_request,
+            type,
+            amount_offer,
+            amount_request,
+            offer_level,
+            request_level,
+            expires_at
+        } = options;
         return `${type} | Предложено: ${await getItemName(pool, item_offer)}, к-во: ${amount_offer}, уровень: ${offer_level ? offer_level : 'нет уровня'}\nЗапрошено: ${await getItemName(pool, item_request)}, к-во: ${amount_request}, уровень: ${request_level ? request_level : 'нет уровня'}.\n⏳ Предложение до: ${expires_at.toLocaleString()}`;
     }
 
@@ -227,12 +240,11 @@ export function shuffleArray(array) {
 export function getMember(interaction, isContextMenu, isMessageContentMenuCommand, getType = 'member') {
     if (isContextMenu) {
         if (isMessageContentMenuCommand) {
-           return interaction.targetMessage.author;
+            return interaction.targetMessage.author;
         } else {
             return interaction.targetUser;
         }
-    }
-    else {
+    } else {
         if (getType === 'user') {
             return interaction.options.getUser('user');
         } else {
@@ -265,15 +277,44 @@ export async function getActiveEvent(pool, isCreateEvent = false) {
     }
 }
 
-export function formatDateToCustomString(dateString) {
-    const date = new Date(dateString);
+dayjs.extend(customParseFormat);
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
-    // Получаем компоненты даты
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Месяцы с 0, поэтому +1
-    const year = date.getFullYear();
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
+export function formatDateToCustomString(dateString, userTimezone = dayjs.tz.guess()) {
+    // Конвертируем дату в нужный часовой пояс
+    const date = dayjs.utc(dateString).tz(userTimezone);
 
-    return `${day}/${month}/${year} ${hours}:${minutes} (GMT +3)`;
+    // Форматируем в строку "dd.mm.yyyy hh:mm (GTM +X)"
+    return `${date.format("DD.MM.YYYY HH:mm")} (GMT ${date.format("Z")})`;
+}
+
+export function parseDateToTimestamp(dateString) {
+    const currentYear = dayjs().year(); // Текущий год
+    const currentTime = dayjs().format("HH:mm"); // Текущее время
+
+    let parsedDate = null;
+
+    // Проверяем и парсим возможные форматы
+    if (/^\d{2}\.\d{2}$/.test(dateString)) {
+        // Формат "dd.mm" (добавляем текущий год и время)
+        parsedDate = dayjs(`${dateString}.${currentYear} ${currentTime}`, "DD.MM.YYYY HH:mm");
+    } else if (/^\d{2}\.\d{2}\.\d{4}$/.test(dateString)) {
+        // Формат "dd.mm.yyyy" (добавляем текущее время)
+        parsedDate = dayjs(`${dateString} ${currentTime}`, "DD.MM.YYYY HH:mm");
+    } else if (/^\d{2}\.\d{2} \d{2}:\d{2}$/.test(dateString)) {
+        // Формат "dd.mm hh:mm" (добавляем текущий год)
+        parsedDate = dayjs(`${dateString}.${currentYear}`, "DD.MM HH:mm.YYYY");
+    } else if (/^\d{2}\.\d{2}\.\d{4} \d{2}:\d{2}$/.test(dateString)) {
+        // Формат "dd.mm.yyyy hh:mm"
+        parsedDate = dayjs(dateString, "DD.MM.YYYY HH:mm");
+    } else {
+        throw new Error("⚠ Ошибка: Неверный формат даты! Используйте один из форматов: \n- dd.mm \n- dd.mm.yyyy \n- dd.mm hh:mm \n- dd.mm.yyyy hh:mm");
+    }
+
+    if (!parsedDate.isValid()) {
+        throw new Error("⚠ Ошибка: Неверная дата.");
+    }
+
+    return parsedDate.valueOf(); // Возвращаем Unix timestamp (в миллисекундах)
 }
