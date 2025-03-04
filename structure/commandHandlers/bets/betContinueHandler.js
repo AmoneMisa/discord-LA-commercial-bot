@@ -5,8 +5,8 @@ export default async function (interaction, pool) {
     const betAmount = parseInt(interaction.fields.getTextInputValue("bet_amount"), 10);
     const server = interaction.fields.getTextInputValue("bet_server");
 
-    if (isNaN(betAmount) || betAmount < 50 || betAmount > 2000) {
-        return await interaction.reply({ content: "⚠ Ошибка: Ставка должна быть от 50 до 2000.", flags: MessageFlags.Ephemeral });
+    if (isNaN(betAmount) || betAmount < 200) {
+        return await interaction.reply({ content: "⚠ Ошибка: Ставка должна быть от 200", flags: MessageFlags.Ephemeral });
     }
 
     const result = await pool.query("SELECT * FROM bet_events");
