@@ -5,15 +5,16 @@ export default async function (interaction, pool) {
     const betAmount = parseInt(interaction.fields.getTextInputValue("bet_amount"), 10);
     const server = interaction.fields.getTextInputValue("bet_server");
 
-    if (isNaN(betAmount) || betAmount < 1 || betAmount > 2000) {
-        return await interaction.reply({ content: "⚠ Ошибка: Ставка должна быть от 1 до 2000.", flags: MessageFlags.Ephemeral });
+    if (isNaN(betAmount) || betAmount < 50 || betAmount > 2000) {
+        return await interaction.reply({ content: "⚠ Ошибка: Ставка должна быть от 50 до 2000.", flags: MessageFlags.Ephemeral });
     }
 
     const result = await pool.query("SELECT * FROM bet_events");
     const activeEvent = result.rows.find(_event => _event.end_time > new Date().getTime());
 
     if (!convertParticipantsToArray(activeEvent.participants).length) {
-        return await interaction.reply({ content: "⚠ Ошибка: Не указаны участники для ставки", flags: MessageFlags.Ephemeral });
+        await interaction.reply({ content: "Что-то пошло не так, пожалуйста, обратитесь к администрации", flags: MessageFlags.Ephemeral });
+        throw new Error("⚠ Ошибка: Не указаны участники для ставки");
     }
 
     const availableTargets = convertParticipantsToArray(activeEvent.participants).map(nick => ({

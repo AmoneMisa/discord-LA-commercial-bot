@@ -35,7 +35,7 @@ export default async function updateBet(interaction, pool) {
     }
 
     await interaction.reply({
-        content: `✅ Ваша ставка отправлена на утверждение. Вы хотите увеличить её с ${bet.rows[0].amount} до **${amount}**!`,
+        content: `:bangbang: **ATTENTION**\nЧтобы Ваша ставка была успешно обновлена, отправьте **камни судьбы** на один из **банков**, в зависимости от Вашего сервера.\nБанк Кратос: **Xzbit**\nБанк Альдеран: **QQbite**\n\n✅ Ваша ставка отправлена на утверждение. Вы хотите увеличить её с ${bet.rows[0].amount} до **${amount}**!`,
         flags: MessageFlags.Ephemeral
     });
 
@@ -49,8 +49,8 @@ export default async function updateBet(interaction, pool) {
             content: `🔔 **Обновление ставки!**\n\n**Игрок:** <@${userId}>\n**Ник:** ${bet.rows[0].nickname}\n**Сервер:** ${bet.rows[0].server}\n**Ставка:** ${amount}\n**Цель:** ${bet.rows[0].target}`,
             components: [
                 new ActionRowBuilder().addComponents(
-                    new ButtonBuilder().setCustomId(`bet_accept_${userId}_${event.id}_${amount}_${bet.rows.target}_update`).setLabel("✅ Принять").setStyle(ButtonStyle.Success),
-                    new ButtonBuilder().setCustomId(`bet_reject_${userId}_${event.id}_${amount}_${bet.rows.target}_update`).setLabel("❌ Отклонить").setStyle(ButtonStyle.Danger)
+                    new ButtonBuilder().setCustomId(`bet_accept_${userId}_${event.id}_${amount}_${bet.rows[0].target}_${bet.rows[0].server}_${bet.rows[0].nickname}_update`).setLabel("✅ Принять").setStyle(ButtonStyle.Success),
+                    new ButtonBuilder().setCustomId(`bet_reject_${userId}_${event.id}_${amount}_${bet.rows[0].target}_${bet.rows[0].server}_${bet.rows[0].nickname}_update`).setLabel("❌ Отклонить").setStyle(ButtonStyle.Danger)
                 )
             ]
         });
