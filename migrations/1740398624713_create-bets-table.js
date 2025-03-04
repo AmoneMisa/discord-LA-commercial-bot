@@ -91,4 +91,10 @@ export const down = (pgm) => {
         FROM settings
         WHERE key = 'bet_leaderboard_message_id';
     `);
+
+    pgm.sql(`
+        DELETE
+        FROM settings
+        WHERE key = 'bet_info_private_channel_id';
+    `);
 };

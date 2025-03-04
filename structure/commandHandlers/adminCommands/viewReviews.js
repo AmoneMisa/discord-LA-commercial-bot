@@ -2,6 +2,13 @@ import { MessageFlags, ButtonBuilder, ButtonStyle, ActionRowBuilder } from 'disc
 import { formatDate } from '../../utils.js';
 import updateRatings from "../../updateRatings.js";
 
+/**
+ * Fetches and displays the latest reviews for a specified user from the database.
+ *
+ * @param {Object} interaction - The interaction object, representing the current command or event.
+ * @param {Object} pool - The database connection pool used to query the reviews.
+ * @return {Promise<void>} Resolves when the interaction response has been sent, or errors if an issue occurs during execution.
+ */
 export default async function viewReviews(interaction, pool) {
     const member = interaction.options.getUser('user');
 

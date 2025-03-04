@@ -1,37 +1,10 @@
-import {SlashCommandBuilder, PermissionFlagsBits} from "discord.js";
+import {PermissionFlagsBits, SlashCommandBuilder} from "discord.js";
 
 export default [
     new SlashCommandBuilder()
-        .setName('info')
-        .setDescription('Получить информацию о пользователе')
-        .addUserOption(option => option.setName('member').setDescription('Выберите участника').setRequired(true)),
-    new SlashCommandBuilder()
-        .setName('last_positive_reviews')
-        .setDescription('Пять последних положительных отзывов')
-        .addUserOption(option => option.setName('member').setDescription('Выберите участника').setRequired(true)),
-    new SlashCommandBuilder()
-        .setName('last_negative_reviews')
-        .setDescription('Пять последних отрицательных отзывов')
-        .addUserOption(option => option.setName('member').setDescription('Выберите участника').setRequired(true)),
-    new SlashCommandBuilder()
-        .setName('last_reviews')
-        .setDescription('Пять последних отзывов')
-        .addUserOption(option => option.setName('member').setDescription('Выберите участника').setRequired(true)),
-    new SlashCommandBuilder()
-        .setName('worst_sellers')
-        .setDescription('Пять худших продавцов'),
-    new SlashCommandBuilder()
-        .setName("review_notifications_toggle")
-        .setDescription("Включить или отключить уведомления о новых отзывах")
-        .addBooleanOption(option =>
-            option.setName("enabled")
-                .setDescription("Включить (true) или отключить (false) уведомления")
-                .setRequired(true)
-        ),
-    new SlashCommandBuilder()
-        .setName('admin_settings_ranks')
-        .setDefaultMemberPermissions(PermissionFlagsBits.ADMINISTRATOR)
-        .setDescription('Административные настройки рейтинга')
+        .setName('adm_ranks')
+        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+        .setDescription('Админ настройки рейтинга')
         .addSubcommand(subcommand =>
             subcommand.setName('set_cooldown')
                 .setDescription('Установить кулдаун на голосование (в минутах)')
@@ -143,21 +116,13 @@ export default [
             subcommand.setName('delete_role')
                 .setDescription('Удалить роль продавца')
                 .addStringOption(option => option.setName('name').setDescription('Название роли').setRequired(true))
-        ),
-    new SlashCommandBuilder()
-        .setName('admin_settings')
-        .setDescription('Настройки администратора')
-        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
-        .addSubcommand(subcommand =>
-            subcommand.setName('remove_bots')
-                .setDescription('Удаляет всех ботов из базы данных')
-        ).addSubcommand(subcommand =>
-            subcommand.setName('set_leaderboard_channel')
-                .setDescription('Устанавливает канал для таблицы лидеров')
-                .addChannelOption(option =>
-                    option.setName('channel')
-                        .setDescription('Выберите текстовый канал')
-                        .setRequired(true)
-                )
         )
-];
+        .addSubcommand(subcommand =>
+        subcommand.setName('set_leaderboard_channel')
+            .setDescription('Устанавливает канал для таблицы лидеров')
+            .addChannelOption(option =>
+                option.setName('channel')
+                    .setDescription('Выберите текстовый канал')
+                    .setRequired(true)
+            ))
+]

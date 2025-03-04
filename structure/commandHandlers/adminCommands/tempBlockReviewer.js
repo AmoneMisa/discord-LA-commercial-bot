@@ -1,5 +1,13 @@
 import { MessageFlags } from 'discord.js';
 
+/**
+ * Temporarily blocks a reviewer for a specified number of hours by updating the database
+ * and notifying the interaction user.
+ *
+ * @param {CommandInteraction} interaction - The interaction object containing the command context and options.
+ * @param {Pool} pool - The database connection pool used for querying and updating the blocked reviewers table.
+ * @return {Promise<void>} A promise that resolves when the reviewer is successfully blocked and the interaction reply is sent.
+ */
 export default async function tempBlockReviewer(interaction, pool) {
     const user = interaction.options.getUser('user');
     const hours = interaction.options.getInteger('hours');

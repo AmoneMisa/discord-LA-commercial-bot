@@ -1,7 +1,17 @@
 import { MessageFlags } from 'discord.js';
-import { setLeaderboardChannelId } from '../dbUtils.js';
+import { setLeaderboardChannelId } from '../../dbUtils.js';
 import updateLeaderboard from '../updateLeaderboard.js';
 
+/**
+ * Sets the leaderboard channel for the interaction. Validates user permissions
+ * and ensures the specified channel is a valid text channel before updating the
+ * leaderboard configuration and refreshing the leaderboard.
+ *
+ * @param {Object} interaction - The interaction object containing command details and user context.
+ * @param {Object} pool - The database connection pool used to store and retrieve data.
+ * @param {Object} client - The client instance of the bot, used for further operations such as updating the leaderboard.
+ * @return {Promise<void>} Resolves when the leaderboard channel is successfully set and the leaderboard is updated.
+ */
 export default async function setLeaderboardChannel(interaction, pool, client) {
     if (!interaction.member.permissions.has('Administrator')) {
         return interaction.reply({

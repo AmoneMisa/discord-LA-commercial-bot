@@ -1,5 +1,15 @@
 import {MessageFlags} from "discord.js";
 
+/**
+ * Handles the interaction to enable or disable review notifications for the user.
+ *
+ * Updates the user's review notifications preference in the database and responds
+ * with a confirmation message indicating whether the notifications were enabled or disabled.
+ *
+ * @param {Object} interaction - The interaction object containing user input and context.
+ * @param {Object} pool - The database connection pool for executing queries.
+ * @returns {Promise<Object>} A promise that resolves with a reply to the interaction.
+ */
 export default async function (interaction, pool) {
     const enabled = interaction.options.getBoolean("enabled");
 

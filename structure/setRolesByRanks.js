@@ -1,3 +1,28 @@
+/**
+ * Updates the roles of users in the guild based on their ratings and reviews.
+ *
+ * This function fetches roles and users information from the database, and assigns
+ * the appropriate role to members in the guild who meet the specified criteria.
+ * It ensures that each member has the highest applicable role and removes any
+ * conflicting roles that they might have.
+ *
+ * @param {object} pool - The database connection pool used for querying roles and users data.
+ * @param {object} guild - The Discord guild in which the roles will be updated.
+ *
+ * Steps:
+ * - Queries roles and users from the database.
+ * - Iterates through each user and evaluates which role they qualify for.
+ * - Fetches the corresponding guild member for the user.
+ * - Assigns the best applicable role to the user.
+ * - Removes any roles that conflict with the newly assigned role.
+ * - Ensures the assigned role adheres to the user's rating and review requirements.
+ *
+ * Notes:
+ * - Skips bot users when assigning roles.
+ * - Handles scenarios where users or roles may no longer exist in the guild by catching errors.
+ * - Relies on the guild's role cache for fetching role objects to assign or remove.
+ * - Roles are ordered by `required_rating` in descending order to ensure proper assignment.
+ */
 export default async function (pool, guild) {
     console.log('🔄 Обновление ролей продавцов...');
     const roles = await pool.query('SELECT * FROM roles ORDER BY required_rating DESC');
@@ -38,7 +63,7 @@ export default async function (pool, guild) {
                 }
             }
             await member.roles.add(roleToAssign).catch(() => null);
-            console.log(`✅ Назначена роль ${bestRole.role_name} пользователю ${member.user.username}`);
+            // console.log(`✅ Назначена роль ${bestRole.role_name} пользователю ${member.user.username}`);
         }
     }
 

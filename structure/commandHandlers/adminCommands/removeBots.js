@@ -1,5 +1,15 @@
 import { MessageFlags } from 'discord.js';
 
+/**
+ * Removes bot accounts from the database based on the provided interaction and database connection pool.
+ * Validates if the user has Administrator permissions before proceeding with the operation.
+ * Deletes bot-related entries in the `reviews` and `users` tables.
+ * Provides feedback to the user via the interaction.
+ *
+ * @param {Object} interaction - The interaction object representing the user's command in Discord.
+ * @param {Object} pool - The database connection pool used for executing queries.
+ * @return {Promise<void>} A promise resolved once the operation is completed or rejected in case of an error.
+ */
 export default async function removeBots(interaction, pool) {
     if (!interaction.member.permissions.has('Administrator')) {
         return interaction.reply({

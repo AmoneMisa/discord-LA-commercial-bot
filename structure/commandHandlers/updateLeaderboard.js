@@ -1,6 +1,13 @@
 import { EmbedBuilder } from 'discord.js';
-import { getLeaderboardChannelId, getLeaderboardMessageId, setLeaderboardMessageId, getTopSellers } from './dbUtils.js';
+import { getLeaderboardChannelId, getLeaderboardMessageId, setLeaderboardMessageId, getTopSellers } from '../dbUtils.js';
 
+/**
+ * Updates the leaderboard in a specified Discord channel with the top 30 sellers from the last 30 days.
+ *
+ * @param {Object} client - The Discord client instance used to interact with the Discord API.
+ * @param {Object} pool - The database connection pool used to fetch leaderboard and configuration data.
+ * @return {Promise<void>} A promise that resolves when the leaderboard update process is complete. Outputs logs indicating the status of the operation.
+ */
 export default async function updateLeaderboard(client, pool) {
     const channelId = await getLeaderboardChannelId(pool);
     if (!channelId || channelId === '') {
