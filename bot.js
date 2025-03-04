@@ -1,33 +1,29 @@
 import {
     ButtonStyle,
-    Events,
     Client,
+    Events,
     GatewayIntentBits,
     InteractionType,
     MessageFlags,
     TextInputStyle
 } from 'discord.js';
 import dotenv from 'dotenv';
-
-dotenv.config();
-
 import pkg from 'pg';
 import registerCommands from "./structure/registerCommands.js";
 import updateRatings from "./structure/updateRatings.js";
 import updateLeaderboard from "./structure/commandHandlers/updateLeaderboard.js";
 import setRolesByRanks from "./structure/setRolesByRanks.js";
 import removeBots from "./structure/commandHandlers/adminCommands/removeBots.js";
-import handleMessageSubscription from "./structure/commandHandlers/subscribe/handleMessageSubscription.js";
 import {schedulersList} from "./structure/cron/scheduleUpdates.js";
 import buttons from "./structure/interactions/buttons.js";
 import modals from "./structure/interactions/modals.js";
 import commands from "./structure/interactions/commands.js";
-import autocomplete from "./structure/interactions/autocomplete.js";
-import {addUserIfNotExists, getModulesSettings, givePointsForActivity} from "./structure/dbUtils.js";
-import sendRaidResponse from "./structure/commandHandlers/responses/sendRaidResponse.js";
+import {addUserIfNotExists} from "./structure/dbUtils.js";
 import createRoles from "./structure/createRoles.js";
 import errorsHandler from "./errorsHandler.js";
 import messageComponent from "./structure/interactions/messageComponent.js";
+
+dotenv.config();
 
 const {Pool} = pkg;
 /**
