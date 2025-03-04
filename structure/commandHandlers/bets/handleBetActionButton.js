@@ -1,5 +1,5 @@
 import updateBetTable from "./updateBetTable.js";
-import {getCurrentUserOdd} from "../../dbUtils.js";
+import {getCurrentUserOdd, updateUsersOdds} from "../../dbUtils.js";
 import {MessageFlags} from "discord.js";
 
 export default async function (interaction, pool) {
@@ -37,7 +37,7 @@ export default async function (interaction, pool) {
             await pool.query(`INSERT INTO bets (event_id, user_id, nickname, amount, server, target, odds) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
                 [eventId, userId, nickname, amount, server, target, await getCurrentUserOdd(pool, eventId, target)]);
         }
-
+        await updateUsersOdds(pool, eventId);
         await updateBetTable(interaction, pool, 1);
         await interaction.reply({
             content: "✅ **Ставка принята!**",
