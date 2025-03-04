@@ -7,11 +7,9 @@ export default async function (interaction, pool) {
     const [, , nickname, betAmount, server] = interaction.customId.split("_");
     const target = interaction.values[0];
     const event = await getActiveEvent(pool);
-    await pool.query(`INSERT INTO bets (event_id, user_id, nickname, amount, server, target, odds) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-        [event.id, userId, nickname, betAmount, server, target, await getCurrentUserOdd(pool, event.id, userId)]);
 
     await interaction.update({
-        content: `✅ Ваша ставка в **${betAmount}** с персонажа **${nickname}** (сервер **${server}**) на игрока ${target} отправлена в обработку!`,
+        content: `:bangbang:  **ATTENTION**\nЧтобы Ваша ставка была успешно зачислена, отправьте **камни судьбы** на один из **банков**, в зависимости от Вашего сервера.\nБанк Кратос: **Xzbit**\nБанк Альдеран: **QQbite**\n\n✅ Ваша ставка в **${betAmount}** с персонажа **${nickname}** (сервер **${server}**) на игрока ${target} отправлена в обработку!`,
         components: [],
         flags: MessageFlags.Ephemeral
     });
@@ -20,14 +18,14 @@ export default async function (interaction, pool) {
     const channelId = settings.rows[0].value;
 
     if (channelId) {
-        const adminChannel = interaction.guild.channels.fetch(channelId);
+        const adminChannel = await interaction.guild.channels.fetch(channelId);
 
         await adminChannel.send({
             content: `🔔 **Новая ставка!**\n\n**Игрок:** <@${userId}>\n**Ник:** ${nickname}\n**Сервер:** ${server}\n**Ставка:** ${betAmount}\n**Цель:** ${target}`,
             components: [
                 new ActionRowBuilder().addComponents(
-                    new ButtonBuilder().setCustomId(`bet_accept_${userId}_${event.id}`).setLabel("✅ Принять").setStyle(ButtonStyle.Success),
-                    new ButtonBuilder().setCustomId(`bet_reject_${userId}_${event.id}`).setLabel("❌ Отклонить").setStyle(ButtonStyle.Danger)
+                    new ButtonBuilder().setCustomId(`bet_accept_${userId}_${event.id}_${betAmount}_${target}_${server}_${nickname}`).setLabel("✅ Принять").setStyle(ButtonStyle.Success),
+                    new ButtonBuilder().setCustomId(`bet_reject_${userId}_${event.id}_${betAmount}_${target}_${server}_${nickname}`).setLabel("❌ Отклонить").setStyle(ButtonStyle.Danger)
                 )
             ]
         });
