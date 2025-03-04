@@ -100,6 +100,7 @@ export async function getModulesSettings(pool) {
 
 export async function getCurrentUserOdd(pool, eventId, target) {
     // Получаем суммы ставок по каждому игроку-цели
+    console.log("target", target);
     const result = await pool.query(`
         SELECT target, SUM(amount) AS total_bets, COUNT(*) AS bet_count
         FROM bets
@@ -107,14 +108,17 @@ export async function getCurrentUserOdd(pool, eventId, target) {
         GROUP BY target
     `, [eventId]);
 
+    console.log("result.rows", result.rows);
     // Получаем список всех возможных целей (участников) из события
     const eventData = await pool.query(`
         SELECT participants FROM bet_events WHERE id = $1
     `, [eventId]);
 
+    console.log("Event data", eventData.rows);
+
     const participants = JSON.parse(eventData.rows[0]?.participants)|| [];
     result.rows.map(row => row.target);
-    console.log(eventData.rows)
+    console.log("participants", participants);
     let totalBank = 0;
 
     // Обрабатываем всех участников, включая тех, на кого ещё не ставили
@@ -123,22 +127,34 @@ export async function getCurrentUserOdd(pool, eventId, target) {
     participants.forEach(participant => {
         const targetData = result.rows.find(row => row.target === participant);
         const totalBets = targetData ? parseInt(targetData.total_bets) : 0;
+        console.log("totalBets", totalBets);
+
         const betCount = targetData ? parseInt(targetData.bet_count) : 0;
+        console.log("betCount", betCount);
+
 
         // Если ставок нет, добавляем фиктивные 150
         const adjustedTotalBets = betCount === 0 ? totalBets + 150 : totalBets;
+        console.log("adjustedTotalBets", adjustedTotalBets);
         targetBetsMap.set(participant, adjustedTotalBets);
+        console.log("targetBetsMap", targetBetsMap);
 
         // Учитываем скорректированные ставки в общем банке
         totalBank += adjustedTotalBets;
+        console.log("totalBank", totalBank);
+
     });
 
     // Считаем коэффициент для конкретной цели
     const totalBetsOnTarget = targetBetsMap.get(target) || 150; // 150, если цель без ставок
+    console.log("targetBetsMap.get(target)", targetBetsMap.get(target));
+
     let odds = totalBank / totalBetsOnTarget;
+    console.log("totalBank / totalBetsOnTarge", totalBank / totalBetsOnTarget);
 
     // Ограничиваем коэффициент до 5
     odds = Math.min(odds, 5);
+    console.log("Math.min(odds, 5)", Math.min(odds, 5));
 
     return odds;
 }
