@@ -1,5 +1,3 @@
-import {EmbedBuilder} from "discord.js";
-
 /**
  * Retrieves the leaderboard channel ID from the settings table.
  *
