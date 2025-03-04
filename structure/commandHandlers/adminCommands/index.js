@@ -22,6 +22,7 @@ import deleteBetEvent from "./deleteBetEvent.js";
 import createRegistrationEvent from "./createRegistrationEvent.js";
 import setBetNotificationChannel from "./setBetNotificationChannel.js";
 import setBetPrivateChannel from "./setBetPrivateChannel.js";
+import sendBetResults from "./sendBetResults.js";
 
 export default {
     setCooldown,
@@ -48,4 +49,5 @@ export default {
     createRegistrationEvent,
     setBetNotificationChannel,
     setBetPrivateChannel,
+    sendBetResults
 }

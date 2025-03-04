@@ -40,7 +40,7 @@ export default async function (interaction, pool) {
 
     const betAmountInput = new TextInputBuilder()
         .setCustomId("bet_amount")
-        .setLabel("Введите сумму ставки (50 - 2000)")
+        .setLabel("Введите сумму ставки (от 200)")
         .setStyle(TextInputStyle.Short)
         .setRequired(true);
 

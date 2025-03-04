@@ -1,4 +1,4 @@
-import {ActionRowBuilder, ButtonBuilder, ButtonStyle} from "discord.js";
+import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from "discord.js";
 import {formatDateToCustomString, getActiveEvent} from "../../utils.js";
 
 export default async function (interaction, pool, page = 1) {
@@ -41,8 +41,7 @@ export default async function (interaction, pool, page = 1) {
 
     embedContent += `\n💰 **Таблица ставок (стр. ${page}/${totalPages})**:\n`;
     paginatedBets.forEach((bet, index) => {
-        console.log(bet)
-        embedContent += `**${startIndex + index + 1}.** <@${bet.user_id}> поставил **${bet.amount}** на **${bet.target}** (возможный выигрыш: ${(Math.ceil(bet.amount * bet.odds))})\n`;
+        embedContent += `**${startIndex + index + 1}.** <@${bet.user_id}> поставил **${bet.amount}** на **${bet.target}**\n`;
     });
 
     const row = new ActionRowBuilder();
@@ -71,8 +70,16 @@ export default async function (interaction, pool, page = 1) {
     }
 
     if (messageId && isMessageExist) {
-        const msg = await channel.messages.fetch(messageId);
-        await msg.edit({ content: embedContent, components: row.components.length ? [row] : [] });
+        if (page > 1) {
+            await interaction.reply({
+                content: embedContent,
+                flags: MessageFlags.Ephemeral,
+                components: row.components.length ? [row] : []
+            });
+        } else {
+            const msg = await channel.messages.fetch(messageId);
+            await msg.edit({ content: embedContent, components: row.components.length ? [row] : [] });
+        }
     } else {
         const newMessage = await channel.send({ content: embedContent, components: row.components.length ? [row] : [] });
         await pool.query(`UPDATE settings SET value = $1 WHERE key = 'bet_leaderboard_message_id'`, [newMessage.id]);

@@ -115,13 +115,13 @@ export async function getTotalBankByUser(pool, eventId, target) {
 }
 
 export async function getCurrentUserOdd(pool, eventId, userId, target) {
-    return await getTotalBank(pool, eventId) / await getTotalBankByUser(pool, eventId, target);
+    return await getTotalBankByUser(pool, eventId, target) === 0 ? 1 : (await getTotalBank(pool, eventId) * 0.9) / await getTotalBankByUser(pool, eventId, target);
 }
 
 export async function updateUsersOdds(pool, eventId) {
     await pool.query(`
         WITH total_bank AS (
-            SELECT SUM(amount) AS total FROM bets WHERE event_id = $1
+            SELECT SUM(amount) * 0.9 AS total FROM bets WHERE event_id = $1 -- Удерживаем 10%
         ),
              target_bets AS (
                  SELECT target, SUM(amount) AS total_bets
@@ -131,7 +131,7 @@ export async function updateUsersOdds(pool, eventId) {
              )
         UPDATE bets
         SET odds = tb.total / tbets.total_bets
-            FROM total_bank tb, target_bets tbets
+        FROM total_bank tb, target_bets tbets
         WHERE bets.event_id = $1
           AND bets.target = tbets.target;
     `, [eventId]);

@@ -57,4 +57,12 @@ export default [
                         .setDescription("Выберите текстовый канал")
                         .setRequired(true)
                 ))
+        .addSubcommand(subcommand =>
+            subcommand.setName("get_winners")
+                .setDescription("Получить список победителей")
+                .addChannelOption(option =>
+                    option.setName("winner")
+                        .setDescription("Ник победителя")
+                        .setRequired(true)
+                ))
 ];
