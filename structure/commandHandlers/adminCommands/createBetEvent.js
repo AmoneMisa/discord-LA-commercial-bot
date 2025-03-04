@@ -33,7 +33,7 @@ export default async function (interaction, pool) {
     await pool.query(
         `INSERT INTO bet_events (name, description, start_time, end_time, participants) 
          VALUES ($1, $2, to_timestamp($3), to_timestamp($4), $5)`,
-        [name, description, parseDateToTimestamp(startTime) / 1000, parseDateToTimestamp(endTime) / 1000, participants]
+        [name, description, parseDateToTimestamp(startTime) / 1000, parseDateToTimestamp(endTime) / 1000, JSON.stringify(participants)]
     );
 
     await interaction.reply({ content: `✅ **Событие "${name}" создано!**\n📌 **Описание:** ${description}\n🕒 **Срок:** ${startTime} - ${endTime}\n👥 **Участники:** ${participants.join(", ")}`,

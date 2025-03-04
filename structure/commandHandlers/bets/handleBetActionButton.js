@@ -1,10 +1,9 @@
 import updateBetTable from "./updateBetTable.js";
-import {getCurrentUserOdd, updateUsersOdds} from "../../dbUtils.js";
+import {getCurrentUserOdd} from "../../dbUtils.js";
 import {MessageFlags} from "discord.js";
 
 export default async function (interaction, pool) {
     const [, action, userId, eventId, amount, target, server, nickname, isUpdate] = interaction.customId.split("_");
-
     if (!["accept", "reject"].includes(action)) {
         return;
     }
@@ -16,10 +15,12 @@ export default async function (interaction, pool) {
         if (isUpdate) {
             const betResult = await pool.query("SELECT amount FROM bets WHERE user_id = $1 AND event_id = $2", [userId, eventId]);
             if (betResult.rows[0].amount === parseInt(amount)) {
-                return await interaction.reply({
+                await interaction.reply({
                     content: "⚠️ Эта ставка уже была принята ранее.",
                     flags: MessageFlags.Ephemeral
                 });
+
+                return;
             }
 
             await pool.query("UPDATE bets SET amount = $1 WHERE user_id = $2", [amount, userId]);
@@ -37,8 +38,7 @@ export default async function (interaction, pool) {
                 [eventId, userId, nickname, amount, server, target, await getCurrentUserOdd(pool, eventId, userId)]);
         }
 
-        await updateUsersOdds(pool, eventId);
-        await updateBetTable(pool, interaction.channel, 1);
+        await updateBetTable(interaction, pool, 1);
         await interaction.reply({
             content: "✅ **Ставка принята!**",
             flags: MessageFlags.Ephemeral
