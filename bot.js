@@ -1,5 +1,7 @@
 import {ButtonStyle, Client, GatewayIntentBits, InteractionType, MessageFlags, TextInputStyle} from 'discord.js';
 import dotenv from 'dotenv';
+dotenv.config();
+
 import pkg from 'pg';
 import registerCommands from "./structure/registerCommands.js";
 import updateRatings from "./structure/updateRatings.js";
@@ -14,8 +16,6 @@ import {addUserIfNotExists} from "./structure/dbUtils.js";
 import createRoles from "./structure/createRoles.js";
 import errorsHandler from "./errorsHandler.js";
 import messageComponent from "./structure/interactions/messageComponent.js";
-
-dotenv.config();
 
 const {Pool} = pkg;
 /**
@@ -75,7 +75,7 @@ client.once('ready', async () => {
         await updateLeaderboard(client, pool);
         await createRoles(pool, guild);
     } catch (e) {
-        console.error('ready:', e);
+        console.error('ready:',e);
         errorsHandler.error(e.message);
     }
 })
@@ -132,7 +132,7 @@ async interaction => {
             throw new Error(`Unknown type of interaction: ${interaction.type}`);
         }
     } catch (e) {
-        console.error('interactionCreate:', e);
+        console.error('interactionCreate:',e);
         errorsHandler.error(e.message);
     }
 });
