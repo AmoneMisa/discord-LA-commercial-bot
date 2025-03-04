@@ -1,15 +1,7 @@
-import adminAchievementsCommands from "./adminAchievementsCommands.js";
 import adminRankCommands from "./adminRankCommands.js";
 import adminSettingsCommands from "./adminSettingsCommands.js";
-import adminSubscriptionCommands from "./adminSubscriptionCommands.js";
-import userProfileCommands from "./userProfileCommands.js";
-import userSubscriptionCommands from "./userSubscriptionCommands.js";
-import adminCodexCommands from "./adminCodexCommands.js";
 import adminBetsCommands from "./adminBetsCommands.js";
-import adminRegistrationCommands from "./adminRegistrationCommands.js";
 import userRanksCommands from "./userRanksCommands.js";
-import userTradeCommands from "./userTradeCommands.js";
-import userCodexCommands from "./userCodexCommands.js";
 import {getModulesSettings} from "../dbUtils.js";
 import userBetsCommands from "./userBetsCommands.js";
 
@@ -35,32 +27,8 @@ export default async function getCommands(pool) {
             commandsArray = [...commandsArray, ...adminRankCommands, ...userRanksCommands];
         }
 
-        if (module.name === 'trade') {
-            commandsArray = [...commandsArray, ...userTradeCommands];
-        }
-
         if (module.name === 'bets') {
             commandsArray = [...commandsArray, ...adminBetsCommands, ...userBetsCommands];
-        }
-
-        if (module.name === 'subscriptions') {
-            commandsArray = [...commandsArray, ...userSubscriptionCommands, ...adminSubscriptionCommands];
-        }
-
-        if (module.name === 'profiles') {
-            commandsArray = [...commandsArray, ...userProfileCommands];
-        }
-
-        if (module.name === 'registration') {
-            commandsArray = [...commandsArray, ...adminRegistrationCommands];
-        }
-
-        if (module.name === 'achievements') {
-            commandsArray = [...commandsArray, ...adminAchievementsCommands];
-        }
-
-        if (module.name === 'codex') {
-            commandsArray = [...commandsArray, ...adminCodexCommands, ...userCodexCommands];
         }
     }
 
