@@ -25,18 +25,21 @@ export default async function (interaction, pool, eventId, client) {
     }
 
     const user = await client.users.fetch(interaction.user.id);
-    let embed;
+    let embed = new MessageEmbed()
+        .setTitle("🎉 Итоги ставок")
+        .setDescription(`Победители:`)
+        .addFields(
+            {name: "Цель-победитель", value: `${targetWinner}`, inline: true},
+            {name: "Коэффициент", value: `${row.odds.toFixed(2)}x`, inline: true}
+        )
+        .setColor("#1396e7");
+
     for (const row of result.rows) {
-        embed = new MessageEmbed()
-            .setTitle("🎉 Итоги ставок")
-            .setDescription(`Победители:`)
-            .addFields(
-                {name: "Сервер", value: row.server, inline: true},
-                {name: "Ставка", value: `${row.amount}💰`, inline: true},
-                {name: "Коэффициент", value: `${row.odds.toFixed(2)}x`, inline: true},
-                {name: "Чистый выигрыш", value: `${row.winnings.toFixed(2)}💰`, inline: true}
-            )
-            .setColor("GREEN");
+        embed.addFields(
+            {name: 'Ник', value: `${row.nickname}`, inline: true},
+            {name: "Сервер", value: row.server, inline: true},
+            {name: "Выигрыш", value: `${row.winnings.toFixed(2)}💰`, inline: true},
+        )
     }
     await user.send({embeds: [embed]}).catch(err => console.error(`Не удалось отправить сообщение: ${err}`));
 }
