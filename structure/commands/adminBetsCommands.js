@@ -60,9 +60,13 @@ export default [
         .addSubcommand(subcommand =>
             subcommand.setName("get_winners")
                 .setDescription("Получить список победителей")
-                .addChannelOption(option =>
+                .addStringOption(option =>
                     option.setName("winner")
                         .setDescription("Ник победителя")
+                        .setRequired(true)
+                ).addStringOption(option =>
+                    option.setName("event_id")
+                        .setDescription("Айди события ставок")
                         .setRequired(true)
                 ))
 ];
