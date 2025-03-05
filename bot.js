@@ -68,7 +68,7 @@ client.once('ready', async () => {
         }
 
         await registerCommands(pool);
-        schedulersList(pool, client, guild);
+        schedulersList(interaction, pool, client, guild);
 
         await updateRatings(pool);
         await setRolesByRanks(pool, guild);

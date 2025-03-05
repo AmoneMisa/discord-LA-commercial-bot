@@ -39,7 +39,7 @@ export default async function (interaction, pool, page = 1) {
 
     let embedContent = `🎲 **${event.name}**\n📅 **Ставки открыты с ${formatDateToCustomString(event.start_time)} по ${formatDateToCustomString(event.end_time)}**\n\n`;
 
-    embedContent += `\n💰 **Таблица ставок (стр. ${page}/${totalPages})**:\n`;
+    embedContent += `\n💰 **Таблица ставок | #${event.id} | (стр. ${page}/${totalPages})**:\n`;
     paginatedBets.forEach((bet, index) => {
         embedContent += `**${startIndex + index + 1}.** <@${bet.user_id}> поставил **${bet.amount}** на **${bet.target}**\n`;
     });

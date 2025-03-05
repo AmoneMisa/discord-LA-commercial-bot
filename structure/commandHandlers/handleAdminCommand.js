@@ -55,7 +55,7 @@ const adminCommandMap = {
     "adm_bet_delete": "deleteBetEvent",
     "adm_bet_channel": "setBetNotificationChannel",
     "adm_bet_info_private_channel": "setBetPrivateChannel",
-    "adm_bet_get_winners": "sendBetWinners",
+    "adm_bet_get_winners": "sendBetResults",
 
     // Регистрация на ивенты
     "adm_event_register": "registerEvent",
