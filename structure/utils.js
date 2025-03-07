@@ -198,7 +198,7 @@ export function parseDateToTimestamp(dateString) {
         parsedDate = dayjs(`${dateString} ${currentTime}`, "DD.MM.YYYY HH:mm");
     } else if (/^\d{2}\.\d{2} \d{2}:\d{2}$/.test(dateString)) {
         // Формат "dd.mm hh:mm" (добавляем текущий год)
-        parsedDate = dayjs(`${dateString}.${currentYear}`, "DD.MM HH:mm.YYYY");
+        parsedDate = dayjs(`${dateString} ${currentYear}`, "DD.MM.YYYY HH:mm");
     } else if (/^\d{2}\.\d{2}\.\d{4} \d{2}:\d{2}$/.test(dateString)) {
         // Формат "dd.mm.yyyy hh:mm"
         parsedDate = dayjs(dateString, "DD.MM.YYYY HH:mm");
