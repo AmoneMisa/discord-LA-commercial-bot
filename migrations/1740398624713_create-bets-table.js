@@ -46,9 +46,9 @@ export const up = (pgm) => {
         user_id: { type: "varchar", references: "users(user_id)", onDelete: "CASCADE", notNull: true },
         nickname: { type: "varchar", notNull: true },
         target: { type: "varchar", notNull: false },
-        amount: { type: "integer", notNull: true, check: "50 < amount < 2001" },
+        amount: { type: "integer", notNull: true, check: "amount > 50 AND amount < 2001" },
         odds: { type: "decimal(5,2)", notNull: true, check: "odds > 0" },
-        server: { type: "varchar", check: "server IN ('Кратос', 'Альдеран')", default: "Кратос" },
+        server: { type: "varchar", check: "server IN ('Кратос', 'Альдеран')", default: "'Кратос'" },
         created_at: { type: "timestamp", default: pgm.func("NOW()"), notNull: true }
     });
 
