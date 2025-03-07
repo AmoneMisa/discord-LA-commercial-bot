@@ -1,9 +1,9 @@
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from "discord.js";
-import {getActiveEvent, parseFormattedNumber} from "../../utils.js";
+import {getActiveEvent} from "../../utils.js";
 
 export default async function updateBet(interaction, pool) {
     const userId = interaction.user.id;
-    const amount = parseFormattedNumber(interaction.options.getInteger("amount"));
+    const amount = interaction.options.getInteger("amount");
 
     if (isNaN(amount)) {
         await interaction.reply({content: "Введённое вами число содержит недопустимые символы или формат ввода."});
