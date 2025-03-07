@@ -212,3 +212,13 @@ export function parseDateToTimestamp(dateString) {
 
     return parsedDate.valueOf(); // Возвращаем Unix timestamp (в миллисекундах)
 }
+
+export function parseFormattedNumber(str) {
+    let cleanedStr = str.replace(/[\s.,]/g, '');
+
+    if (!/^\d+$/.test(cleanedStr)) {
+        return NaN; // Строка невалидна
+    }
+
+    return parseInt(cleanedStr, 10);
+}
