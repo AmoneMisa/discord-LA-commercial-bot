@@ -51,13 +51,6 @@ export const up = (pgm) => {
         server: { type: "varchar", check: "server IN ('Кратос', 'Альдеран')", default: "'Кратос'" },
         created_at: { type: "timestamp", default: pgm.func("NOW()"), notNull: true }
     });
-
-    pgm.sql(`
-        INSERT INTO settings (key, value)
-        VALUES ('bet_leaderboard_message_id', ''),
-               ('bet_leaderboard_channel_id', ''),
-               ('bet_info_private_channel_id', '')
-    `);
 };
 
 /**
@@ -79,22 +72,4 @@ export const down = (pgm) => {
     pgm.dropTable("bet_results");
     pgm.dropTable("bets");
     pgm.dropTable("bet_events");
-
-    pgm.sql(`
-        DELETE
-        FROM settings
-        WHERE key = 'bet_leaderboard_channel_id';
-    `);
-
-    pgm.sql(`
-        DELETE
-        FROM settings
-        WHERE key = 'bet_leaderboard_message_id';
-    `);
-
-    pgm.sql(`
-        DELETE
-        FROM settings
-        WHERE key = 'bet_info_private_channel_id';
-    `);
 };
