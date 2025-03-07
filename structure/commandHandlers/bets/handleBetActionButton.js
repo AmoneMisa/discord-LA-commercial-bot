@@ -34,8 +34,8 @@ export default async function (interaction, pool) {
                 });
             }
 
-            await pool.query(`INSERT INTO bets (event_id, user_id, nickname, amount, server, target, odds) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-                [eventId, userId, nickname, amount, server, target, await getCurrentUserOdd(pool, eventId, target)]);
+            await pool.query(`INSERT INTO bets (event_id, user_id, nickname, amount, server, target, odds) VALUES ($1, $2, $3, $4, LOWER($5), $6, $7)`,
+                [eventId, userId, nickname, amount, server.toLowerCase(), target, await getCurrentUserOdd(pool, eventId, target)]);
         }
         await updateUsersOdds(pool, eventId);
         await updateBetTable(interaction, pool, 1);
