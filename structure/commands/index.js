@@ -2,7 +2,6 @@ import adminRankCommands from "./adminRankCommands.js";
 import adminSettingsCommands from "./adminSettingsCommands.js";
 import adminBetsCommands from "./adminBetsCommands.js";
 import userRanksCommands from "./userRanksCommands.js";
-import {getModulesSettings} from "../dbUtils.js";
 import userBetsCommands from "./userBetsCommands.js";
 
 /***
