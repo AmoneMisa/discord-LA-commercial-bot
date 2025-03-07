@@ -1,3 +1,5 @@
+import {MessageFlags} from "discord.js";
+
 export default async function (interaction, pool) {
     const channel = interaction.options.getChannel("channel");
 
