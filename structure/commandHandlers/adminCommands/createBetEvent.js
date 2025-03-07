@@ -1,6 +1,5 @@
 import {MessageFlags} from "discord.js";
 import {getActiveEvent, parseDateToTimestamp} from "../../utils.js";
-import sendBetResults from "./sendBetResults.js";
 
 /**
  * Creates a new bet event and saves it in the database, then sends a reply to the interaction.

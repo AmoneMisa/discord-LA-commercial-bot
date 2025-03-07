@@ -2,7 +2,7 @@ import {ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, MessageFlags
 
 export default async function (interaction, pool) {
     const targetWinner = interaction.options.getString("winner");
-    const eventId = interaction.options.getString("eventId");
+    const eventId = interaction.options.getString("event_id");
 
     const result = await pool.query(`
         WITH winners AS (SELECT b.user_id,
