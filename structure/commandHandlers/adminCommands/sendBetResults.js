@@ -44,7 +44,7 @@ export default async function (interaction, pool) {
                 .setDisabled(currentPage >= Math.ceil(result.rows.length / itemsPerPage) - 1)
         );
 
-    const message = await user.send({embeds: [generateEmbed(currentPage, result, eventId, targetWinner, itemsPerPage)], components: [row], flags: MessageFlags.Ephemeral})
+    const message = await user.send({embeds: [generateEmbed(currentPage, result.rows, eventId, targetWinner, itemsPerPage)], components: [row], flags: MessageFlags.Ephemeral})
         .catch(err => console.error(`Не удалось отправить сообщение: ${err}`));
     const collector = message.createMessageComponentCollector();
 
@@ -65,19 +65,19 @@ export default async function (interaction, pool) {
 function generateEmbed(page, result, eventId, targetWinner, itemsPerPage) {
     const start = page * itemsPerPage;
     const end = start + itemsPerPage;
-    const pageData = result.rows.slice(start, end);
+    const pageData = result.slice(start, end);
 
     const embed = new EmbedBuilder()
         .setTitle(`🎉 Итоги ставок | #${eventId}`)
         .setDescription(`Победители\n📌 **Цель-победитель**: ${targetWinner}`)
         .setColor("#1396e7")
-        .setFooter({ text: `Страница ${page + 1} из ${Math.ceil(result.rows.length / itemsPerPage)}` });
+        .setFooter({ text: `Страница ${page + 1} из ${Math.ceil(result.length / itemsPerPage)}` });
 
     for (const row of pageData) {
         embed.addFields(
             { name: 'Ник', value: `${row.nickname}`, inline: true },
             { name: "Сервер", value: row.server, inline: true },
-            { name: "Выигрыш", value: `${row.winnings.toFixed(2)}💰`, inline: true },
+            { name: "Выигрыш", value: `${row.amount * row.odds * 0.9}💰`, inline: true },
         );
     }
 
