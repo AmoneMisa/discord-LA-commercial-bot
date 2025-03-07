@@ -1,3 +1,5 @@
+import {MessageFlags} from "discord.js";
+
 /**
  * Deletes a betting event from the database based on the provided event ID.
  *
