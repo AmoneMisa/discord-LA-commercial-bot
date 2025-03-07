@@ -18,19 +18,6 @@ import userBetsCommands from "./userBetsCommands.js";
  ('codex', 'Кодекс - система знаний', false)`);
  ***/
 
-export default async function getCommands(pool) {
-    let commandsArray = [...adminSettingsCommands];
-    const settings = await getModulesSettings(pool);
-
-    for (const module of settings.rows) {
-        if (module.name === 'ranks') {
-            commandsArray = [...commandsArray, ...adminRankCommands, ...userRanksCommands];
-        }
-
-        if (module.name === 'bets') {
-            commandsArray = [...commandsArray, ...adminBetsCommands, ...userBetsCommands];
-        }
-    }
-
-    return commandsArray;
+export default async function getCommands() {
+    return [...adminSettingsCommands, ...adminRankCommands, ...userRanksCommands, ...adminBetsCommands, ...userBetsCommands];
 }
