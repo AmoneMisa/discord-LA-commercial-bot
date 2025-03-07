@@ -1,9 +1,15 @@
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from "discord.js";
-import {getActiveEvent} from "../../utils.js";
+import {getActiveEvent, parseFormattedNumber} from "../../utils.js";
 
 export default async function updateBet(interaction, pool) {
     const userId = interaction.user.id;
-    const amount = interaction.options.getInteger("amount");
+    const amount = parseFormattedNumber(interaction.options.getInteger("amount"));
+
+    if (isNaN(amount)) {
+        await  interaction.reply({content: "Введённое вами число содержит недопустимые символы или формат ввода."});
+        console.error("Update bet Incorrect amount:", amount );
+        return ;
+    }
 
     const event = await getActiveEvent(pool);
     if (!event) {
@@ -24,10 +30,6 @@ export default async function updateBet(interaction, pool) {
 
     if (amount <= bet.rows[0].amount) {
         return await interaction.reply({content: "❌ Вы можете только увеличить свою ставку!", flags: MessageFlags.Ephemeral});
-    }
-
-    if (amount > 2000) {
-        return await interaction.reply({content: "❌ Вы не можете поставить больше 2000!", flags: MessageFlags.Ephemeral});
     }
 
     if (amount === bet.rows[0].amount) {

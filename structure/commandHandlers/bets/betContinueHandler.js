@@ -1,11 +1,18 @@
 import {ActionRowBuilder, MessageFlags, StringSelectMenuBuilder} from "discord.js";
+import {parseFormattedNumber} from "../../utils.js";
 
 export default async function (interaction, pool) {
     const nickname = interaction.fields.getTextInputValue("bet_nickname");
-    const betAmount = parseInt(interaction.fields.getTextInputValue("bet_amount"), 10);
+    const betAmount = parseFormattedNumber(interaction.fields.getTextInputValue("bet_amount"));
     const server = interaction.fields.getTextInputValue("bet_server");
 
-    if (isNaN(betAmount) || betAmount < 200) {
+    if (isNaN(betAmount)) {
+        await  interaction.reply({content: "Введённое вами число содержит недопустимые символы или формат ввода."});
+        console.error("Update bet Incorrect amount:", betAmount );
+        return ;
+    }
+
+    if (betAmount < 200) {
         return await interaction.reply({ content: "⚠ Ошибка: Ставка должна быть от 200", flags: MessageFlags.Ephemeral });
     }
 
