@@ -203,11 +203,11 @@ export function parseDateToTimestamp(dateString) {
         // Формат "dd.mm.yyyy hh:mm"
         parsedDate = dayjs(dateString, "DD.MM.YYYY HH:mm");
     } else {
-        throw new Error("⚠ Ошибка: Неверный формат даты! Используйте один из форматов: \n- dd.mm \n- dd.mm.yyyy \n- dd.mm hh:mm \n- dd.mm.yyyy hh:mm");
+        throw new Error(`⚠ Ошибка: Неверный формат даты: ${dateString}! Используйте один из форматов: \n- dd.mm \n- dd.mm.yyyy \n- dd.mm hh:mm \n- dd.mm.yyyy hh:mm`);
     }
 
     if (!parsedDate.isValid()) {
-        throw new Error("⚠ Ошибка: Неверная дата.");
+        throw new Error(`⚠ Ошибка: Неверная дата: ${parsedDate}`);
     }
 
     return parsedDate.valueOf(); // Возвращаем Unix timestamp (в миллисекундах)
