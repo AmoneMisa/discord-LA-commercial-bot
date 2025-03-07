@@ -1,6 +1,5 @@
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from "discord.js";
 import {getActiveEvent} from "../../utils.js";
-import {getCurrentUserOdd} from "../../dbUtils.js";
 
 export default async function (interaction, pool) {
     const userId = interaction.user.id;
