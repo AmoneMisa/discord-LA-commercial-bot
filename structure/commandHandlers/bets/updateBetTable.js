@@ -43,12 +43,14 @@ export default async function (interaction, pool, page = 1) {
     const endIndex = startIndex + perPage;
     const paginatedBets = bets.rows.slice(startIndex, endIndex);
 
-    let embedContent = `🎲 **${event.name}**\n📅 **Ставки открыты с ${formatDateToCustomString(event.start_time)} по ${formatDateToCustomString(event.end_time)}**\n\n`;
+    let embedContent = `🎲 #${event.id} | **${event.name}**\n📅 **Ставки открыты с ${formatDateToCustomString(event.start_time)} по ${formatDateToCustomString(event.end_time)}**\n\n`;
 
-    embedContent += `\n💰 **Таблица ставок | #${event.id} | (стр. ${page}/${totalPages})**:\n`;
+    embedContent += `\n💰 **Таблица ставок | (стр. ${page}/${totalPages})**:\n`;
     paginatedBets.forEach((bet, index) => {
-        embedContent += `**${startIndex + index + 1}.** <@${bet.user_id}> поставил **${bet.amount}** на **${bet.target}**\n`;
+        embedContent += `**${startIndex + index + 1}.** <@${bet.user_id}> поставил **${bet.amount}** на **${bet.target}** | коэфф. x${bet.odds} | возможный выигрыш ${ (bet.amount * bet.odds) * 0.9 }\n`;
     });
+
+    embedContent += `:bangbang:  Возможный выигрыш указан с вычетом **10% комиссии.**`;
 
     const row = new ActionRowBuilder();
     if (page > 1) {
