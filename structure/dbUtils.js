@@ -111,7 +111,10 @@ export async function getTotalBankByUser(pool, eventId, target) {
 }
 
 export async function getCurrentUserOdd(pool, eventId, userId, target) {
-    return await getTotalBankByUser(pool, eventId, target) === 0 ? 1 : (await getTotalBank(pool, eventId) * 0.9) / await getTotalBankByUser(pool, eventId, target);
+    const totalBank = await getTotalBank(pool, eventId) * 0.9;
+    const totalTargetBets = await getTotalBankByUser(pool, eventId, target);
+
+    return totalTargetBets === 0 ? 1 : Math.max(totalBank / totalTargetBets, 1.0);
 }
 
 export async function updateUsersOdds(pool, eventId) {
