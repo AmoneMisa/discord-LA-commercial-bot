@@ -4,6 +4,12 @@ import {formatDateToCustomString, getActiveEvent} from "../../utils.js";
 export default async function (interaction, pool, page = 1) {
     const messageIdResult = await pool.query(`SELECT * FROM settings WHERE key = 'bet_leaderboard_message_id'`);
     const channelIdResult = await pool.query(`SELECT * FROM settings WHERE key = 'bet_leaderboard_channel_id'`);
+
+    if (channelIdResult.rows.length === 0) {
+        console.error(`Не установлен id для канала-таблицы ставок!`);
+        return interaction.reply({content: "Не установлен id для канала-таблицы ставок!", flags: MessageFlags.Ephemeral });
+    }
+
     const channel = await interaction.guild.channels.fetch(channelIdResult.rows[0].value);
 
     let messageId;
