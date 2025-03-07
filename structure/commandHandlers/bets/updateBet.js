@@ -46,7 +46,7 @@ export default async function updateBet(interaction, pool) {
         const adminChannel = await interaction.guild.channels.fetch(channelId);
 
         await adminChannel.send({
-            content: `🔔 **Обновление ставки!**\n\n**Игрок:** <@${userId}>\n**Ник:** ${bet.rows[0].nickname}\n**Сервер:** ${bet.rows[0].server}\n**Ставка:** ${amount}\n**Цель:** ${bet.rows[0].target}`,
+            content: `🔔 Событие #${event.id} | **Обновление ставки!**\n\n**Игрок:** <@${userId}>\n**Ник:** ${bet.rows[0].nickname}\n**Сервер:** ${bet.rows[0].server}\n**Ставка:** ${amount}\n**Цель:** ${bet.rows[0].target}`,
             components: [
                 new ActionRowBuilder().addComponents(
                     new ButtonBuilder().setCustomId(`bet_accept_${userId}_${event.id}_${amount}_${bet.rows[0].target}_${bet.rows[0].server}_${bet.rows[0].nickname}_update`).setLabel("✅ Принять").setStyle(ButtonStyle.Success),

@@ -20,7 +20,7 @@ export default async function (interaction, pool) {
         const adminChannel = await interaction.guild.channels.fetch(channelId);
 
         await adminChannel.send({
-            content: `🔔 **Новая ставка!**\n\n**Игрок:** <@${userId}>\n**Ник:** ${nickname}\n**Сервер:** ${server}\n**Ставка:** ${betAmount}\n**Цель:** ${target}`,
+            content: `🔔 Событие #${event.id} | **Новая ставка!**\n\n**Игрок:** <@${userId}>\n**Ник:** ${nickname}\n**Сервер:** ${server}\n**Ставка:** ${betAmount}\n**Цель:** ${target}`,
             components: [
                 new ActionRowBuilder().addComponents(
                     new ButtonBuilder().setCustomId(`bet_accept_${userId}_${event.id}_${betAmount}_${target}_${server}_${nickname}`).setLabel("✅ Принять").setStyle(ButtonStyle.Success),
