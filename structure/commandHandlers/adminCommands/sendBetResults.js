@@ -70,8 +70,6 @@ function generateEmbed(page, result, eventId, targetWinner, itemsPerPage) {
     const end = start + itemsPerPage;
     const pageData = result.slice(start, end);
 
-    console.log(result);
-
     const embed = new EmbedBuilder()
         .setTitle(`🎉 Итоги ставок | #${eventId}`)
         .setDescription(`Победители\n📌 **Цель-победитель**: ${targetWinner}`)
