@@ -1,4 +1,3 @@
-import {EmbedBuilder as MessageEmbed} from "@discordjs/builders";
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, MessageFlags} from "discord.js";
 
 export default async function (interaction, pool) {
@@ -14,16 +13,16 @@ export default async function (interaction, pool) {
                          FROM bets b
                                   JOIN bet_events e ON b.event_id = e.id
                          WHERE e.id = $1
-                           AND b.target = $2 -- Победившая цель
+                           AND LOWER(b.target) = LOWER($2) -- Победившая цель
         )
         SELECT u.user_id, w.server, w.amount, w.odds, w.winnings
         FROM winners w
                  JOIN users u ON w.user_id = u.user_id;
-    `, [eventId, targetWinner]);
+    `, [eventId, targetWinner.toLowerCase()]);
 
     if (result.rowCount === 0) {
-        console.log("❌ Нет победителей в этом событии.");
-        return;
+        await interaction.reply({content: "❌ Нет победителей в этом событии. Проверьте консоль на наличие ошибок.", flags: MessageFlags.Ephemeral});
+        throw new Error(`Произошла ошибка при попытке получить победителей. EventId: ${eventId}\nTargetWinner: ${targetWinner}\nResult: ${result.rows}`);
     }
 
     const user = await interaction.guild.members.fetch(interaction.user.id);

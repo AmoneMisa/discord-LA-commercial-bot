@@ -6,9 +6,9 @@ export default async function updateBet(interaction, pool) {
     const amount = parseFormattedNumber(interaction.options.getInteger("amount"));
 
     if (isNaN(amount)) {
-        await  interaction.reply({content: "Введённое вами число содержит недопустимые символы или формат ввода."});
-        console.error("Update bet Incorrect amount:", amount );
-        return ;
+        await interaction.reply({content: "Введённое вами число содержит недопустимые символы или формат ввода."});
+        console.error("Update bet Incorrect amount:", amount);
+        return;
     }
 
     const event = await getActiveEvent(pool);
@@ -24,16 +24,25 @@ export default async function updateBet(interaction, pool) {
                                   WHERE event_id = $1
                                     AND user_id = $2`, [event.id, interaction.user.id])
     if (!bet.rows.length) {
-        await interaction.reply({content: "❌ У вас нет активных ставок на это событие.", flags: MessageFlags.Ephemeral});
+        await interaction.reply({
+            content: "❌ У вас нет активных ставок на это событие.",
+            flags: MessageFlags.Ephemeral
+        });
         return;
     }
 
     if (amount <= bet.rows[0].amount) {
-        return await interaction.reply({content: "❌ Вы можете только увеличить свою ставку!", flags: MessageFlags.Ephemeral});
+        return await interaction.reply({
+            content: "❌ Вы можете только увеличить свою ставку!",
+            flags: MessageFlags.Ephemeral
+        });
     }
 
     if (amount === bet.rows[0].amount) {
-        return await interaction.reply({content: "❌ Вы не можете поставить ставку, равную предыдущей!", flags: MessageFlags.Ephemeral});
+        return await interaction.reply({
+            content: "❌ Вы не можете поставить ставку, равную предыдущей!",
+            flags: MessageFlags.Ephemeral
+        });
     }
 
     await interaction.reply({
@@ -57,6 +66,6 @@ export default async function updateBet(interaction, pool) {
             ]
         });
     } else {
-        throw new Error("Не найден канал с таким id:", channelId);
+        throw new Error(`Не найден канал с таким id: ${channelId}`);
     }
 }
