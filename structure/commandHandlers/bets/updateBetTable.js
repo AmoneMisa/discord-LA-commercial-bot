@@ -64,12 +64,14 @@ export default async function (interaction, pool, page = 1) {
 
     let isMessageExist;
     try {
-        isMessageExist = !!await channel.messages.fetch(messageId);
+        if (messageId) {
+            isMessageExist = !!await channel.messages.fetch(messageId);
+        }
     } catch (e) {
         console.error(`В канале: ${channelIdResult.rows[0].value} не найдено сообщение: ${messageId}`);
     }
 
-    if (messageId && isMessageExist) {
+    if (isMessageExist) {
         if (page > 1) {
             await interaction.reply({
                 content: embedContent,
