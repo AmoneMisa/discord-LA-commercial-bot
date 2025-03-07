@@ -1,11 +1,10 @@
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, MessageFlags} from "discord.js";
-import updateBetTable from "../bets/updateBetTable.js";
+import {updateUsersOdds} from "../../dbUtils.js";
 
 export default async function (interaction, pool) {
     const targetWinner = interaction.options.getString("winner");
     const eventId = interaction.options.getString("event_id");
-
-    await updateBetTable(interaction, pool, 1);
+    await updateUsersOdds(pool, eventId);
 
     const result = await pool.query(`
         WITH winners AS (SELECT b.user_id,
