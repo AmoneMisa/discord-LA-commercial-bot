@@ -6,6 +6,7 @@ export default async function (interaction, pool) {
 
     const result = await pool.query(`
         WITH winners AS (SELECT b.user_id,
+                                b.nickname,
                                 b.server,
                                 b.amount,
                                 b.odds,
@@ -15,7 +16,7 @@ export default async function (interaction, pool) {
                          WHERE e.id = $1
                            AND LOWER(b.target) = LOWER($2) -- Победившая цель
         )
-        SELECT u.user_id, w.server, w.amount, w.odds, w.winnings
+        SELECT u.user_id, w.nickname, w.server, w.amount, w.odds, w.winnings
         FROM winners w
                  JOIN users u ON w.user_id = u.user_id;
     `, [eventId, targetWinner.toLowerCase()]);
@@ -67,6 +68,8 @@ function generateEmbed(page, result, eventId, targetWinner, itemsPerPage) {
     const end = start + itemsPerPage;
     const pageData = result.slice(start, end);
 
+    console.log(result);
+
     const embed = new EmbedBuilder()
         .setTitle(`🎉 Итоги ставок | #${eventId}`)
         .setDescription(`Победители\n📌 **Цель-победитель**: ${targetWinner}`)
@@ -77,7 +80,7 @@ function generateEmbed(page, result, eventId, targetWinner, itemsPerPage) {
         embed.addFields(
             { name: 'Ник', value: `${row.nickname}`, inline: true },
             { name: "Сервер", value: row.server, inline: true },
-            { name: "Выигрыш", value: `${row.amount * row.odds * 0.9}💰`, inline: true },
+            { name: "Выигрыш", value: `${Math.ceil(row.winnings)}💰`, inline: true },
         );
     }
 
