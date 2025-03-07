@@ -83,7 +83,8 @@ export default async function (interaction, pool, page = 1) {
             await msg.edit({ content: embedContent, components: row.components.length ? [row] : [] });
         }
     } else {
-        const newMessage = await channel.send({ content: embedContent, components: row.components.length ? [row] : [] });
+        const newMessage = await channel.send({ content: embedContent, components: row.components.length ? [row] : [] })
+            .catch(e => console.error(`Ошибка при отправке сообщения-таблицы в канал для ставок: ${e}`, `Канал Id: ${channelIdResult.rows[0].value}`, channel));
         await pool.query(`UPDATE settings SET value = $1 WHERE key = 'bet_leaderboard_message_id'`, [newMessage.id]);
     }
 }
