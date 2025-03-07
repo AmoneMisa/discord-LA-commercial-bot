@@ -66,7 +66,7 @@ export default [
                         .setRequired(true)
                 ).addStringOption(option =>
                     option.setName("event_id")
-                        .setDescription("Айди события ставок")
+                        .setDescription("Id события ставок")
                         .setRequired(true)
                 ))
 ];
