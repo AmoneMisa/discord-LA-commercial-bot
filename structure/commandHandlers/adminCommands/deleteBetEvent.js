@@ -26,5 +26,5 @@ export default async function (interaction, pool) {
         return interaction.reply({ content: "🚫 Событие не найдено или уже удалено.", flags: MessageFlags.Ephemeral });
     }
 
-    await interaction.reply({ content: `✅ Событие ставок **#${eventId}** удалено!`, ephemeral: false });
+    await interaction.reply({ content: `✅ Событие ставок **#${eventId}** удалено!`, flags: MessageFlags.Ephemeral });
 }
