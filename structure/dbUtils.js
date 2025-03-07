@@ -94,10 +94,6 @@ export async function addUserIfNotExists(pool, user) {
     }
 }
 
-export async function getModulesSettings(pool) {
-    return pool.query(`SELECT name, description FROM modules_settings WHERE active = true`);
-}
-
 export async function getTotalBank(pool, eventId) {
     const result = await pool.query(`SELECT * FROM bets WHERE event_id = $1`, [eventId]);
     let totalBank = 0;
