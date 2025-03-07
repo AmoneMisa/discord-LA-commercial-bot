@@ -11,7 +11,6 @@ export default [
         option.setName("amount")
             .setDescription("Новое значение ставки. Должна быть больше предыдущей")
             .setRequired(true)
-            .setMinValue(1)
-            .setMaxValue(2000)
+            .setMinValue(201)
         )
 ]
