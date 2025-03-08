@@ -19,8 +19,10 @@ const transport = new DailyRotateFile({
 const logger = winston.createLogger({
     level: "error",
     format: winston.format.combine(
+        winston.format.errors({ stack: true }),
         winston.format.timestamp(),
-        winston.format.json()
+        winston.format.prettyPrint(),
+        winston.format.colorize()
     ),
     transports: [
         transport,

@@ -9,20 +9,18 @@ import getCommands from "./commands/index.js";
  * @return {Promise<void>} A promise that resolves when the commands are successfully registered or updated, or rejects with an error if the process fails.
  */
 export default async function registerCommands() {
-    const rest = new REST({ version: '10' }).setToken(process.env.BOT_TOKEN);
+    const rest = new REST({version: '10'}).setToken(process.env.BOT_TOKEN);
 
-    try {
-        console.log('Обновление (регистрация) команд...');
-        await rest.put(Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID), { body: [...await getCommands(), ...contextMenuCommands].map(cmd => {
+    console.log('Обновление (регистрация) команд...');
+    await rest.put(Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID), {
+        body: [...await getCommands(), ...contextMenuCommands].map(cmd => {
             try {
                 return cmd.toJSON();
             } catch (e) {
                 console.log(cmd.options);
                 throw e;
             }
-            }) });
-        console.log('Команды успешно обновлены!');
-    } catch (error) {
-        console.error('Ошибка при обновлении команд:', error);
-    }
+        })
+    });
+    console.log('Команды успешно обновлены!');
 }

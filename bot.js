@@ -76,7 +76,7 @@ client.once('ready', async () => {
         await createRoles(pool, guild);
     } catch (e) {
         console.error('ready:',e);
-        errorsHandler.error(e.message);
+        errorsHandler.error(e);
     }
 })
 
@@ -133,7 +133,7 @@ async interaction => {
         }
     } catch (e) {
         console.error('interactionCreate:',e);
-        errorsHandler.error(e.message);
+        errorsHandler.error(e);
     }
 });
 
