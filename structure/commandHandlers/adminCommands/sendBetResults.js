@@ -12,7 +12,7 @@ export default async function (interaction, pool) {
                                 b.server,
                                 b.amount,
                                 b.odds,
-                                b.amount * b.odds AS winnings -- Удерживаем 10%
+                                (b.amount * b.odds) * 0.9 AS winnings -- Удерживаем 10%
                          FROM bets b
                                   JOIN bet_events e ON b.event_id = e.id
                          WHERE e.id = $1
