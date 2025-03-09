@@ -47,7 +47,7 @@ export default async function (interaction, pool, page = 1) {
 
     embedContent += `\n💰 **Таблица ставок | (стр. ${page}/${totalPages})**:\n`;
     paginatedBets.forEach((bet, index) => {
-        embedContent += `**${startIndex + index + 1}.** <@${bet.user_id}> поставил **${bet.amount}** на **${bet.target}** | коэфф. x${bet.odds} | возможный выигрыш ${ bet.amount * bet.odds }\n`;
+        embedContent += `**${startIndex + index + 1}.** <@${bet.user_id}> поставил **${bet.amount}** на **${bet.target}** | коэфф. x${bet.odds} | возможный выигрыш ${ bet.amount * bet.odds * 0.9 }\n`;
     });
 
     embedContent += `:bangbang:  Возможный выигрыш указан с вычетом **10% комиссии.**`;
