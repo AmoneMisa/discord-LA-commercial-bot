@@ -131,7 +131,7 @@ export function toCamelCase(str) {
  * @param {string} [getType='member'] - Specifies the type of entity to retrieve ("user" or "member").
  * @return {Object} The retrieved user or member object, determined by the interaction context and parameters.
  */
-export function getMember(interaction, isContextMenu, isMessageContentMenuCommand, getType = 'member') {
+export function getMember(interaction, isContextMenu = false, isMessageContentMenuCommand = false, getType = 'member') {
     if (isContextMenu) {
         if (isMessageContentMenuCommand) {
             return interaction.targetMessage.author;
@@ -140,9 +140,16 @@ export function getMember(interaction, isContextMenu, isMessageContentMenuComman
         }
     } else {
         if (getType === 'user') {
-            return interaction.options.getUser('user');
+            if (interaction.options.getUser('user')) {
+                return interaction.options.getUser('user');
+            }
+            return interaction.user;
         } else {
-            return interaction.options.getUser('member');
+            if (interaction.options.getUser('member')) {
+                return interaction.options.getUser('member');
+            }
+
+            return interaction.member;
         }
     }
 }
