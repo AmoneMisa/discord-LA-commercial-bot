@@ -70,4 +70,12 @@ export default async function (interaction, pool, client) {
     if (interaction.commandName === 'update_bet') {
         await updateBet(interaction, pool);
     }
+
+    if (interaction.commandName === 'Поставить ставку') {
+        await createBetHandler(interaction, pool, true, true);
+    }
+
+    if (interaction.commandName === 'Увеличить ставку') {
+        await updateBet(interaction, pool, true, true);
+    }
 }

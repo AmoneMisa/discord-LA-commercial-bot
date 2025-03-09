@@ -1,8 +1,9 @@
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from "discord.js";
-import {getActiveEvent} from "../../utils.js";
+import {getActiveEvent, getMember} from "../../utils.js";
 
-export default async function updateBet(interaction, pool) {
-    const userId = interaction.user.id;
+export default async function updateBet(interaction, pool, isContextMenu = false, isMessageContentMenuCommand = false) {
+    let member = getMember(interaction, isContextMenu, isMessageContentMenuCommand);
+
     const amount = interaction.options.getInteger("amount");
 
     if (isNaN(amount)) {
@@ -57,11 +58,11 @@ export default async function updateBet(interaction, pool) {
         const adminChannel = await interaction.guild.channels.fetch(channelId);
 
         await adminChannel.send({
-            content: `🔔 Событие #${event.id} | **Обновление ставки!**\n\n**Игрок:** <@${userId}>\n**Ник:** ${bet.rows[0].nickname}\n**Сервер:** ${bet.rows[0].server}\n**Ставка:** ${amount}\n**Цель:** ${bet.rows[0].target}`,
+            content: `🔔 Событие #${event.id} | **Обновление ставки!**\n\n**Игрок:** <@${member.id}>\n**Ник:** ${bet.rows[0].nickname}\n**Сервер:** ${bet.rows[0].server}\n**Ставка:** ${amount}\n**Цель:** ${bet.rows[0].target}`,
             components: [
                 new ActionRowBuilder().addComponents(
-                    new ButtonBuilder().setCustomId(`bet_accept_${userId}_${event.id}_${amount}_${bet.rows[0].target}_${bet.rows[0].server}_${bet.rows[0].nickname}_update`).setLabel("✅ Принять").setStyle(ButtonStyle.Success),
-                    new ButtonBuilder().setCustomId(`bet_reject_${userId}_${event.id}_${amount}_${bet.rows[0].target}_${bet.rows[0].server}_${bet.rows[0].nickname}_update`).setLabel("❌ Отклонить").setStyle(ButtonStyle.Danger)
+                    new ButtonBuilder().setCustomId(`bet_accept_${member.id}_${event.id}_${amount}_${bet.rows[0].target}_${bet.rows[0].server}_${bet.rows[0].nickname}_update`).setLabel("✅ Принять").setStyle(ButtonStyle.Success),
+                    new ButtonBuilder().setCustomId(`bet_reject_${member.id}_${event.id}_${amount}_${bet.rows[0].target}_${bet.rows[0].server}_${bet.rows[0].nickname}_update`).setLabel("❌ Отклонить").setStyle(ButtonStyle.Danger)
                 )
             ]
         });

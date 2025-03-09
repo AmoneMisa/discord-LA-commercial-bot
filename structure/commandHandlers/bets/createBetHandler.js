@@ -1,13 +1,15 @@
 import {ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, MessageFlags} from "discord.js";
-import {getActiveEvent} from "../../utils.js";
+import {getActiveEvent, getMember} from "../../utils.js";
 
-export default async function (interaction, pool) {
+export default async function (interaction, pool, isContextMenu = false, isMessageContentMenuCommand = false) {
     const event = await getActiveEvent(pool);
     if (!event) {
         return interaction.reply({ content: "❌ Это событие либо не существует, либо уже завершилось.", flags: MessageFlags.Ephemeral });
     }
 
-    const betsResult = await pool.query(`SELECT * FROM bets WHERE event_id = $1 AND user_id = $2`, [event.id, interaction.user.id]);
+    let member = getMember(interaction, isContextMenu, isMessageContentMenuCommand);
+
+    const betsResult = await pool.query(`SELECT * FROM bets WHERE event_id = $1 AND user_id = $2`, [event.id, member.id]);
 
     if (betsResult.rows.length) {
         await interaction.reply({content: "Ставка уже создана!", flags: MessageFlags.Ephemeral});
