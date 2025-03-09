@@ -1,6 +1,7 @@
 import {MessageFlags} from "discord.js";
 import updateRatings from "../../updateRatings.js";
 import sendReviewNotification from "./sendReviewNotification.js";
+import errorsHandler from "../../../errorsHandler.js";
 
 /**
  * Handles the interaction for submitting a user review.
@@ -59,7 +60,7 @@ export default async function (interaction, pool, client) {
         await updateRatings(pool);
         await sendReviewNotification(pool, userId, reviewerId, isPositive, reviewText, client);
     } catch (error) {
-        console.error('❌ Ошибка при сохранении отзыва:', error);
+        errorsHandler.error(`'❌ Ошибка при сохранении отзыва: ${error}`);
         return interaction.reply({
             content: '❌ Произошла ошибка при сохранении отзыва. Попробуйте позже.',
             flags: MessageFlags.Ephemeral

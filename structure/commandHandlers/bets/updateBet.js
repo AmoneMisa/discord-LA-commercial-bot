@@ -1,5 +1,6 @@
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from "discord.js";
 import {getActiveEvent, getMember, parseFormattedNumber} from "../../utils.js";
+import errorsHandler from "../../../errorsHandler.js";
 
 export default async function updateBet(interaction, pool, isContextMenu = false, isMessageContentMenuCommand = false) {
     const event = await getActiveEvent(pool);
@@ -15,7 +16,8 @@ export default async function updateBet(interaction, pool, isContextMenu = false
     if (!member) {
         console.error("updateBet interaction isContextMenu, isMessageContentMenuCommand:", interaction, isContextMenu, isMessageContentMenuCommand);
         console.error("Пользователь не найден или не существует", member);
-        return await interaction.reply({content: "Пользователь не найден или не существует", flags: MessageFlags.Ephemeral});
+        await interaction.reply({content: "Пользователь не найден или не существует", flags: MessageFlags.Ephemeral});
+        errorsHandler.error(`updateBet interaction isContextMenu, isMessageContentMenuCommand: ${interaction}\n${isContextMenu}\n${isMessageContentMenuCommand}`);
     }
 
     let amount;

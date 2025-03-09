@@ -29,6 +29,6 @@ export default async function (interaction, pool) {
             ]
         });
     } else {
-        throw new Error("Не найден канал с таким id:", channelId);
+        throw new Error(`Не найден канал с таким id: ${channelId}`);
     }
 }
