@@ -14,19 +14,6 @@ export async function getLeaderboardChannelId(pool) {
 }
 
 /**
- * Retrieves the leaderboard channel ID from the settings table.
- *
- * @param {Object} pool - The database connection pool used to execute the query.
- * @return {Promise<string|null>} The leaderboard channel ID if found, or null if not present.
- */
-export async function getLeaderboardChannelId(pool) {
-    const result = await pool.query(`SELECT value
-                                     FROM settings
-                                     WHERE key = 'leaderboard_channel_id'`);
-    return result.rows[0]?.value || null;
-}
-
-/**
  * Sets the leaderboard channel ID in the database.
  *
  * @param {Object} pool - The database connection pool used to execute the query.

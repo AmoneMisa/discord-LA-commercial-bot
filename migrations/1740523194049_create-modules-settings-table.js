@@ -53,7 +53,7 @@ export const up = (pgm) => {
              VALUES ('ranks', 'Система рейтинга', true),
                     ('fastResponses', 'Кнопки быстрой связи с продавцом в канале для продаж', false),
                     ('factions', 'Система фракций и борьбы за активность', false),
-                    ('bets', 'Система ставок', false),
+                    ('bets', 'Система ставок', true),
                     ('subscriptions', 'Система подписок', false),
                     ('profiles', 'Система профилей', false),
                     ('randomGames', 'Рандомайзер', false),

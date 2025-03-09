@@ -20,10 +20,13 @@ import {schedulersList} from "./structure/cron/scheduleUpdates.js";
 import buttons from "./structure/interactions/buttons.js";
 import modals from "./structure/interactions/modals.js";
 import commands from "./structure/interactions/commands.js";
-import {addUserIfNotExists} from "./structure/dbUtils.js";
+import {addUserIfNotExists, getModulesSettings, givePointsForActivity} from "./structure/dbUtils.js";
 import createRoles from "./structure/createRoles.js";
 import errorsHandler from "./errorsHandler.js";
 import messageComponent from "./structure/interactions/messageComponent.js";
+import handleMessageSubscription from "./structure/commandHandlers/subscribe/handleMessageSubscription.js";
+import sendRaidResponse from "./structure/commandHandlers/responses/sendRaidResponse.js";
+import autocomplete from "./structure/interactions/autocomplete.js";
 
 const {Pool} = pkg;
 /**
