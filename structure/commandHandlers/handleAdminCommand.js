@@ -1,6 +1,7 @@
 import {ButtonStyle, MessageFlags} from "discord.js";
 import subcommandsHandlers from './adminCommands/index.js';
 import setBetPrivateChannel from "./adminCommands/setBetPrivateChannel.js";
+import i18n from "../../locales/i18n.js";
 
 const adminCommandMap = {
     // Достижения
@@ -78,7 +79,7 @@ export default async function (interaction, pool, guild) {
     const subcommand = interaction.options.getSubcommand();
     if (!interaction.member.permissions.has('Administrator')) {
         return await interaction.reply({
-            content: '🚫 У вас нет прав администратора для выполнения этой команды.',
+            content: i18n.t("errors.notAdmin", { lng: interaction.client.language[interaction.user.id]}),
             flags: MessageFlags.Ephemeral
         });
     }

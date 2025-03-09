@@ -1,5 +1,6 @@
 import {getMember, sendPaginatedReviews} from "../../utils.js";
 import {MessageFlags} from "discord.js";
+import i18n from "../../../locales/i18n.js";
 
 /**
  * Handles the "last negative reviews" command by displaying paginated reviews for a specific member.
@@ -19,7 +20,7 @@ export default async function handleLastNegativeReviewsCommand(interaction, pool
     }
 
     if (member.bot) {
-        return await interaction.reply({content: "Эту команду нельзя применять на ботах", flags: MessageFlags.Ephemeral});
+        return await interaction.reply({content: i18n.t("errors.userIsBot", { lng: interaction.client.language[interaction.user.id]}), flags: MessageFlags.Ephemeral});
     }
 
     await sendPaginatedReviews(interaction, pool, 1, false, member.id);

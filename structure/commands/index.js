@@ -3,6 +3,7 @@ import adminSettingsCommands from "./adminSettingsCommands.js";
 import adminBetsCommands from "./adminBetsCommands.js";
 import userRanksCommands from "./userRanksCommands.js";
 import userBetsCommands from "./userBetsCommands.js";
+import userSettingsCommands from "./userSettingsCommands.js";
 
 /***
  ('ranks', 'Система рейтинга', true),
@@ -18,5 +19,12 @@ import userBetsCommands from "./userBetsCommands.js";
  ***/
 
 export default async function getCommands() {
-    return [...adminSettingsCommands, ...adminRankCommands, ...userRanksCommands, ...adminBetsCommands, ...userBetsCommands];
+    return [
+        ...adminSettingsCommands,
+        ...adminRankCommands,
+        ...userRanksCommands,
+        ...adminBetsCommands,
+        ...userBetsCommands,
+        ...userSettingsCommands
+    ];
 }

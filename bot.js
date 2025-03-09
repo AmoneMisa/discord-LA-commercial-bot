@@ -16,6 +16,7 @@ import {addUserIfNotExists} from "./structure/dbUtils.js";
 import createRoles from "./structure/createRoles.js";
 import errorsHandler from "./errorsHandler.js";
 import messageComponent from "./structure/interactions/messageComponent.js";
+import i18n from "./locales/i18n.js";
 
 const {Pool} = pkg;
 /**
@@ -108,13 +109,16 @@ async interaction => {
         const targetUser = interaction?.options?.getUser('member');
         await addUserIfNotExists(pool, interaction.user);
 
+        interaction.client.language = interaction.client.language || {};
+        interaction.client.language[interaction.user.id] = "ru";
+
         if (interaction.isCommand() && interaction.commandName === 'adm_settings' && interaction.options.getSubcommand() === 'remove_bots') {
             await removeBots(interaction, pool);
         }
 
         if (targetUser && targetUser.bot) {
             return await interaction.reply({
-                content: '🚫 Вы не можете использовать эту команду на боте!',
+                content: i18n.t("errors.userIsBot", { lng: interaction.client.language[interaction.user.id]}),
                 flags: MessageFlags.Ephemeral
             });
         }

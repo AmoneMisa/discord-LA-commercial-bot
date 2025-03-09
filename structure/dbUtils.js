@@ -135,3 +135,8 @@ export async function updateUsersOdds(pool, eventId) {
           AND bets.target = tbets.target;
     `, [eventId]);
 }
+
+export async function getUserLanguage(userId, pool) {
+    const result = await pool.query("SELECT language FROM users WHERE user_id = $1", [userId]);
+    return result.rowCount > 0 ? result.rows[0].language : "ru";
+}

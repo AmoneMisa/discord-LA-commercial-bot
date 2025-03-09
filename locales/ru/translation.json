@@ -1,0 +1,22 @@
+{
+  "commandNames": {},
+  "commandDescriptions": {},
+  "buttons": {},
+  "errors": {
+    "userIsBot": "\uD83D\uDEAB Вы не можете использовать эту команду на боте!",
+    "notAdmin": "\uD83D\uDEAB У вас нет прав администратора для выполнения этой команды.",
+    "channelDoesntChoose": "❌ Ошибка: Вы не указали канал!",
+    "unknownCommand": "❌ Ошибка: неизвестная команда",
+    "channelMustBeTextType": "❌ Укажите корректный текстовый канал!",
+    "deleteBotFromDB": "❌ Ошибка при удалении ботов из БД:",
+    "incorrectMember": "Пользователь не выбран или не найден",
+    "noData": "Нет данных"
+  },
+  "info": {
+    "setLeaderboardChannel": "✅ Канал для таблицы лидеров установлен: <#{{channelId}}>\\nОбновляю таблицу...",
+    "noBotsInDB": "✅ В базе данных нет ботов.",
+    "botsRemovedFromDB": "✅ Удалено **({botsCount})** ботов из базы данных.",
+    "bet_placed": "Ваша ставка в размере {{amount}} сделана на {{target}}.",
+    "rankInfoMessage": ":point_right: **{{username}} - {{userRole}}**\\n:chart_with_upwards_trend: Рейтинг: {{rating}}\\n:white_check_mark: Положительные отзывы: {{positiveReviews}}\\n:x: Отрицательные отзывы: {{negativeReviews}}\\nПоследний положительный отзыв: {{lastPositiveReview}}\\nПоследний отрицательный отзыв: {{lastNegativeReview}}"
+  }
+}
