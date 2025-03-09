@@ -8,6 +8,7 @@ import reviewNotificationsToggle from "../commandHandlers/ranks/reviewNotificati
 import createBetHandler from "../commandHandlers/bets/createBetHandler.js";
 import updateBet from "../commandHandlers/bets/updateBet.js";
 import updateBetModal from "../commandHandlers/bets/updateBetModal.js";
+import userChangeLanguage from "../commandHandlers/common/userChangeLanguage.js";
 
 /**
  * Handles various Discord interaction commands based on the command name and subcommands.
@@ -53,6 +54,10 @@ export default async function (interaction, pool, client) {
 
     if (interaction.commandName === 'update_bet') {
         await updateBet(interaction, pool, false, false);
+    }
+
+    if (interaction.commandName === 'language') {
+        await userChangeLanguage(interaction, pool);
     }
 
     // обработчики команд контекстного меню

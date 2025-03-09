@@ -6,6 +6,6 @@ export default async function (interaction, pool) {
 
     await pool.query("UPDATE users SET language = $1 WHERE user_id = $2", [lang, userId]);
 
-    const message = i18n.t("language_updated", { lang });
+    const message = i18n.t("languageUpdated", { lang });
     await interaction.reply({ content: message });
 }
