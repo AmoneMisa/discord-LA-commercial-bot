@@ -13,6 +13,7 @@ export default async function updateBet(interaction, pool, isContextMenu = false
     let member = getMember(interaction, isContextMenu, isMessageContentMenuCommand);
 
     if (!member) {
+        console.error("updateBet interaction", interaction, isContextMenu, isMessageContentMenuCommand);
         console.error("Пользователь не найден или не существует", member);
         return await interaction.reply({content: "Пользователь не найден или не существует", flags: MessageFlags.Ephemeral});
     }
