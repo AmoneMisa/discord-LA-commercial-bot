@@ -28,7 +28,7 @@ export default async function updateBet(interaction, pool, isContextMenu = false
     const bet = await pool.query(`SELECT *
                                   FROM bets
                                   WHERE event_id = $1
-                                    AND user_id = $2`, [event.id, interaction.user.id])
+                                    AND user_id = $2`, [event.id, interaction.user.id]);
     if (!bet.rows.length) {
         await interaction.reply({
             content: "❌ У вас нет активных ставок на это событие.",
