@@ -1,23 +1,28 @@
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from "discord.js";
-import {getActiveEvent, getMember} from "../../utils.js";
+import {getActiveEvent, getMember, parseFormattedNumber} from "../../utils.js";
 
 export default async function updateBet(interaction, pool, isContextMenu = false, isMessageContentMenuCommand = false) {
-    let member = getMember(interaction, isContextMenu, isMessageContentMenuCommand);
-
-    const amount = interaction.options.getInteger("amount");
-
-    if (isNaN(amount)) {
-        await interaction.reply({content: "Введённое вами число содержит недопустимые символы или формат ввода."});
-        console.error("Update bet Incorrect amount:", amount);
-        return;
-    }
-
     const event = await getActiveEvent(pool);
     if (!event) {
         return await interaction.reply({
             content: "❌ Это событие либо не существует, либо уже завершилось.",
             flags: MessageFlags.Ephemeral
         });
+    }
+
+    let member = getMember(interaction, isContextMenu, isMessageContentMenuCommand);
+    let amount;
+
+    if (isContextMenu) {
+        amount = parseFormattedNumber(interaction.fields.getTextInputValue("amount"));
+    } else {
+        amount = interaction.options.getInteger("amount");
+    }
+
+    if (isNaN(amount)) {
+        await interaction.reply({content: "Введённое вами число содержит недопустимые символы или формат ввода."});
+        console.error("Update bet Incorrect amount:", amount);
+        return;
     }
 
     const bet = await pool.query(`SELECT *
