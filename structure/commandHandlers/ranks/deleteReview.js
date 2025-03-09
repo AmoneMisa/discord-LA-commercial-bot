@@ -32,18 +32,17 @@ export default async function (interaction, pool) {
 
     if (isNaN(parsedReviewId) || isNaN(parsedPage)) {
         return interaction.reply({
-            content: '❌ Ошибка: неверный ID отзыва или страницы.',
+            content: i18n.t("errors.incorrectId", {lng: interaction.client.language[interaction.user.id]}),
             flags: MessageFlags.Ephemeral
         });
     }
 
-    i18n.t("buttons.delete", { lng: interaction.client.language[interaction.user.id]})
     const member = await interaction.guild.members.fetch(interaction.user.id);
     const isAdmin = member.permissions.has(PermissionsBitField.Flags.Administrator);
 
     if (!isAdmin) {
         return interaction.reply({
-            content: '❌ У вас нет прав на удаление отзывов!',
+            content: i18n.t("errors.notAdmin", {lng: interaction.client.language[interaction.user.id]}),
             flags: MessageFlags.Ephemeral
         });
     }
@@ -52,7 +51,7 @@ export default async function (interaction, pool) {
 
     if (reviewData.rows.length === 0) {
         return interaction.reply({
-            content: '❌ Ошибка: отзыв не найден.',
+            content: i18n.t("errors.reviewDontFound", {lng: interaction.client.language[interaction.user.id]}),
             flags: MessageFlags.Ephemeral
         });
     }

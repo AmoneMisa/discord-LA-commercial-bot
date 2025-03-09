@@ -1,5 +1,6 @@
 import {MessageFlags} from "discord.js";
 import {getActiveEvent, parseDateToTimestamp} from "../../utils.js";
+import i18n from "../../../locales/i18n.js";
 
 /**
  * Creates a new bet event and saves it in the database, then sends a reply to the interaction.
@@ -14,7 +15,7 @@ export default async function (interaction, pool) {
     const isEventExist = await getActiveEvent(pool, true);
 
     if (isEventExist) {
-        await interaction.reply({content: "Событие уже существует", flags: MessageFlags.Ephemeral });
+        await interaction.reply({content: i18n.t("errors.eventAlreadyExists", { lng: interaction.client.language[interaction.user.id] }), flags: MessageFlags.Ephemeral });
         return;
     }
 
@@ -28,7 +29,7 @@ export default async function (interaction, pool) {
     participants = [...new Set(participants)];
 
     if (participants.length === 0) {
-        return interaction.reply({ content: "⚠ Ошибка: Список участников не может быть пустым.", flags: MessageFlags.Ephemeral });
+        return interaction.reply({ content: i18n.t("errors.emptyParticipantsList", { lng: interaction.client.language[interaction.user.id] }), flags: MessageFlags.Ephemeral });
     }
     await pool.query(
         `INSERT INTO bet_events (name, description, start_time, end_time, participants) 
@@ -36,6 +37,13 @@ export default async function (interaction, pool) {
         [name, description, parseDateToTimestamp(startTime) / 1000, parseDateToTimestamp(endTime) / 1000, JSON.stringify(participants)]
     );
 
-    await interaction.reply({ content: `✅ **Событие "${name}" создано!**\n📌 **Описание:** ${description}\n🕒 **Срок:** ${startTime} - ${endTime}\n👥 **Участники:** ${participants.join(", ")}`,
+    await interaction.reply({ content: i18n.t("info.betEventCreated", {
+            lng: interaction.client.language[interaction.user.id],
+            name,
+            description,
+            startTime,
+            endTime,
+            participants: participants.join(", ")
+        }),
          flags: MessageFlags.Ephemeral });
 }

@@ -1,4 +1,5 @@
 import {ButtonBuilder, ButtonStyle, ActionRowBuilder, MessageFlags} from "discord.js";
+import i18n from "../../../locales/i18n.js";
 
 export default async function (interaction, pool) {
     const messageId = interaction.options.getString("message_id");
@@ -17,16 +18,16 @@ export default async function (interaction, pool) {
     const row = new ActionRowBuilder().addComponents(
         new ButtonBuilder()
             .setCustomId(`register_event_${eventId}`)
-            .setLabel("🎟️ Записаться")
+            .setLabel(i18n.t("buttons.registerEvent", { lng: interaction.client.language[interaction.user.id] }))
             .setStyle(ButtonStyle.Primary),
         new ButtonBuilder()
-            .setCustomId(`register_event_${eventId}`)
-            .setLabel("🎟️ Отменить запись")
+            .setCustomId(`unregister_event_${eventId}`)
+            .setLabel(i18n.t("buttons.unregisterEvent", { lng: interaction.client.language[interaction.user.id] }))
             .setStyle(ButtonStyle.Danger)
     );
 
     const targetMessage = await interaction.channel.messages.fetch(messageId);
     await targetMessage.edit({ components: [row] });
 
-    await interaction.reply({ content: "✅ Ивент создан! Кнопка добавлена.", flags: MessageFlags.Ephemeral });
+    await interaction.reply({ content: i18n.t("info.eventCreated", { lng: interaction.client.language[interaction.user.id] }), flags: MessageFlags.Ephemeral });
 }

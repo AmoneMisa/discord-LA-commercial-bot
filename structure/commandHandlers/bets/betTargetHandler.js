@@ -1,5 +1,6 @@
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from "discord.js";
 import {getActiveEvent} from "../../utils.js";
+import i18n from "../../../locales/i18n.js";
 
 export default async function (interaction, pool) {
     const userId = interaction.user.id;
@@ -7,24 +8,61 @@ export default async function (interaction, pool) {
     const target = interaction.values[0];
     const event = await getActiveEvent(pool);
 
+    if (!event) {
+        return await interaction.reply({
+            content: i18n.t("errors.noBetEventExist", { lng: interaction.client.language[interaction.user.id] }),
+            flags: MessageFlags.Ephemeral
+        });
+    }
+
     await interaction.update({
-        content: `:bangbang:  **ATTENTION**\nЧтобы Ваша ставка была успешно зачислена, отправьте **камни судьбы** на один из **банков**, в зависимости от Вашего сервера.\nБанк Кратос: **Xzbit**\nБанк Альдеран: **QQbite**\n\n✅ Ваша ставка в **${betAmount}** с персонажа **${nickname}** (сервер **${server}**) на игрока ${target} отправлена в обработку!`,
+        content: i18n.t("info.betProcessing", {
+            lng: interaction.client.language[interaction.user.id],
+            betAmount,
+            nickname,
+            server,
+            target
+        }),
         components: [],
         flags: MessageFlags.Ephemeral
     });
 
     const settings = await pool.query("SELECT * FROM settings WHERE key = 'bet_info_private_channel_id'");
+    if (settings.rowCount === 0 || !settings.rows[0].value) {
+        return await interaction.reply({
+            content: i18n.t("errors.betChannelDoesntSetup", { lng: interaction.client.language[interaction.user.id] }),
+            flags: MessageFlags.Ephemeral
+        });
+    }
+
     const channelId = settings.rows[0].value;
 
     if (channelId) {
-        const adminChannel = await interaction.guild.channels.fetch(channelId);
+        let adminChannel;
+        try {
+            adminChannel = await interaction.guild.channels.fetch(channelId);
+        } catch (error) {
+            console.error(i18n.t("errors.betChannelDoesntExist", { channelId }), error);
+            return interaction.reply({
+                content: i18n.t("errors.betChannelDoesntExist", { lng: interaction.client.language[interaction.user.id] }),
+                flags: MessageFlags.Ephemeral
+            });
+        }
 
         await adminChannel.send({
-            content: `🔔 Событие #${event.id} | **Новая ставка!**\n\n**Игрок:** <@${userId}>\n**Ник:** ${nickname}\n**Сервер:** ${server}\n**Ставка:** ${betAmount}\n**Цель:** ${target}`,
+            content: i18n.t("info.betRequestAdminInfo", {
+                    lng: interaction.client.language[interaction.user.id],
+                    eventId: event.id,
+                    userId,
+                    nickname,
+                    server,
+                    betAmount,
+                    target
+                }),
             components: [
                 new ActionRowBuilder().addComponents(
-                    new ButtonBuilder().setCustomId(`bet_accept_${userId}_${event.id}_${betAmount}_${target}_${server}_${nickname}`).setLabel("✅ Принять").setStyle(ButtonStyle.Success),
-                    new ButtonBuilder().setCustomId(`bet_reject_${userId}_${event.id}_${betAmount}_${target}_${server}_${nickname}`).setLabel("❌ Отклонить").setStyle(ButtonStyle.Danger)
+                    new ButtonBuilder().setCustomId(`bet_accept_${userId}_${event.id}_${betAmount}_${target}_${server}_${nickname}`).setLabel(i18n.t("buttons.accept", { lng: interaction.client.language[interaction.user.id] })).setStyle(ButtonStyle.Success),
+                    new ButtonBuilder().setCustomId(`bet_reject_${userId}_${event.id}_${betAmount}_${target}_${server}_${nickname}`).setLabel(i18n.t("buttons.reject", { lng: interaction.client.language[interaction.user.id] })).setStyle(ButtonStyle.Danger)
                 )
             ]
         });
