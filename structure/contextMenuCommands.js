@@ -18,5 +18,11 @@ export default [
         .setType(ApplicationCommandType.Message),
     new ContextMenuCommandBuilder()
         .setName("Просмотреть профиль игрока")
-        .setType(ApplicationCommandType.User)
+        .setType(ApplicationCommandType.User),
+    new ContextMenuCommandBuilder()
+        .setName("Поставить ставку")
+        .setType(ApplicationCommandType.Message),
+    new ContextMenuCommandBuilder()
+        .setName("Увеличить ставку")
+        .setType(ApplicationCommandType.Message),
 ];
