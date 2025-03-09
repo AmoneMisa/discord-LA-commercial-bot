@@ -4,6 +4,7 @@ import notifySellerMessageSend from "../commandHandlers/subscribe/notifySellerMe
 import handleSellerAnswerToBuyerModal from "../commandHandlers/subscribe/handleSellerAnswerToBuyerModal.js";
 import notifySellerResponse from "../commandHandlers/responses/notifySellerResponse.js";
 import betContinueHandler from "../commandHandlers/bets/betContinueHandler.js";
+import updateBet from "../commandHandlers/bets/updateBet.js";
 
 /**
  * Handles various interactions triggered by user input in a Discord modal.
@@ -48,5 +49,9 @@ export default async function (interaction, pool, client) {
 
     if (interaction.customId.startsWith('bet_modal')) {
         await betContinueHandler(interaction, pool);
+    }
+
+    if (interaction.customId.startsWith('bet_update_modal')) {
+        await updateBet(interaction, pool, true, interaction.isMessageContextMenuCommand());
     }
 }

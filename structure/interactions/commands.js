@@ -26,6 +26,7 @@ import pickOnlineFromChannel from "../commandHandlers/randomGames/pickOnlineFrom
 import pickFromMentions from "../commandHandlers/randomGames/pickFromMentions.js";
 import createBetHandler from "../commandHandlers/bets/createBetHandler.js";
 import updateBet from "../commandHandlers/bets/updateBet.js";
+import updateBetModal from "../commandHandlers/bets/updateBetModal.js";
 
 /**
  * Handles various Discord interaction commands based on the command name and subcommands.
@@ -111,6 +112,14 @@ export default async function (interaction, pool, client) {
         await reviewNotificationsToggle(interaction, pool);
     }
 
+    if (interaction.commandName === 'create_bet') {
+        await createBetHandler(interaction, pool);
+    }
+
+    if (interaction.commandName === 'update_bet') {
+        await updateBet(interaction, pool);
+    }
+
     if (interaction.commandName === 'achievement-info') {
         await getAchievementInfo(interaction, pool);
     }
@@ -172,19 +181,11 @@ export default async function (interaction, pool, client) {
         await lastReviewsCommand(interaction, pool, true, interaction.isMessageContextMenuCommand());
     }
 
-    if (interaction.commandName === 'create_bet') {
-        await createBetHandler(interaction, pool);
-    }
-
-    if (interaction.commandName === 'update_bet') {
-        await updateBet(interaction, pool);
-    }
-
     if (interaction.commandName === 'Поставить ставку') {
-        await createBetHandler(interaction, pool, true, true);
+        await createBetHandler(interaction, pool, true, interaction.isMessageContextMenuCommand());
     }
 
     if (interaction.commandName === 'Увеличить ставку') {
-        await updateBet(interaction, pool, true, true);
+        await updateBetModal(interaction, pool, true, interaction.isMessageContextMenuCommand());
     }
 }
