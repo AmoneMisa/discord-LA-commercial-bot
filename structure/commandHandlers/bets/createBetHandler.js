@@ -7,7 +7,13 @@ export default async function (interaction, pool, isContextMenu = false, isMessa
         return interaction.reply({ content: "❌ Это событие либо не существует, либо уже завершилось.", flags: MessageFlags.Ephemeral });
     }
 
-    let member = getMember(interaction, isContextMenu, isMessageContentMenuCommand);
+    let member = getMember(interaction, isContextMenu, isMessageContentMenuCommand, 'user');
+
+    if (!member) {
+        console.error("createBet interaction isContextMenu, isMessageContentMenuCommand:", interaction, isContextMenu, isMessageContentMenuCommand);
+        console.error("Пользователь не найден или не существует", member);
+        return await interaction.reply({content: "Пользователь не найден или не существует", flags: MessageFlags.Ephemeral});
+    }
 
     const betsResult = await pool.query(`SELECT * FROM bets WHERE event_id = $1 AND user_id = $2`, [event.id, member.id]);
 

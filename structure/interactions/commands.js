@@ -48,11 +48,11 @@ export default async function (interaction, pool, client) {
     }
 
     if (interaction.commandName === 'create_bet') {
-        await createBetHandler(interaction, pool);
+        await createBetHandler(interaction, pool, false, false);
     }
 
     if (interaction.commandName === 'update_bet') {
-        await updateBet(interaction, pool);
+        await updateBet(interaction, pool, false, false);
     }
 
     // обработчики команд контекстного меню

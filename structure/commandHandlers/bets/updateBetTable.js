@@ -1,5 +1,6 @@
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from "discord.js";
 import {formatDateToCustomString, getActiveEvent} from "../../utils.js";
+import errorsHandler from "../../../errorsHandler.js";
 
 export default async function (interaction, pool, page = 1) {
     const messageIdResult = await pool.query(`SELECT * FROM settings WHERE key = 'bet_leaderboard_message_id'`);
@@ -76,7 +77,7 @@ export default async function (interaction, pool, page = 1) {
             isMessageExist = !!await channel.messages.fetch(messageId);
         }
     } catch (e) {
-        console.error(`В канале: ${channelIdResult.rows[0].value} не найдено сообщение: ${messageId}`);
+        console.info(`В канале: ${channelIdResult.rows[0].value} не найдено сообщение: ${messageId}`);
     }
 
     if (isMessageExist) {
@@ -92,7 +93,10 @@ export default async function (interaction, pool, page = 1) {
         }
     } else {
         const newMessage = await channel.send({ content: embedContent, components: row.components.length ? [row] : [] })
-            .catch(e => console.error(`Ошибка при отправке сообщения-таблицы в канал для ставок: ${e}`, `Канал Id: ${channelIdResult.rows[0].value}`, channel));
+            .catch(e => {
+                console.error(`Ошибка при отправке сообщения-таблицы в канал для ставок: ${e}`, `Канал Id: ${channelIdResult.rows[0].value}`, channel)
+                errorsHandler.error(`Ошибка при отправке сообщения-таблицы в канал для ставок: ${e}`, `Канал Id: ${channelIdResult.rows[0].value}\n\nChannel: ${channel}`);
+            });
         await pool.query(`UPDATE settings SET value = $1 WHERE key = 'bet_leaderboard_message_id'`, [newMessage.id]);
     }
 }
