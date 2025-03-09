@@ -7,8 +7,14 @@ export default async function (interaction, pool) {
     const server = interaction.fields.getTextInputValue("bet_server");
 
     if (isNaN(betAmount)) {
-        await  interaction.reply({content: "Введённое вами число содержит недопустимые символы или формат ввода."});
+        await interaction.reply({content: "Введённое вами число содержит недопустимые символы или формат ввода.", flags: MessageFlags.Ephemeral});
         console.error("Update bet Incorrect amount:", betAmount );
+        return ;
+    }
+
+    if (server.toLowerCase() !== 'кратос' && server.toLowerCase() !== 'альдеран') {
+        await interaction.reply({content: "Введённый вами сервер не соответствует названию Кратос или Альдеран.", flags: MessageFlags.Ephemeral});
+        console.error("Некорректное название сервера:", server );
         return ;
     }
 
