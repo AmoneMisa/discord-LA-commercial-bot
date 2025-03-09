@@ -1,15 +1,16 @@
 import {ActionRowBuilder, ButtonStyle, MessageFlags, ModalBuilder, TextInputBuilder, TextInputStyle} from "discord.js";
+import i18n from "../../../locales/i18n.js";
 
 export default async function (interaction) {
     const modal = new ModalBuilder()
         .setCustomId(`bet_update_modal`)
-        .setTitle('Увеличить ставку');
+        .setTitle(i18n.t("buttons.updateBetTitle", { lng: interaction.client.language[interaction.user.id]}));
 
     const input = new TextInputBuilder()
         .setCustomId('amount')
-        .setLabel('Введите НОВОЕ значение ставки')
+        .setLabel(i18n.t("buttons.updateBetAmountField", { lng: interaction.client.language[interaction.user.id]}))
         .setStyle(TextInputStyle.Paragraph)
-        .setPlaceholder('Введите НОВОЕ значение ставки')
+        .setPlaceholder(i18n.t("buttons.updateBetAmountField", { lng: interaction.client.language[interaction.user.id]}))
         .setRequired(true);
 
     const actionRow = new ActionRowBuilder().addComponents(input);

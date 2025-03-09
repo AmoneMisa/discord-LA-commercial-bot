@@ -17,7 +17,7 @@ export default async function (interaction, pool, isContextMenu = false, isMessa
     let member = getMember(interaction, isContextMenu, isMessageContentMenuCommand);
 
     if (!member) {
-        return interaction.reply({content: 'Выберите участника.', flags: MessageFlags.Ephemeral});
+        return interaction.reply({content: i18n.t("errors.incorrectMember", { lng: interaction.client.language[interaction.user.id]}), flags: MessageFlags.Ephemeral});
     }
 
     if (member.bot) {

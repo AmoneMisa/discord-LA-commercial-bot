@@ -1,10 +1,11 @@
 import {ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, MessageFlags} from "discord.js";
 import {getActiveEvent, getMember} from "../../utils.js";
+import i18n from "../../../locales/i18n.js";
 
 export default async function (interaction, pool, isContextMenu = false, isMessageContentMenuCommand = false) {
     const event = await getActiveEvent(pool);
     if (!event) {
-        return interaction.reply({ content: "❌ Это событие либо не существует, либо уже завершилось.", flags: MessageFlags.Ephemeral });
+        return interaction.reply({ content: i18n.t("errors.noBetEventExist", { lng: interaction.client.language[interaction.user.id]}), flags: MessageFlags.Ephemeral });
     }
 
     let member = getMember(interaction, isContextMenu, isMessageContentMenuCommand, 'user');
@@ -12,13 +13,13 @@ export default async function (interaction, pool, isContextMenu = false, isMessa
     if (!member) {
         console.error("createBet interaction isContextMenu, isMessageContentMenuCommand:", interaction, isContextMenu, isMessageContentMenuCommand);
         console.error("Пользователь не найден или не существует", member);
-        return await interaction.reply({content: "Пользователь не найден или не существует", flags: MessageFlags.Ephemeral});
+        return await interaction.reply({content: i18n.t("errors.incorrectMember", { lng: interaction.client.language[interaction.user.id]}), flags: MessageFlags.Ephemeral});
     }
 
     const betsResult = await pool.query(`SELECT * FROM bets WHERE event_id = $1 AND user_id = $2`, [event.id, member.id]);
 
     if (betsResult.rows.length) {
-        await interaction.reply({content: "Ставка уже создана!", flags: MessageFlags.Ephemeral});
+        await interaction.reply({content: i18n.t("errors.betAlreadyExist", { lng: interaction.client.language[interaction.user.id]}), flags: MessageFlags.Ephemeral});
         return ;
     }
 
@@ -27,34 +28,34 @@ export default async function (interaction, pool, isContextMenu = false, isMessa
     const channelId = settings.rows[0]?.value;
 
     if (!channelId) {
-        return await interaction.reply({ content: "⚠️ Канал для ставок не настроен администратором.", flags: MessageFlags.Ephemeral });
+        return await interaction.reply({ content: i18n.t("errors.betChannelDoesntSetup", { lng: interaction.client.language[interaction.user.id]}), flags: MessageFlags.Ephemeral });
     }
 
     const channel = await interaction.guild.channels.fetch(channelId);
     if (!channel) {
-        return await interaction.reply({ content: "⚠️ Ошибка: не найден канал для ставок.", flags: MessageFlags.Ephemeral });
+        return await interaction.reply({ content: i18n.t("errors.betChannelDoesntExist", { lng: interaction.client.language[interaction.user.id]}), flags: MessageFlags.Ephemeral });
     }
 
     // Создание модального окна
     const modal = new ModalBuilder()
         .setCustomId("bet_modal")
-        .setTitle("🎲 Создание ставки");
+        .setTitle(i18n.t("buttons.createBetTitle", { lng: interaction.client.language[interaction.user.id]}));
 
     const nicknameInput = new TextInputBuilder()
         .setCustomId("bet_nickname")
-        .setLabel("Введите ваш ник")
+        .setLabel(i18n.t("buttons.createBetNicknameField", { lng: interaction.client.language[interaction.user.id]}))
         .setStyle(TextInputStyle.Short)
         .setRequired(true);
 
     const betAmountInput = new TextInputBuilder()
         .setCustomId("bet_amount")
-        .setLabel("Введите сумму ставки (от 200)")
+        .setLabel(i18n.t("buttons.createBetAmountField", { lng: interaction.client.language[interaction.user.id]}))
         .setStyle(TextInputStyle.Short)
         .setRequired(true);
 
     const serverInput = new TextInputBuilder()
         .setCustomId("bet_server")
-        .setLabel("Введите ваш сервер (Кратос / Альдеран)")
+        .setLabel(i18n.t("buttons.createBetServerField", { lng: interaction.client.language[interaction.user.id]}))
         .setStyle(TextInputStyle.Short)
         .setRequired(true);
 

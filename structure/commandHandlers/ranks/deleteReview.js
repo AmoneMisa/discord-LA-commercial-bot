@@ -1,6 +1,7 @@
 import {MessageFlags, PermissionsBitField} from "discord.js";
 import {sendPaginatedReviews} from "../../utils.js";
 import updateRatings from "../../updateRatings.js";
+import i18n from "../../../locales/i18n.js";
 
 /**
  * Handles an interaction to delete a review from the database and updates the user's review statistics.
@@ -36,6 +37,7 @@ export default async function (interaction, pool) {
         });
     }
 
+    i18n.t("buttons.delete", { lng: interaction.client.language[interaction.user.id]})
     const member = await interaction.guild.members.fetch(interaction.user.id);
     const isAdmin = member.permissions.has(PermissionsBitField.Flags.Administrator);
 

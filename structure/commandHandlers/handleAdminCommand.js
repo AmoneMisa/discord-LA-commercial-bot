@@ -88,6 +88,6 @@ export default async function (interaction, pool, guild) {
     if (typeof subcommandsHandlers[handlerName] === "function") {
         await subcommandsHandlers[handlerName](interaction, pool, guild);
     } else {
-        await interaction.reply({content: '❌ Неизвестная команда.', flags: MessageFlags.Ephemeral});
+        await interaction.reply({content: i18n.t("errors.unknownCommand", { lng: interaction.client.language[interaction.user.id]}), flags: MessageFlags.Ephemeral});
     }
 }

@@ -10,6 +10,7 @@ import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat.js";
 import utc from "dayjs/plugin/utc.js";
 import timezone from "dayjs/plugin/timezone.js";
+import i18n from "../locales/i18n.js";
 
 /**
  * Formats a date string into the format "DD/MM/YYYY HH:mm".
@@ -68,12 +69,12 @@ export async function sendPaginatedReviews(interaction, pool, page = 1, isPositi
 
     if (reviews.rows.length === 0) {
         return interaction.reply({
-            content: `❌ У пользователя <@${member.id}> пока нет отзывов.`,
+            content: i18n.t("info.userDontHaveReviews", { lng: interaction.client.language[interaction.user.id]}),
             flags: MessageFlags.Ephemeral
         });
     }
 
-    let message = `📋 **Отзывы о <@${member.id}> (Страница ${page}):**\n\n`;
+    let message = i18n.t("info.reviewsAboutUser", { lng: interaction.client.language[interaction.user.id], memberId: member.id, page});
     let buttons = new ActionRowBuilder();
 
     reviews.rows.forEach((review, index) => {
@@ -83,7 +84,7 @@ export async function sendPaginatedReviews(interaction, pool, page = 1, isPositi
             buttons.addComponents(
                 new ButtonBuilder()
                     .setCustomId(`delete_review_${review.id}_${member.id}_${page}`)
-                    .setLabel(`Удалить ${index + 1}`)
+                    .setLabel(i18n.t("buttons.delete", { lng: interaction.client.language[interaction.user.id], index: index + 1}))
                     .setStyle(ButtonStyle.Danger)
             );
         }
@@ -97,7 +98,7 @@ export async function sendPaginatedReviews(interaction, pool, page = 1, isPositi
         paginationButtons.addComponents(
             new ButtonBuilder()
                 .setCustomId(`prev_reviews_${member.id}_${page - 1}_${isPositive}`)
-                .setLabel('⬅️ Назад')
+                .setLabel(i18n.t("buttons.back", { lng: interaction.client.language[interaction.user.id]}))
                 .setStyle(ButtonStyle.Secondary)
         );
     }
@@ -105,7 +106,7 @@ export async function sendPaginatedReviews(interaction, pool, page = 1, isPositi
         paginationButtons.addComponents(
             new ButtonBuilder()
                 .setCustomId(`next_reviews_${member.id}_${page + 1}_${isPositive}`)
-                .setLabel('➡️ Вперёд')
+                .setLabel(i18n.t("buttons.next", { lng: interaction.client.language[interaction.user.id]}))
                 .setStyle(ButtonStyle.Secondary)
         );
     }
