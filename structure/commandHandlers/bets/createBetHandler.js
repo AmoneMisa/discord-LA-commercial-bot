@@ -9,6 +9,11 @@ export default async function (interaction, pool, isContextMenu = false, isMessa
 
     let member = getMember(interaction, isContextMenu, isMessageContentMenuCommand);
 
+    if (!member) {
+        console.error("Пользователь не найден или не существует", member);
+        return await interaction.reply({content: "Пользователь не найден или не существует", flags: MessageFlags.Ephemeral});
+    }
+
     const betsResult = await pool.query(`SELECT * FROM bets WHERE event_id = $1 AND user_id = $2`, [event.id, member.id]);
 
     if (betsResult.rows.length) {
