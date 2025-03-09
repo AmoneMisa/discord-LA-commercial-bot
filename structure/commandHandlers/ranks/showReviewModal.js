@@ -1,4 +1,5 @@
 import { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } from 'discord.js';
+import i18n from "../../../locales/i18n.js";
 
 /**
  * Displays a modal for the user to leave a review based on the specified action.
@@ -11,13 +12,13 @@ import { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } from
 export default async function showReviewModal(interaction, action, userId) {
     const modal = new ModalBuilder()
         .setCustomId(`review_${action}_${userId}`)
-        .setTitle(action === 'upvote' ? 'Оставить положительный отзыв' : 'Оставить отрицательный отзыв');
+        .setTitle(action === 'upvote' ? i18n.t("buttons.leavePositiveReview", {lng: interaction.client.language[interaction.user.id]}) : i18n.t("buttons.leaveNegativeReview", {lng: interaction.client.language[interaction.user.id]}));
 
     const input = new TextInputBuilder()
         .setCustomId('review_text')
-        .setLabel('Введите ваш отзыв')
+        .setLabel(i18n.t("buttons.fillReviewTitle", {lng: interaction.client.language[interaction.user.id]}))
         .setStyle(TextInputStyle.Paragraph)
-        .setPlaceholder('Напишите здесь свой отзыв')
+        .setPlaceholder(i18n.t("buttons.fillReviewText", {lng: interaction.client.language[interaction.user.id]}))
         .setMinLength(10)
         .setMaxLength(300)
         .setRequired(true);
