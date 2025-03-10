@@ -9,9 +9,9 @@ i18next
         backend: {
             loadPath: "./locales/{{lng}}/translation.json",
         },
-        interpolation: {
-            escapeValue: false, // Разрешает вставку HTML в строки
-        },
+        preload: ["ru", "ua", "by", "ch", "en"], // Принудительная загрузка всех языков
+        load: "languageOnly",
+        nonExplicitSupportedLngs: true
     });
 
 export default i18next;

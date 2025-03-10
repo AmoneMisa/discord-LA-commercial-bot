@@ -12,7 +12,7 @@ import {schedulersList} from "./structure/cron/scheduleUpdates.js";
 import buttons from "./structure/interactions/buttons.js";
 import modals from "./structure/interactions/modals.js";
 import commands from "./structure/interactions/commands.js";
-import {addUserIfNotExists} from "./structure/dbUtils.js";
+import {addUserIfNotExists, getUserLanguage} from "./structure/dbUtils.js";
 import createRoles from "./structure/createRoles.js";
 import errorsHandler from "./errorsHandler.js";
 import messageComponent from "./structure/interactions/messageComponent.js";
@@ -109,8 +109,13 @@ async interaction => {
         const targetUser = interaction?.options?.getUser('member');
         await addUserIfNotExists(pool, interaction.user);
 
+        const lang = await getUserLanguage(interaction.user.id, pool);
         interaction.client.language = interaction.client.language || {};
-        interaction.client.language[interaction.user.id] = "ru";
+        interaction.client.language[interaction.user.id] = lang || "ru";
+        console.log(interaction.client.language[interaction.user.id]);
+        console.log(i18n.store.data);
+
+
 
         if (interaction.isCommand() && interaction.commandName === 'adm_settings' && interaction.options.getSubcommand() === 'remove_bots') {
             await removeBots(interaction, pool);
