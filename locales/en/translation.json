@@ -13,7 +13,9 @@
     "reject": "❌ Reject",
     "unregisterEvent": "🎟️ Cancel registration",
     "updateBetAmountField": "Enter the new bet amount. It must be greater than the previous one",
-    "updateBetTitle": "Edit bet"
+    "updateBetTitle": "Edit bet",
+    "leaveNegativeReview": "Leave a negative review",
+    "leavePositiveReview": "Leave a positive review"
   },
   "errors": {
     "betAlreadyAccepted": "⚠️ This bet has already been accepted.",
