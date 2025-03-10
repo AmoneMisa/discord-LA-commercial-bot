@@ -1,6 +1,7 @@
 import {getMember, sendPaginatedReviews} from "../../utils.js";
 import {MessageFlags} from "discord.js";
 import i18n from "../../../locales/i18n.js";
+import {getUserLanguage} from "../../dbUtils.js";
 
 /**
  * Handles the "last reviews" command by fetching and displaying paginated reviews for a specific member.
@@ -14,10 +15,10 @@ import i18n from "../../../locales/i18n.js";
 export default async function handleLastReviewsCommand(interaction, pool, isContextMenu = false, isMessageContentMenuCommand = false) {
     let member = getMember(interaction, isContextMenu, isMessageContentMenuCommand);
 
-    if (!member) return interaction.reply({ content: i18n.t("errors.incorrectMember", { lng: interaction.client.language[interaction.user.id]}), flags: MessageFlags.Ephemeral });
+    if (!member) return interaction.reply({ content: i18n.t("errors.incorrectMember", { lng: await getUserLanguage(interaction.user.id, pool)}), flags: MessageFlags.Ephemeral });
 
     if (member.bot) {
-        return await interaction.reply({content: i18n.t("errors.userIsBot", { lng: interaction.client.language[interaction.user.id]}), flags: MessageFlags.Ephemeral});
+        return await interaction.reply({content: i18n.t("errors.userIsBot", { lng: await getUserLanguage(interaction.user.id, pool)}), flags: MessageFlags.Ephemeral});
     }
 
     await sendPaginatedReviews(interaction, pool,1, null, member.id);

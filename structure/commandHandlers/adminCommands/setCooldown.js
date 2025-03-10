@@ -1,5 +1,6 @@
 import {MessageFlags} from "discord.js";
 import i18n from "../../../locales/i18n.js";
+import {getUserLanguage} from "../../dbUtils.js";
 
 /**
  * Updates the cooldown value for voting in the database and sends a reply to the user.
@@ -15,7 +16,7 @@ export default async function setCooldown(interaction, pool) {
 
     await interaction.reply({
         content: i18n.t("info.cooldownSet", {
-            lng: interaction.client.language[interaction.user.id],
+            lng: await getUserLanguage(interaction.user.id, pool),
             minutes
         }),
         flags: MessageFlags.Ephemeral

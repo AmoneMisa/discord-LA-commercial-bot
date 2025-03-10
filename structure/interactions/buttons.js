@@ -14,6 +14,9 @@ import handleSendRaidResponseBuy from "../commandHandlers/responses/handleSendRa
 import betContinueHandler from "../commandHandlers/bets/betContinueHandler.js";
 import betTargetHandler from "../commandHandlers/bets/betTargetHandler.js";
 import i18n from "../../locales/i18n.js";
+import {getUserLanguage} from "../dbUtils.js";
+import handleBetActionButton from "../commandHandlers/bets/handleBetActionButton.js";
+import handleBetPagination from "../commandHandlers/bets/handleBetPagination.js";
 
 /**
  * Handles various types of button interactions in a Discord bot and delegates
@@ -43,7 +46,7 @@ import i18n from "../../locales/i18n.js";
 export default async function (interaction, pool, client) {
     if (Date.now() - interaction.message.createdTimestamp > 5 * 60 * 1000 && !interaction.customId.startsWith("bet")) {
         return await interaction.update({
-            content: i18n.t("errors.buttonsTimeout", { lng: interaction.client.language[interaction.user.id]}),
+            content: i18n.t("errors.buttonsTimeout", { lng: await getUserLanguage(interaction.user.id, pool)}),
             components: [],
             flags: MessageFlags.Ephemeral
         });

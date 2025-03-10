@@ -1,4 +1,6 @@
 import {MessageFlags} from "discord.js";
+import i18n from "../../../locales/i18n.js";
+import {getUserLanguage} from "../../dbUtils.js";
 
 /**
  * Asynchronous function to handle the addition of a new codex entry.
@@ -29,7 +31,7 @@ export default async function (interaction, pool) {
         );
 
         if (categoryResult.rows.length === 0) {
-            return interaction.reply({ content: "❌ Категория не найдена!", flags: MessageFlags.Ephemeral });
+            return interaction.reply({ content: i18n.t("errors.categoryNotFound", { lng: await getUserLanguage(interaction.user.id, pool) }), flags: MessageFlags.Ephemeral });
         }
 
         const categoryId = categoryResult.rows[0].id;
@@ -51,10 +53,10 @@ export default async function (interaction, pool) {
             );
         }
 
-        interaction.reply({ content: "✅ Запись добавлена в кодекс!", flags: MessageFlags.Ephemeral });
+        await interaction.reply({ content: i18n.t("info.codexEntryAdded", { lng: await getUserLanguage(interaction.user.id, pool) }), flags: MessageFlags.Ephemeral });
 
     } catch (error) {
         console.error("Ошибка при добавлении в кодекс:", error);
-        interaction.reply({ content: "❌ Ошибка при добавлении записи!", flags: MessageFlags.Ephemeral });
+        await interaction.reply({ content: i18n.t("errors.codexEntryAddError", { lng: await getUserLanguage(interaction.user.id, pool) }), flags: MessageFlags.Ephemeral });
     }
 }

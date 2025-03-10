@@ -3,6 +3,7 @@ import updateRatings from "../../updateRatings.js";
 import sendReviewNotification from "./sendReviewNotification.js";
 import errorsHandler from "../../../errorsHandler.js";
 import i18n from "../../../locales/i18n.js";
+import {getUserLanguage} from "../../dbUtils.js";
 
 /**
  * Handles the interaction for submitting a user review.
@@ -54,7 +55,7 @@ export default async function (interaction, pool, client) {
         );
 
         await interaction.reply({
-            content: i18n.t("info.reviewSaved", { lng: interaction.client.language[interaction.user.id] }),
+            content: i18n.t("info.reviewSaved", { lng: await getUserLanguage(interaction.user.id, pool) }),
             flags: MessageFlags.Ephemeral
         });
 
@@ -63,7 +64,7 @@ export default async function (interaction, pool, client) {
     } catch (error) {
         errorsHandler.error(`'❌ Ошибка при сохранении отзыва: ${error}`);
         await interaction.reply({
-            content: i18n.t("errors.reviewSaveError", { lng: interaction.client.language[interaction.user.id] }),
+            content: i18n.t("errors.reviewSaveError", { lng: await getUserLanguage(interaction.user.id, pool) }),
             flags: MessageFlags.Ephemeral
         });
     }

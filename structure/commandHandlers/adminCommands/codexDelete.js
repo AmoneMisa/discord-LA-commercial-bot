@@ -1,3 +1,7 @@
+import i18n from "../../../locales/i18n.js";
+import {MessageFlags} from "discord.js";
+import {getUserLanguage} from "../../dbUtils.js";
+
 /**
  * Handles the deletion of a Codex entry based on the provided entry ID.
  *
@@ -21,12 +25,12 @@ export default async function (interaction, pool) {
         );
 
         if (result.rowCount === 0) {
-            return interaction.reply({ content: "❌ Запись не найдена.", flags: MessageFlags.Ephemeral });
+            return await interaction.reply({ content: i18n.t("errors.entryNotFound", { lng: await getUserLanguage(interaction.user.id, pool)}), flags: MessageFlags.Ephemeral });
         }
 
-        interaction.reply({ content: "🗑️ Запись успешно удалена!", flags: MessageFlags.Ephemeral });
+        await interaction.reply({ content: i18n.t("info.entryDeletedFromCodex", { lng: await getUserLanguage(interaction.user.id, pool)}), flags: MessageFlags.Ephemeral });
     } catch (error) {
         console.error("Ошибка при удалении записи кодекса:", error);
-        interaction.reply({ content: "❌ Ошибка при удалении записи.", flags: MessageFlags.Ephemeral });
+        await interaction.reply({ content: i18n.t("errors.entryDeletionFailed", { lng: await getUserLanguage(interaction.user.id, pool)}), flags: MessageFlags.Ephemeral });
     }
 }

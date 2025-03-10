@@ -1,4 +1,6 @@
 import {MessageFlags} from "discord.js";
+import i18n from "../../../locales/i18n.js";
+import {getUserLanguage} from "../../dbUtils.js";
 
 /**
  * Edits an achievement in the database by updating a specified field with a new value.
@@ -18,5 +20,5 @@ export default async function editAchievement(interaction, pool) {
 
     await pool.query(`UPDATE achievements SET ${field} = $1 WHERE name = $2`, [value, name]);
 
-    await interaction.reply({ content: `✅ Достижение **${name}** обновлено!`, flags: MessageFlags.Ephemeral });
+    await interaction.reply({ content: i18n.t("info.achievementUpdated", { lng: await getUserLanguage(interaction.user.id, pool), name }), flags: MessageFlags.Ephemeral });
 }

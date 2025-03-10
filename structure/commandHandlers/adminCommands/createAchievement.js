@@ -1,5 +1,7 @@
 import {MessageFlags} from "discord.js";
 import saveAchievementIcon from "../achievements/saveAchievementIcon.js";
+import i18n from "../../../locales/i18n.js";
+import {getUserLanguage} from "../../dbUtils.js";
 
 /**
  * Creates a new achievement with the provided name, description, and icon.
@@ -17,21 +19,21 @@ export default async function createAchievement(interaction, pool) {
     const icon = interaction.options.getAttachment('icon');
 
     if (!icon) {
-        return interaction.reply({ content: '❌ Прикрепите изображение PNG.', flags: MessageFlags.Ephemeral });
+        return await interaction.reply({ content: i18n.t("errors.attachmentMustBePng", { lng: await getUserLanguage(interaction.user.id, pool)}), flags: MessageFlags.Ephemeral });
     }
 
     const isAchievementExist = await pool.query(`SELECT * FROM achievements WHERE name = $1`, [name]);
 
     if (isAchievementExist.rows.length) {
-        return await interaction.reply({ content: '❌ Достижение с таким названием уже существует', flags: MessageFlags.Ephemeral });
+        return await interaction.reply({ content: i18n.t("errors.achievementAlreadyExists", { lng: await getUserLanguage(interaction.user.id, pool)}), flags: MessageFlags.Ephemeral });
     }
 
     const savedPath = await saveAchievementIcon(name, icon);
 
     if (savedPath) {
-        await interaction.reply({ content: `🏆 Достижение **${name}** создано!\n📁 Файл сохранён: ${savedPath}`, flags: MessageFlags.Ephemeral });
+        await interaction.reply({ content: i18n.t("info.achievementCreated", { lng: await getUserLanguage(interaction.user.id, pool), name, savedPath}), flags: MessageFlags.Ephemeral });
     } else {
-        return await interaction.reply({ content: '❌ Ошибка при сохранении иконки.', flags: MessageFlags.Ephemeral });
+        return await interaction.reply({ content: i18n.t("errors.achievementIconSaveFailed", { lng: await getUserLanguage(interaction.user.id, pool)}), flags: MessageFlags.Ephemeral });
     }
 
     await pool.query(

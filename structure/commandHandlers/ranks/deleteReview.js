@@ -2,6 +2,7 @@ import {MessageFlags, PermissionsBitField} from "discord.js";
 import {sendPaginatedReviews} from "../../utils.js";
 import updateRatings from "../../updateRatings.js";
 import i18n from "../../../locales/i18n.js";
+import {getUserLanguage} from "../../dbUtils.js";
 
 /**
  * Handles an interaction to delete a review from the database and updates the user's review statistics.
@@ -32,7 +33,7 @@ export default async function (interaction, pool) {
 
     if (isNaN(parsedReviewId) || isNaN(parsedPage)) {
         return interaction.reply({
-            content: i18n.t("errors.incorrectId", {lng: interaction.client.language[interaction.user.id]}),
+            content: i18n.t("errors.incorrectId", {lng: await getUserLanguage(interaction.user.id, pool)}),
             flags: MessageFlags.Ephemeral
         });
     }
@@ -42,7 +43,7 @@ export default async function (interaction, pool) {
 
     if (!isAdmin) {
         return interaction.reply({
-            content: i18n.t("errors.notAdmin", {lng: interaction.client.language[interaction.user.id]}),
+            content: i18n.t("errors.notAdmin", {lng: await getUserLanguage(interaction.user.id, pool)}),
             flags: MessageFlags.Ephemeral
         });
     }
@@ -51,7 +52,7 @@ export default async function (interaction, pool) {
 
     if (reviewData.rows.length === 0) {
         return interaction.reply({
-            content: i18n.t("errors.reviewDontFound", {lng: interaction.client.language[interaction.user.id]}),
+            content: i18n.t("errors.reviewDontFound", {lng: await getUserLanguage(interaction.user.id, pool)}),
             flags: MessageFlags.Ephemeral
         });
     }

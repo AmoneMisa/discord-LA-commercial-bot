@@ -1,4 +1,6 @@
 import {EmbedBuilder, MessageFlags} from "discord.js";
+import i18n from "../../../locales/i18n.js";
+import {getUserLanguage} from "../../dbUtils.js";
 
 /**
  * Retrieves information about a specific achievement and sends an embedded response to the user.
@@ -19,17 +21,22 @@ export default async function getAchievementInfo(interaction, pool) {
     );
 
     if (!result.rows.length) {
-        return interaction.reply({ content: `🚫 Достижение **${achievementName}** не найдено!`, flags: MessageFlags.Ephemeral });
+        return interaction.reply({ content: i18n.t("errors.achievementNotFound", { lng: await getUserLanguage(interaction.user.id, pool), achievement: achievementName }), flags: MessageFlags.Ephemeral });
     }
 
     const achievement = result.rows[0];
 
     const embed = new EmbedBuilder()
-        .setTitle(`🏆 Достижение: ${achievement.name}`)
+        .setTitle(`🏆 ${i18n.t("info.achievementTitle", { lng: await getUserLanguage(interaction.user.id, pool), achievement: achievement.name })}`)
         .setDescription(achievement.description)
         .setThumbnail(achievement.icon)
         .addFields(
-            { name: "Выдано", value: achievement.assigned_at ? `<@${achievement.user_id}> - ${achievement.assigned_at}` : "Не выдавалось" }
+            {
+                name: i18n.t("info.achievementIssued", { lng: await getUserLanguage(interaction.user.id, pool) }),
+                value: achievement.assigned_at
+                    ? `<@${achievement.user_id}> - ${achievement.assigned_at}`
+                    : i18n.t("info.achievementNotIssued", { lng: await getUserLanguage(interaction.user.id, pool) })
+            }
         )
         .setColor("#FFD700");
 

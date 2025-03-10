@@ -1,4 +1,6 @@
 import {MessageFlags} from "discord.js";
+import i18n from "../../../locales/i18n.js";
+import {getUserLanguage} from "../../dbUtils.js";
 
 /**
  * Associates a specific role with a raid, storing the relationship in the database if it does not already exist.
@@ -15,7 +17,7 @@ export default async function setRaidRole(interaction, pool) {
 
     if (raid.rowCount === 0) {
         return interaction.reply({
-            content: `🚫 Рейд "${raidName}" не найден!`,
+            content: i18n.t("errors.raidNotFound", { raidName, lng: await getUserLanguage(interaction.user.id, pool) }),
             flags: MessageFlags.Ephemeral
         });
     }
@@ -34,7 +36,7 @@ export default async function setRaidRole(interaction, pool) {
     `, [raidId, role.id]);
 
     return interaction.reply({
-        content: `✅ Роль ${role.name} теперь связана с рейдом "${raidName}"!`,
+        content: i18n.t("info.roleLinkedToRaid", { roleName: role.name, raidName, lng: await getUserLanguage(interaction.user.id, pool) }),
         flags: MessageFlags.Ephemeral
     });
 }

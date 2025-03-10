@@ -1,3 +1,7 @@
+import i18n from "../../../locales/i18n.js";
+import {getUserLanguage} from "../../dbUtils.js";
+import {MessageFlags} from "discord.js";
+
 /**
  * Edits an existing Codex entry in the database with the provided updated fields.
  *
@@ -32,12 +36,12 @@ export default async function editCodexEntry(interaction, pool) {
         );
 
         if (result.rowCount === 0) {
-            return interaction.reply({ content: "❌ Запись не найдена.", flags: MessageFlags.Ephemeral });
+            return await interaction.reply({ content: i18n.t("errors.entryNotFound", { lng: await getUserLanguage(interaction.user.id, pool)}), flags: MessageFlags.Ephemeral });
         }
 
-        interaction.reply({ content: "✅ Запись в кодексе обновлена!", flags: MessageFlags.Ephemeral });
+        await interaction.reply({ content: i18n.t("info.entryUpdatedInCodex", { lng: await getUserLanguage(interaction.user.id, pool)}), flags: MessageFlags.Ephemeral });
     } catch (error) {
         console.error("Ошибка при редактировании записи кодекса:", error);
-        interaction.reply({ content: "❌ Ошибка при обновлении записи.", flags: MessageFlags.Ephemeral });
+        await interaction.reply({ content: i18n.t("errors.entryUpdateFailed", { lng: await getUserLanguage(interaction.user.id, pool)}), flags: MessageFlags.Ephemeral });
     }
 }

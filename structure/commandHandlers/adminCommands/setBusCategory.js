@@ -1,4 +1,6 @@
 import {MessageFlags} from "discord.js";
+import {getUserLanguage} from "../../dbUtils.js";
+import i18n from "../../../locales/i18n.js";
 
 /**
  * Sets a bus category in the system, ensuring it is a valid category channel.
@@ -15,7 +17,7 @@ export default async function setBusCategory(interaction, pool) {
 
     if (category.type !== 4) { // 4 = категория в Discord API
         return interaction.reply({
-            content: '🚫 Вы должны выбрать **категорию**, а не обычный канал!',
+            content: i18n.t("errors.mustSelectCategory", { lng: await getUserLanguage(interaction.user.id, pool) }),
             flags: MessageFlags.Ephemeral
         });
     }
@@ -26,7 +28,7 @@ export default async function setBusCategory(interaction, pool) {
     `, [category.id]);
 
     await interaction.editReply({
-        content: `✅ Категория <#${category.id}> теперь отслеживается для рейдов.`,
+        content: i18n.t("info.categoryNowTracked", { categoryId: category.id, lng: await getUserLanguage(interaction.user.id, pool) }),
         flags: MessageFlags.Ephemeral
     });
 }

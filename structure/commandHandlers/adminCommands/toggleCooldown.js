@@ -1,4 +1,6 @@
 import { MessageFlags } from 'discord.js';
+import {getUserLanguage} from "../../dbUtils.js";
+import i18n from "../../../locales/i18n.js";
 
 /**
  * Toggles the cooldown state for voting in the database and sends a response to the interaction.
@@ -13,7 +15,10 @@ export default async function toggleCooldown(interaction, pool) {
     await pool.query('UPDATE settings SET value = $1 WHERE key = \'cooldown_enabled\'', [enabled]);
 
     await interaction.reply({
-        content: `✅ Кулдаун на голосование **${enabled ? 'включён' : 'выключен'}**.`,
+        content: i18n.t("info.votingCooldown", {
+            lng: await getUserLanguage(interaction.user.id, pool),
+            status: enabled ? i18n.t("common.enabled", { lng: await getUserLanguage(interaction.user.id, pool) }) : i18n.t("common.disabled", { lng: await getUserLanguage(interaction.user.id, pool) })
+        }),
         flags: MessageFlags.Ephemeral
     });
 }

@@ -2,6 +2,7 @@ import {ButtonStyle, MessageFlags} from "discord.js";
 import subcommandsHandlers from './adminCommands/index.js';
 import setBetPrivateChannel from "./adminCommands/setBetPrivateChannel.js";
 import i18n from "../../locales/i18n.js";
+import {getUserLanguage} from "../dbUtils.js";
 
 const adminCommandMap = {
     // Достижения
@@ -79,7 +80,7 @@ export default async function (interaction, pool, guild) {
     const subcommand = interaction.options.getSubcommand();
     if (!interaction.member.permissions.has('Administrator')) {
         return await interaction.reply({
-            content: i18n.t("errors.notAdmin", { lng: interaction.client.language[interaction.user.id]}),
+            content: i18n.t("errors.notAdmin", { lng: await getUserLanguage(interaction.user.id, pool)}),
             flags: MessageFlags.Ephemeral
         });
     }
@@ -88,6 +89,6 @@ export default async function (interaction, pool, guild) {
     if (typeof subcommandsHandlers[handlerName] === "function") {
         await subcommandsHandlers[handlerName](interaction, pool, guild);
     } else {
-        await interaction.reply({content: i18n.t("errors.unknownCommand", { lng: interaction.client.language[interaction.user.id]}), flags: MessageFlags.Ephemeral});
+        await interaction.reply({content: i18n.t("errors.unknownCommand", { lng: await getUserLanguage(interaction.user.id, pool)}), flags: MessageFlags.Ephemeral});
     }
 }

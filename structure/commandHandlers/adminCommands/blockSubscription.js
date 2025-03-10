@@ -1,4 +1,6 @@
 import {MessageFlags} from "discord.js";
+import i18n from "../../../locales/i18n.js";
+import {getUserLanguage} from "../../dbUtils.js";
 
 /**
  * Blocks a user's subscription by adding their user ID to the blocked subscriptions list.
@@ -12,5 +14,5 @@ export default async function blockSubscription(interaction, pool) {
     const blockType = interaction.options.getString('block_type');
 
     await pool.query('INSERT INTO blocked_subscriptions (user_id, block_type) VALUES ($1, $2) ON CONFLICT DO NOTHING', [userId, blockType]);
-    await interaction.reply({ content: `🚫 Пользователю запрещено подписываться.`, flags: MessageFlags.Ephemeral });
+    await interaction.reply({ content: i18n.t("info.userBlockedFromLeavingReviews", { lng: await getUserLanguage(interaction.user.id, pool), username: user.username }), flags: MessageFlags.Ephemeral });
 }

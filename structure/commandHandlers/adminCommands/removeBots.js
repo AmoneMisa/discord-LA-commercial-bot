@@ -1,5 +1,6 @@
 import { MessageFlags } from 'discord.js';
 import i18n from "../../../locales/i18n.js";
+import {getUserLanguage} from "../../dbUtils.js";
 
 /**
  * Removes bot accounts from the database based on the provided interaction and database connection pool.
@@ -14,7 +15,7 @@ import i18n from "../../../locales/i18n.js";
 export default async function removeBots(interaction, pool) {
     if (!interaction.member.permissions.has('Administrator')) {
         return interaction.reply({
-            content: i18n.t("errors.notAdmin", { lng: interaction.client.language[interaction.user.id]}),
+            content: i18n.t("errors.notAdmin", { lng: await getUserLanguage(interaction.user.id, pool)}),
             flags: MessageFlags.Ephemeral
         });
     }
@@ -26,7 +27,7 @@ export default async function removeBots(interaction, pool) {
 
         if (bots.size === 0) {
             return interaction.editReply({
-                content: i18n.t("info.noBotsInDB", { lng: interaction.client.language[interaction.user.id]}),
+                content: i18n.t("info.noBotsInDB", { lng: await getUserLanguage(interaction.user.id, pool)}),
                 flags: MessageFlags.Ephemeral
             });
         }
@@ -37,14 +38,14 @@ export default async function removeBots(interaction, pool) {
         await pool.query(`DELETE FROM users WHERE user_id = ANY($1)`, [botIds]);
 
         await interaction.editReply({
-            content: i18n.t("info.botsRemovedFromDB", { lng: interaction.client.language[interaction.user.id], botsCount: botIds.length}),
+            content: i18n.t("info.botsRemovedFromDB", { lng: await getUserLanguage(interaction.user.id, pool), botsCount: botIds.length}),
             flags: MessageFlags.Ephemeral
         });
 
     } catch (error) {
-        console.error(i18n.t("errors.deleteBotFromDB", { lng: interaction.client.language[interaction.user.id]}), error);
+        console.error(i18n.t("errors.deleteBotFromDB", { lng: await getUserLanguage(interaction.user.id, pool)}), error);
         await interaction.editReply({
-            content: i18n.t("errors.deleteBotFromDB", { lng: interaction.client.language[interaction.user.id]}),
+            content: i18n.t("errors.deleteBotFromDB", { lng: await getUserLanguage(interaction.user.id, pool)}),
             flags: MessageFlags.Ephemeral
         });
     }

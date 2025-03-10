@@ -1,4 +1,6 @@
 import { MessageFlags } from 'discord.js';
+import i18n from "../../../locales/i18n.js";
+import {getUserLanguage} from "../../dbUtils.js";
 
 /**
  * Resets the statistics for a specified user by updating their rating, positive reviews,
@@ -16,7 +18,7 @@ export default async function resetUserStats(interaction, pool) {
     await pool.query('UPDATE users SET rating = 0, positive_reviews = 0, negative_reviews = 0 WHERE user_id = $1', [user.id]);
 
     await interaction.reply({
-        content: `🔄 Статистика пользователя **${user.username}** сброшена.`,
+        content: i18n.t("info.userResetStats", { username: user.username, lng: await getUserLanguage(interaction.user.id, pool)}),
         flags: MessageFlags.Ephemeral
     });
 }

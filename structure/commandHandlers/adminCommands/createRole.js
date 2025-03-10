@@ -1,4 +1,6 @@
 import { MessageFlags } from 'discord.js';
+import i18n from "../../../locales/i18n.js";
+import {getUserLanguage} from "../../dbUtils.js";
 
 /**
  * Creates a new role in the specified guild and stores its details in the database.
@@ -18,7 +20,7 @@ export default async function createRole(interaction, pool, guild) {
     let existingRole = await pool.query('SELECT * FROM roles WHERE role_name = $1', [name]);
 
     if (existingRole.rows.length > 0) {
-        return interaction.reply({ content: `❌ Роль **${name}** уже существует.`, flags: MessageFlags.Ephemeral });
+        return await interaction.reply({ content: i18n.t("errors.roleAlreadyExists", { lng: await getUserLanguage(interaction.user.id, pool), name }), flags: MessageFlags.Ephemeral });
     }
 
     let createdRole = await guild.roles.create({
@@ -33,5 +35,5 @@ export default async function createRole(interaction, pool, guild) {
         [name, createdRole.id, requiredRating, minReviews, minPositive, minNegative]
     );
 
-    await interaction.reply({ content: `✅ Создана новая роль **${name}**.`, flags: MessageFlags.Ephemeral });
+    await interaction.reply({ content: i18n.t("info.roleCreated", { lng: await getUserLanguage(interaction.user.id, pool), name }), flags: MessageFlags.Ephemeral });
 }

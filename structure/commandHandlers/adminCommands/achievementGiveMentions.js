@@ -1,4 +1,6 @@
 import {MessageFlags} from "discord.js";
+import {getUserLanguage} from "../../dbUtils.js";
+import i18n from "../../../locales/i18n.js";
 
 /**
  * Assigns an achievement to users mentioned in a specific message within the same channel.
@@ -44,7 +46,7 @@ export default async function (interaction, pool) {
 
         if (achievementCheck.rowCount === 0) {
             return interaction.reply({
-                content: `❌ Достижение **${achievement}** не найдено! Убедитесь, что оно существует.`,
+                content: i18n.t("errors.achievementNotFound", { lng: await getUserLanguage(interaction.user.id, pool), achievement }),
                 flags: MessageFlags.Ephemeral,
             });
         }
@@ -53,7 +55,7 @@ export default async function (interaction, pool) {
         const message = await channel.messages.fetch(messageId);
         if (!message) {
             return interaction.reply({
-                content: "❌ Сообщение не найдено! Укажите корректный ID.",
+                content: i18n.t("errors.messageNotFound", { lng: await getUserLanguage(interaction.user.id, pool) }),
                 flags: MessageFlags.Ephemeral,
             });
         }
@@ -62,7 +64,7 @@ export default async function (interaction, pool) {
         const mentionedUsers = message.mentions.users;
         if (mentionedUsers.size === 0) {
             return interaction.reply({
-                content: "❌ В сообщении нет упомянутых пользователей!",
+                content: i18n.t("errors.noMentions", { lng: await getUserLanguage(interaction.user.id, pool) }),
                 flags: MessageFlags.Ephemeral,
             });
         }
@@ -82,15 +84,14 @@ export default async function (interaction, pool) {
             }
         }
 
-        return interaction.reply({
-            content: `✅ Достижение **${achievement}** успешно выдано **${successCount}** пользователям!`,
-            ephemeral: false,
+        await interaction.reply({
+            content: i18n.t("info.achievementGranted", { lng: await getUserLanguage(interaction.user.id, pool), achievement, count: successCount })
         });
     } catch (err) {
-        console.error("❌ Ошибка при обработке команды achievement_give_mentions:", err);
-        return interaction.reply({
-            content: "❌ Произошла ошибка при обработке команды!",
+        await interaction.reply({
+            content: i18n.t("errors.unexpectedError", { lng: await getUserLanguage(interaction.user.id, pool) }),
             flags: MessageFlags.Ephemeral,
         });
+        throw new Error(`❌ Ошибка при обработке команды achievement_give_mentions: ${err}`);
     }
 }

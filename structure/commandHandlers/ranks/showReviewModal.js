@@ -1,5 +1,6 @@
 import { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } from 'discord.js';
 import i18n from "../../../locales/i18n.js";
+import {getUserLanguage} from "../../dbUtils.js";
 
 /**
  * Displays a modal for the user to leave a review based on the specified action.
@@ -12,13 +13,13 @@ import i18n from "../../../locales/i18n.js";
 export default async function showReviewModal(interaction, action, userId) {
     const modal = new ModalBuilder()
         .setCustomId(`review_${action}_${userId}`)
-        .setTitle(action === 'upvote' ? i18n.t("buttons.leavePositiveReview", {lng: interaction.client.language[interaction.user.id]}) : i18n.t("buttons.leaveNegativeReview", {lng: interaction.client.language[interaction.user.id]}));
+        .setTitle(action === 'upvote' ? i18n.t("buttons.leavePositiveReview", {lng: await getUserLanguage(interaction.user.id, pool)}) : i18n.t("buttons.leaveNegativeReview", {lng: await getUserLanguage(interaction.user.id, pool)}));
 
     const input = new TextInputBuilder()
         .setCustomId('review_text')
-        .setLabel(i18n.t("buttons.fillReviewTitle", {lng: interaction.client.language[interaction.user.id]}))
+        .setLabel(i18n.t("buttons.fillReviewTitle", {lng: await getUserLanguage(interaction.user.id, pool)}))
         .setStyle(TextInputStyle.Paragraph)
-        .setPlaceholder(i18n.t("buttons.fillReviewText", {lng: interaction.client.language[interaction.user.id]}))
+        .setPlaceholder(i18n.t("buttons.fillReviewText", {lng: await getUserLanguage(interaction.user.id, pool)}))
         .setMinLength(10)
         .setMaxLength(300)
         .setRequired(true);

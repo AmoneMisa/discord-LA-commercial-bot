@@ -1,4 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags } from 'discord.js';
+import i18n from "../../../locales/i18n.js";
+import {getUserLanguage} from "../../dbUtils.js";
 
 /**
  * Handles the editing of raids by retrieving a list of raids from the database,
@@ -13,12 +15,12 @@ export default async function editRaids(interaction, pool) {
 
     if (raids.rows.length === 0) {
         return interaction.reply({
-            content: '⚠ Ещё никаких рейдов не создано. Пожалуйста, создайте первый рейд.',
+            content: i18n.t("info.noRaids", { lng: await getUserLanguage(interaction.user.id, pool) }),
             components: [
                 new ActionRowBuilder().addComponents(
                     new ButtonBuilder()
                         .setCustomId('create_raid')
-                        .setLabel('Создать')
+                        .setLabel(i18n.t("buttons.createRaid", { lng: await getUserLanguage(interaction.user.id, pool) }))
                         .setStyle(ButtonStyle.Primary)
                 )
             ],
@@ -45,19 +47,19 @@ export default async function editRaids(interaction, pool) {
     rows.unshift(new ActionRowBuilder().addComponents(
         new ButtonBuilder()
             .setCustomId('create_raid')
-            .setLabel('Создать')
+            .setLabel(i18n.t("buttons.createRaid", { lng: await getUserLanguage(interaction.user.id, pool) }))
             .setStyle(ButtonStyle.Success)
     ));
 
     if (interaction.replied) {
         await interaction.editReply({
-            content: '📋 Список доступных рейдов:',
+            content: i18n.t("info.raidList", { lng: await getUserLanguage(interaction.user.id, pool) }),
             components: rows,
             flags: MessageFlags.Ephemeral
         });
     } else {
         await interaction.reply({
-            content: '📋 Список доступных рейдов:',
+            content: i18n.t("info.raidList", { lng: await getUserLanguage(interaction.user.id, pool) }),
             components: rows,
             flags: MessageFlags.Ephemeral
         });

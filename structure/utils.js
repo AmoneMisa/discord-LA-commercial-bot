@@ -6,7 +6,7 @@ import {
     PermissionsBitField,
     TextInputStyle
 } from "discord.js";
-import {getItemName} from "./dbUtils.js";
+import {getItemName, getUserLanguage} from "./dbUtils.js";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat.js";
 import utc from "dayjs/plugin/utc.js";
@@ -70,26 +70,27 @@ export async function sendPaginatedReviews(interaction, pool, page = 1, isPositi
 
     if (reviews.rows.length === 0) {
         return interaction.reply({
-            content: i18n.t("info.userDontHaveReviews", { lng: interaction.client.language[interaction.user.id]}),
+            content: i18n.t("info.userDontHaveReviews", { lng: await getUserLanguage(interaction.user.id, pool), memberId: member.id}),
             flags: MessageFlags.Ephemeral
         });
     }
 
-    let message = i18n.t("info.reviewsAboutUser", { lng: interaction.client.language[interaction.user.id], memberId: member.id, page});
+    let message = i18n.t("info.reviewsAboutUser", { lng: await getUserLanguage(interaction.user.id, pool), memberId: member.id, page});
     let buttons = new ActionRowBuilder();
 
-    reviews.rows.forEach((review, index) => {
+    for (const review of reviews.rows) {
+        const index = reviews.rows.indexOf(review);
         message += `**${index + 1}.** <@${review.reviewer_id}>: ${review.is_positive ? '✅' : '❌'} "${review.review_text.subStr(0, 300)}" *(${formatDate(review.timestamp)})* \n`;
 
         if (isAdmin) {
             buttons.addComponents(
                 new ButtonBuilder()
                     .setCustomId(`delete_review_${review.id}_${member.id}_${page}`)
-                    .setLabel(i18n.t("buttons.delete", { lng: interaction.client.language[interaction.user.id], index: index + 1}))
+                    .setLabel(i18n.t("buttons.delete", { lng: await getUserLanguage(interaction.user.id, pool), index: index + 1}))
                     .setStyle(ButtonStyle.Danger)
             );
         }
-    });
+    }
 
     const totalReviews = await pool.query('SELECT COUNT(*) FROM reviews WHERE target_user = $1', [member.id]);
     const totalPages = Math.ceil(parseInt(totalReviews.rows[0].count) / reviewsPerPage);
@@ -99,7 +100,7 @@ export async function sendPaginatedReviews(interaction, pool, page = 1, isPositi
         paginationButtons.addComponents(
             new ButtonBuilder()
                 .setCustomId(`prev_reviews_${member.id}_${page - 1}_${isPositive}`)
-                .setLabel(i18n.t("buttons.back", { lng: interaction.client.language[interaction.user.id]}))
+                .setLabel(i18n.t("buttons.back", { lng: await getUserLanguage(interaction.user.id, pool)}))
                 .setStyle(ButtonStyle.Secondary)
         );
     }
@@ -107,7 +108,7 @@ export async function sendPaginatedReviews(interaction, pool, page = 1, isPositi
         paginationButtons.addComponents(
             new ButtonBuilder()
                 .setCustomId(`next_reviews_${member.id}_${page + 1}_${isPositive}`)
-                .setLabel(i18n.t("buttons.next", { lng: interaction.client.language[interaction.user.id]}))
+                .setLabel(i18n.t("buttons.next", { lng: await getUserLanguage(interaction.user.id, pool)}))
                 .setStyle(ButtonStyle.Secondary)
         );
     }

@@ -1,4 +1,6 @@
 import {MessageFlags} from "discord.js";
+import i18n from "../../../locales/i18n.js";
+import {getUserLanguage} from "../../dbUtils.js";
 
 /**
  * Deletes an achievement from the database and notifies the user of the deletion.
@@ -12,5 +14,5 @@ export default async function deleteAchievement(interaction, pool) {
 
     await pool.query(`DELETE FROM achievements WHERE name = $1`, [name]);
 
-    await interaction.reply({ content: `✅ Достижение **${name}** удалено!`, flags: MessageFlags.Ephemeral });
+    await interaction.reply({ content: i18n.t("info.achievementDeleted", { lng: await getUserLanguage(interaction.user.id, pool), name }), flags: MessageFlags.Ephemeral });
 }

@@ -1,4 +1,6 @@
 import { MessageFlags } from 'discord.js';
+import {getUserLanguage} from "../../dbUtils.js";
+import i18n from "../../../locales/i18n.js";
 
 /**
  * Unblocks a reviewer by deleting their entry from the "blocked_reviewers" table
@@ -15,7 +17,10 @@ export default async function unblockReviewer(interaction, pool) {
     await pool.query('DELETE FROM blocked_reviewers WHERE user_id = $1', [user.id]);
 
     await interaction.reply({
-        content: `✅ **${user.username}** теперь может оставлять отзывы.`,
+        content: i18n.t("info.userCanLeaveReviews", {
+            lng: await getUserLanguage(interaction.user.id, pool),
+            username: user.username
+        }),
         flags: MessageFlags.Ephemeral
     });
 }

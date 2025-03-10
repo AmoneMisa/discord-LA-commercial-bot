@@ -1,5 +1,6 @@
 import {MessageFlags} from "discord.js";
-import {givePointsForActivity} from "../../dbUtils.js";
+import {getUserLanguage, givePointsForActivity} from "../../dbUtils.js";
+import i18n from "../../../locales/i18n.js";
 
 /**
  * Assigns a specified achievement to a user by interacting with the database.
@@ -15,7 +16,7 @@ export default async function giveAchievementToUser(interaction, pool) {
     const achievement = await pool.query(`SELECT id FROM achievements WHERE name = $1`, [achievementName]);
 
     if (!achievement.rows.length) {
-        return interaction.reply({ content: `🚫 Достижение **${achievementName}** не найдено!`, flags: MessageFlags.Ephemeral });
+        return interaction.reply({ content: i18n.t("errors.achievementNotFound", { achievementName, lng: await getUserLanguage(interaction.user.id, pool) }), flags: MessageFlags.Ephemeral });
     }
 
     await pool.query(
@@ -25,5 +26,5 @@ export default async function giveAchievementToUser(interaction, pool) {
 
     await givePointsForActivity(pool, user.id, 50);
 
-    await interaction.reply({ content: `✅ Достижение **${achievementName}** выдано **${user.username}**!`, flags: MessageFlags.Ephemeral });
+    await interaction.reply({ content: i18n.t("info.achievementGrantedToUser", { achievementName, username: user.username, lng: await getUserLanguage(interaction.user.id, pool) }), flags: MessageFlags.Ephemeral });
 }

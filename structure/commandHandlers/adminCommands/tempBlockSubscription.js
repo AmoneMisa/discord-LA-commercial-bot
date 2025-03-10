@@ -1,4 +1,6 @@
 import {MessageFlags} from "discord.js";
+import {getUserLanguage} from "../../dbUtils.js";
+import i18n from "../../../locales/i18n.js";
 
 /**
  * Temporarily blocks a user from subscriptions for a specified number of hours.
@@ -14,5 +16,8 @@ export default async function tempBlockSubscription(interaction, pool) {
 
     await pool.query('INSERT INTO blocked_subscriptions (user_id, blocked_until, block_type) VALUES ($1, NOW() + INTERVAL \'$2 hours\') ON CONFLICT (user_id) DO UPDATE SET blocked_until = NOW() + INTERVAL \'$2 hours\'', [userId, hours, blockType]);
 
-    await interaction.reply({ content: `🚫 Пользователь заблокирован для подписок на ${hours} часов.`, flags: MessageFlags.Ephemeral });
+    await interaction.reply({ content: i18n.t("errors.subscriptionBlocked", {
+            lng: await getUserLanguage(interaction.user.id, pool),
+            hours: hours
+        }), flags: MessageFlags.Ephemeral });
 }

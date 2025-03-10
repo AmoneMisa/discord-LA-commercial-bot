@@ -120,17 +120,13 @@ async interaction => {
         const targetUser = interaction?.options?.getUser('member');
         await addUserIfNotExists(pool, interaction.user);
 
-        const lang = await getUserLanguage(interaction.user.id, pool);
-        interaction.client.language = interaction.client.language || {};
-        interaction.client.language[interaction.user.id] = lang || "ru";
-
         if (interaction.isCommand() && interaction.commandName === 'adm_settings' && interaction.options.getSubcommand() === 'remove_bots') {
             await removeBots(interaction, pool);
         }
 
         if (targetUser && targetUser.bot) {
             return await interaction.reply({
-                content: i18n.t("errors.userIsBot", { lng: interaction.client.language[interaction.user.id]}),
+                content: i18n.t("errors.userIsBot", { lng: await getUserLanguage(interaction.user.id, pool)}),
                 flags: MessageFlags.Ephemeral
             });
         }

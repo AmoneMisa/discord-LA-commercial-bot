@@ -1,5 +1,6 @@
 import {ButtonBuilder, ButtonStyle, ActionRowBuilder, MessageFlags} from "discord.js";
 import i18n from "../../../locales/i18n.js";
+import {getUserLanguage} from "../../dbUtils.js";
 
 export default async function (interaction, pool) {
     const messageId = interaction.options.getString("message_id");
@@ -18,16 +19,16 @@ export default async function (interaction, pool) {
     const row = new ActionRowBuilder().addComponents(
         new ButtonBuilder()
             .setCustomId(`register_event_${eventId}`)
-            .setLabel(i18n.t("buttons.registerEvent", { lng: interaction.client.language[interaction.user.id] }))
+            .setLabel(i18n.t("buttons.registerEvent", { lng: await getUserLanguage(interaction.user.id, pool) }))
             .setStyle(ButtonStyle.Primary),
         new ButtonBuilder()
             .setCustomId(`unregister_event_${eventId}`)
-            .setLabel(i18n.t("buttons.unregisterEvent", { lng: interaction.client.language[interaction.user.id] }))
+            .setLabel(i18n.t("buttons.unregisterEvent", { lng: await getUserLanguage(interaction.user.id, pool) }))
             .setStyle(ButtonStyle.Danger)
     );
 
     const targetMessage = await interaction.channel.messages.fetch(messageId);
     await targetMessage.edit({ components: [row] });
 
-    await interaction.reply({ content: i18n.t("info.eventCreated", { lng: interaction.client.language[interaction.user.id] }), flags: MessageFlags.Ephemeral });
+    await interaction.reply({ content: i18n.t("info.eventCreated", { lng: await getUserLanguage(interaction.user.id, pool) }), flags: MessageFlags.Ephemeral });
 }
