@@ -1,5 +1,6 @@
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from "discord.js";
 import {formatDate, getMember} from "../../utils.js";
+import i18n from "../../../locales/i18n.js";
 
 /**
  * Handles an interaction, processes a user's data from the database,
@@ -31,11 +32,11 @@ export default async function (interaction, pool, isContextMenu = false, isMessa
     let member = getMember(interaction, isContextMenu, isMessageContentMenuCommand);
 
     if (!member) {
-        return await interaction.reply({ content: 'Пользователь не выбран или не найден', flags: MessageFlags.Ephemeral });
+        return await interaction.reply({ content: i18n.t("errors.incorrectMember", { lng: interaction.client.language[interaction.user.id]}), flags: MessageFlags.Ephemeral });
     }
 
     if (member.bot) {
-        return await interaction.reply({content: "Эту команду нельзя применять на ботах", flags: MessageFlags.Ephemeral});
+        return await interaction.reply({content: i18n.t("errors.userIsBot", { lng: interaction.client.language[interaction.user.id]}), flags: MessageFlags.Ephemeral});
     }
 
     const userStats = await pool.query('SELECT * FROM users WHERE user_id = $1', [member.id]);
@@ -63,15 +64,15 @@ export default async function (interaction, pool, isContextMenu = false, isMessa
         [member.id]
     );
 
-    let lastPositiveReview = 'Нет данных';
-    let lastNegativeReview = 'Нет данных';
+    let lastPositiveReview = i18n.t("errors.noData", { lng: interaction.client.language[interaction.user.id]});
+    let lastNegativeReview = i18n.t("errors.noData", { lng: interaction.client.language[interaction.user.id]});
 
     lastReviews.rows.forEach(review => {
         if (review.is_positive) lastPositiveReview = formatDate(review.last_review_time);
         else lastNegativeReview = formatDate(review.last_review_time);
     });
 
-    const message = `:point_right: **${member.username} - ${userRole}**\n:chart_with_upwards_trend: Рейтинг: ${userData.rating}\n:white_check_mark: Положительные отзывы: ${userData.positive_reviews}\n:x: Отрицательные отзывы: ${userData.negative_reviews}\nПоследний положительный отзыв: ${lastPositiveReview}\nПоследний отрицательный отзыв: ${lastNegativeReview}`;
+    const message = i18n.t("errors.noData", { lng: interaction.client.language[interaction.user.id], userName: member.username, userRole, rating: userData.rating, positiveReviews: userData.positive_reviews, negativeReviews: userData.negative_reviews, lastPositiveReview, lastNegativeReview });
 
     const upvoteButton = new ButtonBuilder()
         .setCustomId(`upvote_${member.id}`)

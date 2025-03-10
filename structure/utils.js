@@ -11,6 +11,7 @@ import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat.js";
 import utc from "dayjs/plugin/utc.js";
 import timezone from "dayjs/plugin/timezone.js";
+import i18n from "../locales/i18n.js";
 
 /**
  * Formats a date string into the format "DD/MM/YYYY HH:mm".
@@ -69,12 +70,12 @@ export async function sendPaginatedReviews(interaction, pool, page = 1, isPositi
 
     if (reviews.rows.length === 0) {
         return interaction.reply({
-            content: `❌ У пользователя <@${member.id}> пока нет отзывов.`,
+            content: i18n.t("info.userDontHaveReviews", { lng: interaction.client.language[interaction.user.id]}),
             flags: MessageFlags.Ephemeral
         });
     }
 
-    let message = `📋 **Отзывы о <@${member.id}> (Страница ${page}):**\n\n`;
+    let message = i18n.t("info.reviewsAboutUser", { lng: interaction.client.language[interaction.user.id], memberId: member.id, page});
     let buttons = new ActionRowBuilder();
 
     reviews.rows.forEach((review, index) => {
@@ -84,7 +85,7 @@ export async function sendPaginatedReviews(interaction, pool, page = 1, isPositi
             buttons.addComponents(
                 new ButtonBuilder()
                     .setCustomId(`delete_review_${review.id}_${member.id}_${page}`)
-                    .setLabel(`Удалить ${index + 1}`)
+                    .setLabel(i18n.t("buttons.delete", { lng: interaction.client.language[interaction.user.id], index: index + 1}))
                     .setStyle(ButtonStyle.Danger)
             );
         }
@@ -98,7 +99,7 @@ export async function sendPaginatedReviews(interaction, pool, page = 1, isPositi
         paginationButtons.addComponents(
             new ButtonBuilder()
                 .setCustomId(`prev_reviews_${member.id}_${page - 1}_${isPositive}`)
-                .setLabel('⬅️ Назад')
+                .setLabel(i18n.t("buttons.back", { lng: interaction.client.language[interaction.user.id]}))
                 .setStyle(ButtonStyle.Secondary)
         );
     }
@@ -106,7 +107,7 @@ export async function sendPaginatedReviews(interaction, pool, page = 1, isPositi
         paginationButtons.addComponents(
             new ButtonBuilder()
                 .setCustomId(`next_reviews_${member.id}_${page + 1}_${isPositive}`)
-                .setLabel('➡️ Вперёд')
+                .setLabel(i18n.t("buttons.next", { lng: interaction.client.language[interaction.user.id]}))
                 .setStyle(ButtonStyle.Secondary)
         );
     }
@@ -122,6 +123,61 @@ export async function sendPaginatedReviews(interaction, pool, page = 1, isPositi
 
 export function toCamelCase(str) {
     return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+}
+/**
+ * Retrieves a member or user based on the provided parameters and interaction context.
+ *
+ * @param {Object} interaction - The interaction object containing the context and options.
+ * @param {boolean} isContextMenu - Indicates whether the command is triggered from a context menu.
+ * @param {boolean} isMessageContentMenuCommand - Indicates whether the context menu is targeting message content.
+ * @param {string} [getType='member'] - Specifies the type of entity to retrieve ("user" or "member").
+ * @return {Object} The retrieved user or member object, determined by the interaction context and parameters.
+ */
+export function getMember(interaction, isContextMenu = false, isMessageContentMenuCommand = false, getType = 'member') {
+    if (isContextMenu) {
+        if (isMessageContentMenuCommand) {
+            return interaction.targetMessage.author;
+        } else {
+            return interaction.targetUser;
+        }
+    } else {
+        if (getType === 'user') {
+            if (interaction.options.getUser('user')) {
+                return interaction.options.getUser('user');
+            }
+            return interaction.user;
+        } else {
+            if (interaction.options.getUser('member')) {
+                return interaction.options.getUser('member');
+            }
+
+            return interaction.member;
+        }
+    }
+}
+
+export async function getActiveEvent(pool, isCreateEvent = false) {
+    const now = new Date();
+
+    const result = await pool.query(
+        "SELECT * FROM bet_events WHERE end_time > $1",
+        [now]
+    );
+
+    if (result.rowCount > 0) {
+        const activeEvent = result.rows[0];
+        const eventEndTime = new Date(activeEvent.end_time);
+
+        if (eventEndTime > now) {
+            return activeEvent;
+        }
+    } else {
+        if (isCreateEvent) {
+            return null;
+        } else {
+            throw new Error("Активных событий для ставок не существует.");
+        }
+    }
 }
 
 /**
@@ -226,55 +282,6 @@ export async function delay(ms) {
  */
 export function shuffleArray(array) {
     return array.sort(() => Math.random() - 0.5);
-}
-
-/**
- * Retrieves a member or user based on the provided parameters and interaction context.
- *
- * @param {Object} interaction - The interaction object containing the context and options.
- * @param {boolean} isContextMenu - Indicates whether the command is triggered from a context menu.
- * @param {boolean} isMessageContentMenuCommand - Indicates whether the context menu is targeting message content.
- * @param {string} [getType='member'] - Specifies the type of entity to retrieve ("user" or "member").
- * @return {Object} The retrieved user or member object, determined by the interaction context and parameters.
- */
-export function getMember(interaction, isContextMenu, isMessageContentMenuCommand, getType = 'member') {
-    if (isContextMenu) {
-        if (isMessageContentMenuCommand) {
-            return interaction.targetMessage.author;
-        } else {
-            return interaction.targetUser;
-        }
-    } else {
-        if (getType === 'user') {
-            return interaction.options.getUser('user');
-        } else {
-            return interaction.options.getUser('member');
-        }
-    }
-}
-
-export async function getActiveEvent(pool, isCreateEvent = false) {
-    const now = new Date();
-
-    const result = await pool.query(
-        "SELECT * FROM bet_events WHERE end_time > $1",
-        [now]
-    );
-
-    if (result.rowCount > 0) {
-        const activeEvent = result.rows[0];
-        const eventEndTime = new Date(activeEvent.end_time);
-
-        if (eventEndTime > now) {
-            return activeEvent;
-        }
-    } else {
-        if (isCreateEvent) {
-            return null;
-        } else {
-            throw new Error("Активных событий для ставок не существует.");
-        }
-    }
 }
 
 dayjs.extend(customParseFormat);

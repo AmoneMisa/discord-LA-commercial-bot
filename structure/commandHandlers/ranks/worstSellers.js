@@ -1,4 +1,5 @@
 import { MessageFlags } from 'discord.js';
+import i18n from "../../../locales/i18n.js";
 
 /**
  * Retrieves and replies with the top 5 worst-rated sellers from the database within the last 30 days.
@@ -19,12 +20,12 @@ export default async function worstSellers(interaction, pool) {
     );
 
     if (worstUsers.rows.length === 0) {
-        return interaction.reply({ content: '❌ Пока нет продавцов с рейтингом.', flags: MessageFlags.Ephemeral });
+        return interaction.reply({ content: i18n.t("info.noSellersWithRating", { lng: interaction.client.language[interaction.user.id]}), flags: MessageFlags.Ephemeral });
     }
 
-    let message = `📉 **Топ 5 худших продавцов** 📉\n\n`;
+    let message = i18n.t("info.topFiveWorstSellers", { lng: interaction.client.language[interaction.user.id]});
     worstUsers.rows.forEach((user, index) => {
-        message += `**${index + 1}.** <@${user.user_id}> - **${user.negative_reviews}** негативных отзывов из ${user.positive_reviews + user.negative_reviews}\n`;
+        message += i18n.t("info.negativeReviewsCountInfo", { lng: interaction.client.language[interaction.user.id], index: index + 1, userId: user.user_id, negativeReviews: user.negative_reviews, totalReviews: user.positive_reviews + user.negative_reviews });
     });
 
     await interaction.reply({ content: message, flags: MessageFlags.Ephemeral });

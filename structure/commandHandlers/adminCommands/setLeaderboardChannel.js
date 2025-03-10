@@ -1,6 +1,7 @@
 import { MessageFlags } from 'discord.js';
 import { setLeaderboardChannelId } from '../../dbUtils.js';
 import updateLeaderboard from '../updateLeaderboard.js';
+import i18n from "../../../locales/i18n.js";
 
 /**
  * Sets the leaderboard channel for the interaction. Validates user permissions
@@ -15,7 +16,7 @@ import updateLeaderboard from '../updateLeaderboard.js';
 export default async function setLeaderboardChannel(interaction, pool, client) {
     if (!interaction.member.permissions.has('Administrator')) {
         return interaction.reply({
-            content: '❌ У вас нет прав для этой команды!',
+            content: i18n.t("errors.notAdmin", { lng: interaction.client.language[interaction.user.id]}),
             flags: MessageFlags.Ephemeral
         });
     }
@@ -24,14 +25,14 @@ export default async function setLeaderboardChannel(interaction, pool, client) {
 
     if (!channel) {
         return interaction.reply({
-            content: '❌ Ошибка: Вы не указали канал!',
+            content: i18n.t("errors.channelDoesntChoose", { lng: interaction.client.language[interaction.user.id]}),
             flags: MessageFlags.Ephemeral
         });
     }
 
     if (channel.type !== 0) { // 0 = текстовый канал
         return interaction.reply({
-            content: '❌ Укажите корректный текстовый канал!',
+            content: i18n.t("errors.channelMustBeTextType", { lng: interaction.client.language[interaction.user.id]}),
             flags: MessageFlags.Ephemeral
         });
     }
@@ -39,7 +40,7 @@ export default async function setLeaderboardChannel(interaction, pool, client) {
     await setLeaderboardChannelId(pool, channel.id);
 
     await interaction.reply({
-        content: `✅ Канал для таблицы лидеров установлен: <#${channel.id}>\nОбновляю таблицу...`,
+        content: i18n.t("info.setLeaderboardChannel", { lng: interaction.client.language[interaction.user.id], channelId: channel.id}),
         flags: MessageFlags.Ephemeral
     });
 

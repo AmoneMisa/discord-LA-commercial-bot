@@ -1,10 +1,10 @@
 import sendReview from "../commandHandlers/ranks/sendReview.js";
+import betContinueHandler from "../commandHandlers/bets/betContinueHandler.js";
+import updateBet from "../commandHandlers/bets/updateBet.js";
 import handleCreateRaidModal from "../commandHandlers/subscribe/handleCreateRaidModal.js";
 import notifySellerMessageSend from "../commandHandlers/subscribe/notifySellerMessageSend.js";
 import handleSellerAnswerToBuyerModal from "../commandHandlers/subscribe/handleSellerAnswerToBuyerModal.js";
 import notifySellerResponse from "../commandHandlers/responses/notifySellerResponse.js";
-import betContinueHandler from "../commandHandlers/bets/betContinueHandler.js";
-import updateBet from "../commandHandlers/bets/updateBet.js";
 
 /**
  * Handles various interactions triggered by user input in a Discord modal.

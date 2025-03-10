@@ -1,4 +1,5 @@
 import {MessageFlags} from "discord.js";
+import i18n from "../../../locales/i18n.js";
 
 /**
  * Deletes a betting event from the database based on the provided event ID.
@@ -23,8 +24,11 @@ export default async function (interaction, pool) {
     const result = await pool.query(`DELETE FROM bet_events WHERE id = $1 RETURNING *`, [eventId]);
 
     if (result.rowCount === 0) {
-        return interaction.reply({ content: "🚫 Событие не найдено или уже удалено.", flags: MessageFlags.Ephemeral });
+        return interaction.reply({
+            content: i18n.t("errors.eventNotFound", { lng: interaction.client.language[interaction.user.id] }),
+            flags: MessageFlags.Ephemeral
+        });
     }
 
-    await interaction.reply({ content: `✅ Событие ставок **#${eventId}** удалено!`, flags: MessageFlags.Ephemeral });
+    await interaction.reply({ content: i18n.t("info.betEventDeleted", { lng: interaction.client.language[interaction.user.id], eventId }), flags: MessageFlags.Ephemeral });
 }

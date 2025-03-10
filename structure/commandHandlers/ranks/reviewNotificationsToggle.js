@@ -1,4 +1,5 @@
 import {MessageFlags} from "discord.js";
+import i18n from "../../../locales/i18n.js";
 
 /**
  * Handles the interaction to enable or disable review notifications for the user.
@@ -20,8 +21,8 @@ export default async function (interaction, pool) {
 
     return interaction.reply({
         content: enabled
-            ? "🔔 Уведомления о новых отзывах **включены**!"
-            : "🔕 Уведомления о новых отзывах **выключены**!",
+            ? i18n.t("info.reviewNotificationsEnabled", { lng: interaction.client.language[interaction.user.id]})
+            : i18n.t("info.reviewNotificationsDisabled", { lng: interaction.client.language[interaction.user.id]}),
         flags: MessageFlags.Ephemeral
     });
 }

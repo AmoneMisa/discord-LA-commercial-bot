@@ -12,6 +12,7 @@ import adminAchievementsCommands from "./adminAchievementsCommands.js";
 import adminCodexCommands from "./adminCodexCommands.js";
 import userCodexCommands from "./userCodexCommands.js";
 import {getModulesSettings} from "../dbUtils.js";
+import userSettingsCommands from "./userSettingsCommands.js";
 
 /***
  ('ranks', 'Система рейтинга', true),
@@ -27,7 +28,7 @@ import {getModulesSettings} from "../dbUtils.js";
  ***/
 
 export default async function getCommands(pool) {
-    let commandsArray = [...adminSettingsCommands];
+    let commandsArray = [...adminSettingsCommands, ...userSettingsCommands];
     const settings = await getModulesSettings(pool);
 
     for (const module of settings.rows) {

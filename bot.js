@@ -20,13 +20,14 @@ import {schedulersList} from "./structure/cron/scheduleUpdates.js";
 import buttons from "./structure/interactions/buttons.js";
 import modals from "./structure/interactions/modals.js";
 import commands from "./structure/interactions/commands.js";
-import {addUserIfNotExists, getModulesSettings, givePointsForActivity} from "./structure/dbUtils.js";
+import {addUserIfNotExists,getUserLanguage, getModulesSettings, givePointsForActivity} from "./structure/dbUtils.js";
 import createRoles from "./structure/createRoles.js";
 import errorsHandler from "./errorsHandler.js";
 import messageComponent from "./structure/interactions/messageComponent.js";
 import handleMessageSubscription from "./structure/commandHandlers/subscribe/handleMessageSubscription.js";
 import sendRaidResponse from "./structure/commandHandlers/responses/sendRaidResponse.js";
 import autocomplete from "./structure/interactions/autocomplete.js";
+import i18n from "./locales/i18n.js";
 
 const {Pool} = pkg;
 /**
@@ -119,13 +120,17 @@ async interaction => {
         const targetUser = interaction?.options?.getUser('member');
         await addUserIfNotExists(pool, interaction.user);
 
+        const lang = await getUserLanguage(interaction.user.id, pool);
+        interaction.client.language = interaction.client.language || {};
+        interaction.client.language[interaction.user.id] = lang || "ru";
+
         if (interaction.isCommand() && interaction.commandName === 'adm_settings' && interaction.options.getSubcommand() === 'remove_bots') {
             await removeBots(interaction, pool);
         }
 
         if (targetUser && targetUser.bot) {
             return await interaction.reply({
-                content: '🚫 Вы не можете использовать эту команду на боте!',
+                content: i18n.t("errors.userIsBot", { lng: interaction.client.language[interaction.user.id]}),
                 flags: MessageFlags.Ephemeral
             });
         }
@@ -183,5 +188,6 @@ async message => {
         errorsHandler.error(e.message);
     }
 });
+
 
 client.login(process.env.BOT_TOKEN);

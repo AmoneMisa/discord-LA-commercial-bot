@@ -1,5 +1,6 @@
 import {getMember, sendPaginatedReviews} from "../../utils.js";
 import {MessageFlags} from "discord.js";
+import i18n from "../../../locales/i18n.js";
 
 /**
  * Handles an interaction to display paginated reviews for a specific user.
@@ -16,11 +17,11 @@ export default async function (interaction, pool, isContextMenu = false, isMessa
     let member = getMember(interaction, isContextMenu, isMessageContentMenuCommand);
 
     if (!member) {
-        return interaction.reply({content: 'Выберите участника.', flags: MessageFlags.Ephemeral});
+        return interaction.reply({content: i18n.t("errors.incorrectMember", { lng: interaction.client.language[interaction.user.id]}), flags: MessageFlags.Ephemeral});
     }
 
     if (member.bot) {
-        return await interaction.reply({content: "Эту команду нельзя применять на ботах", flags: MessageFlags.Ephemeral});
+        return await interaction.reply({content: i18n.t("errors.userIsBot", { lng: interaction.client.language[interaction.user.id]}), flags: MessageFlags.Ephemeral});
     }
 
 

@@ -13,8 +13,7 @@ import handleBuyButtonsResponse from "../commandHandlers/responses/createModalBu
 import handleSendRaidResponseBuy from "../commandHandlers/responses/handleSendRaidResponseBuy.js";
 import betContinueHandler from "../commandHandlers/bets/betContinueHandler.js";
 import betTargetHandler from "../commandHandlers/bets/betTargetHandler.js";
-import handleBetActionButton from "../commandHandlers/bets/handleBetActionButton.js";
-import handleBetPagination from "../commandHandlers/bets/handleBetPagination.js";
+import i18n from "../../locales/i18n.js";
 
 /**
  * Handles various types of button interactions in a Discord bot and delegates
@@ -44,7 +43,7 @@ import handleBetPagination from "../commandHandlers/bets/handleBetPagination.js"
 export default async function (interaction, pool, client) {
     if (Date.now() - interaction.message.createdTimestamp > 5 * 60 * 1000 && !interaction.customId.startsWith("bet")) {
         return await interaction.update({
-            content: "Время на использование кнопок истекло. Пожалуйста, вызовите команду заново.",
+            content: i18n.t("errors.buttonsTimeout", { lng: interaction.client.language[interaction.user.id]}),
             components: [],
             flags: MessageFlags.Ephemeral
         });

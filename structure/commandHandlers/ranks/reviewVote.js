@@ -1,5 +1,6 @@
 import {MessageFlags} from "discord.js";
 import showReviewModal from "./showReviewModal.js";
+import i18n from "../../../locales/i18n.js";
 
 /**
  * Handles an interaction event for submitting or managing reviews.
@@ -25,7 +26,7 @@ export default async function(interaction, pool) {
     const blockedReviewer = await pool.query('SELECT * FROM blocked_reviewers WHERE user_id = $1', [reviewerId]);
     if (blockedReviewer.rows.length > 0) {
         return interaction.reply({
-            content: '🚫 Вы не можете оставлять отзывы, так как вам это запрещено.',
+            content: i18n.t("errors.blockedReviewer", { lng: interaction.client.language[interaction.user.id] }),
             flags: MessageFlags.Ephemeral
         });
     }
@@ -33,7 +34,7 @@ export default async function(interaction, pool) {
     const blockedReceiver = await pool.query('SELECT * FROM blocked_receivers WHERE user_id = $1', [userId]);
     if (blockedReceiver.rows.length > 0) {
         return interaction.reply({
-            content: `🚫 Этот пользователь не может получать отзывы.`,
+            content: i18n.t("errors.blockedReceiver", { lng: interaction.client.language[interaction.user.id] }),
             flags: MessageFlags.Ephemeral
         });
     }
@@ -57,7 +58,7 @@ export default async function(interaction, pool) {
             if (timePassed < cooldownTime) {
                 const remainingTime = Math.ceil((cooldownTime - timePassed) / 60000);
                 return interaction.reply({
-                    content: `⏳ Вы уже оставили отзыв этому пользователю недавно. Попробуйте снова через **${remainingTime} минут**.`,
+                    content: i18n.t("errors.reviewCooldown", { lng: interaction.client.language[interaction.user.id], time: remainingTime }),
                     flags: MessageFlags.Ephemeral
                 });
             }
@@ -69,7 +70,7 @@ export default async function(interaction, pool) {
 
     if (userId.toString() === reviewerId.toString() && !selfVotingEnabled) {
         return interaction.reply({
-            content: '❌ Вы не можете оставлять отзыв самому себе.',
+            content: i18n.t("errors.selfReview", { lng: interaction.client.language[interaction.user.id] }),
             flags: MessageFlags.Ephemeral
         });
     }
