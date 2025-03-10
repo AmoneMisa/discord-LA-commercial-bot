@@ -8,6 +8,8 @@
     "createBetServerField": "输入您的服务器（克拉托斯 / 阿尔德兰）",
     "createBetTitle": "🎲 创建投注",
     "delete": "删除 {{index}}",
+    "fillReviewText": "在此处撰写您的评价",
+    "fillReviewTitle": "输入您的评价",
     "leaveNegativeReview": "留下负面评价",
     "leavePositiveReview": "留下正面评价",
     "next": "➡️ 下一页",

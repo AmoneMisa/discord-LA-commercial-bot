@@ -8,14 +8,16 @@
     "createBetServerField": "Enter your server (Kratos / Alderan)",
     "createBetTitle": "🎲 Create a bet",
     "delete": "Delete {{index}}",
+    "fillReviewText": "Write your review here",
+    "fillReviewTitle": "Enter your review",
+    "leaveNegativeReview": "Leave a negative review",
+    "leavePositiveReview": "Leave a positive review",
     "next": "➡️ Next",
     "registerEvent": "🎟️ Register",
     "reject": "❌ Reject",
     "unregisterEvent": "🎟️ Cancel registration",
     "updateBetAmountField": "Enter the new bet amount. It must be greater than the previous one",
-    "updateBetTitle": "Edit bet",
-    "leaveNegativeReview": "Leave a negative review",
-    "leavePositiveReview": "Leave a positive review"
+    "updateBetTitle": "Edit bet"
   },
   "errors": {
     "betAlreadyAccepted": "⚠️ This bet has already been accepted.",
