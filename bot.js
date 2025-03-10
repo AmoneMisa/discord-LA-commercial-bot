@@ -112,10 +112,6 @@ async interaction => {
         const lang = await getUserLanguage(interaction.user.id, pool);
         interaction.client.language = interaction.client.language || {};
         interaction.client.language[interaction.user.id] = lang || "ru";
-        console.log(interaction.client.language[interaction.user.id]);
-        console.log(i18n.store.data);
-
-
 
         if (interaction.isCommand() && interaction.commandName === 'adm_settings' && interaction.options.getSubcommand() === 'remove_bots') {
             await removeBots(interaction, pool);
