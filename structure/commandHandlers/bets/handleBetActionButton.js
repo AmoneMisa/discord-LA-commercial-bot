@@ -33,6 +33,8 @@ export default async function (interaction, pool) {
                     flags: MessageFlags.Ephemeral
                 });
 
+                await updateBetTable(interaction, pool, 1);
+
                 return;
             }
 
@@ -41,10 +43,12 @@ export default async function (interaction, pool) {
             const betResult = await pool.query("SELECT * FROM bets WHERE user_id = $1 AND event_id = $2", [userId, eventId]);
 
             if (betResult.rowCount > 0) {
-                return await interaction.reply({
+                await interaction.reply({
                     content: i18n.t("errors.betAlreadyAccepted", { lng: lang }),
                     flags: MessageFlags.Ephemeral
                 });
+                await updateBetTable(interaction, pool, 1);
+                return ;
             }
 
             await pool.query(`INSERT INTO bets (event_id, user_id, nickname, amount, server, target, odds) VALUES ($1, $2, $3, $4, LOWER($5), $6, $7)`,
