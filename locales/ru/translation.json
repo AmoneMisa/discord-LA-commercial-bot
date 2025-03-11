@@ -31,6 +31,7 @@
     "attachmentMustBePng": "❌ Прикрепите изображение PNG.",
     "betAlreadyAccepted": "⚠️ Эта ставка уже была принята ранее.",
     "betAlreadyExist": "Ставка уже создана!",
+    "betDontExist": "Ставка не существует!",
     "betAmountTooLow": "⚠ Ошибка: Минимальная ставка - 200.",
     "betChannelDoesntExist": "⚠️ Ошибка: канал для получения ставок не найден или не существует.",
     "betChannelDoesntSetup": "⚠️ Канал для получения ставок не настроен.",

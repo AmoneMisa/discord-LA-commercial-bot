@@ -42,7 +42,7 @@ export default async function updateBet(interaction, pool, isContextMenu = false
                                     AND user_id = $2`, [event.id, interaction.user.id]);
     if (!bet.rows.length) {
         await interaction.reply({
-            content: i18n.t("errors.incorrectBetAmount", { lng: await getUserLanguage(interaction.user.id, pool)}),
+            content: i18n.t("errors.betDontExist", { lng: await getUserLanguage(interaction.user.id, pool)}),
             flags: MessageFlags.Ephemeral
         });
         return;
