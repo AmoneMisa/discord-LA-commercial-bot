@@ -17,7 +17,7 @@
     "registerEvent": "🎟️ Register",
     "reject": "❌ Reject",
     "unregisterEvent": "🎟️ Cancel registration",
-    "updateBetAmountField": "Enter the new bet amount. It must be greater than the previous one",
+    "updateBetAmountField": "Enter the new bet amount",
     "updateBetTitle": "Edit bet"
   },
   "common": {
