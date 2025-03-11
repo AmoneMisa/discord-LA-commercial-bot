@@ -24,7 +24,10 @@ export default async function (interaction, pool, page = 1) {
 
     const event = await getActiveEvent(pool);
     if (!event) {
-        return;
+        return await interaction.reply({
+            content: i18n.t("errors.noBetEventExist", { lng: lang}),
+            flags: MessageFlags.Ephemeral
+        });
     }
 
     const bets = await pool.query("SELECT user_id, target, amount, odds FROM bets WHERE event_id = $1 ORDER BY amount DESC", [event.id]);
