@@ -14,22 +14,26 @@ export default async function (interaction, pool) {
     const event = await getActiveEvent(pool);
     if (!event) {
         return await interaction.reply({
-            content: i18n.t("errors.noBetEventExist", { lng: lang}),
+            content: i18n.t("errors.noBetEventExist", {lng: lang}),
             flags: MessageFlags.Ephemeral
         });
     }
 
     const user = await interaction.guild.members.fetch(userId);
     if (!user) {
-        return interaction.reply({content: i18n.t("errors.incorrectMember", { lng: lang}), flags: MessageFlags.Ephemeral});
+        return interaction.reply({
+            content: i18n.t("errors.incorrectMember", {lng: lang}),
+            flags: MessageFlags.Ephemeral
+        });
     }
 
+    await interaction.deferUpdate();
     if (action === "accept") {
         if (isUpdate) {
             const betResult = await pool.query("SELECT amount FROM bets WHERE user_id = $1 AND event_id = $2", [userId, eventId]);
             if (betResult.rows[0].amount === parseInt(amount)) {
                 await interaction.reply({
-                    content: i18n.t("errors.betAlreadyAccepted", { lng: lang }),
+                    content: i18n.t("errors.betAlreadyAccepted", {lng: lang}),
                     flags: MessageFlags.Ephemeral
                 });
 
@@ -44,20 +48,30 @@ export default async function (interaction, pool) {
 
             if (betResult.rowCount > 0) {
                 await interaction.reply({
-                    content: i18n.t("errors.betAlreadyAccepted", { lng: lang }),
+                    content: i18n.t("errors.betAlreadyAccepted", {lng: lang}),
                     flags: MessageFlags.Ephemeral
                 });
                 await updateBetTable(interaction, pool, 1);
-                return ;
+                return;
             }
 
-            await pool.query(`INSERT INTO bets (event_id, user_id, nickname, amount, server, target, odds) VALUES ($1, $2, $3, $4, LOWER($5), $6, $7)`,
+            await pool.query(`INSERT INTO bets (event_id, user_id, nickname, amount, server, target, odds)
+                              VALUES ($1, $2, $3, $4, LOWER($5), $6, $7)`,
                 [eventId, userId, nickname, amount, server.toLowerCase(), target, await getCurrentUserOdd(pool, eventId, target)]);
         }
         await updateUsersOdds(pool, eventId);
         await updateBetTable(interaction, pool, 1);
-        await interaction.reply({
-            content: i18n.t("info.betAccepted", { lng: lang }),
+        await interaction.editReply({
+            content: i18n.t("info.betAccepted", {
+                lng: lang,
+                eventId,
+                userId,
+                nickname,
+                amount,
+                server,
+                target,
+            }),
+            components: [],
             flags: MessageFlags.Ephemeral
         });
         const user = await interaction.guild.members.fetch(userId);
@@ -74,8 +88,17 @@ export default async function (interaction, pool) {
     }
 
     if (action === "reject") {
-        await interaction.reply({
-            content: i18n.t("info.betRejected", { lng: lang }),
+        await interaction.editReply({
+            content: i18n.t("info.betRejected", {
+                lng: lang,
+                eventId,
+                userId,
+                nickname,
+                amount,
+                server,
+                target,
+            }),
+            components: [],
             flags: MessageFlags.Ephemeral
         });
 
