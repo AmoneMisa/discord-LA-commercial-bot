@@ -82,6 +82,6 @@ export default async function (interaction, pool, client) {
     }
 
     if (interaction.commandName === 'Изменить ставку') {
-        await updateBetModal(interaction, pool, true, interaction.isMessageContextMenuCommand());
+        await updateBetModal(interaction, pool);
     }
 }
