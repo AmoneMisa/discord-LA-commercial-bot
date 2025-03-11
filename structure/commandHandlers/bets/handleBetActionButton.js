@@ -63,7 +63,7 @@ export default async function (interaction, pool) {
         const user = await interaction.guild.members.fetch(userId);
         await user.send({
             content: i18n.t("info.betAcceptedUser", {
-                lng: interaction.client.language[userId],
+                lng: lang,
                 target,
                 amount
             }),
@@ -82,7 +82,7 @@ export default async function (interaction, pool) {
         const user = await interaction.guild.members.fetch(userId);
         await user.send({
             content: i18n.t("info.betRejectedUser", {
-                lng: interaction.client.language[userId],
+                lng: lang,
                 target,
                 amount
             }),
