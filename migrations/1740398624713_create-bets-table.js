@@ -48,7 +48,7 @@ export const up = (pgm) => {
         target: { type: "varchar", notNull: false },
         amount: { type: "integer", notNull: true, check: "amount >= 200" },
         odds: { type: "decimal(5,2)", notNull: true, check: "odds > 0" },
-        server: { type: "varchar", check: "LOWER(server) IN ('кратос', 'альдеран')", default: "'Кратос'" },
+        server: { type: "varchar", check: "LOWER(server) IN ('кратос', 'альдеран', 'kratos', 'alderan')", default: "'Кратос'" },
         created_at: { type: "timestamp", default: pgm.func("NOW()"), notNull: true }
     });
 };

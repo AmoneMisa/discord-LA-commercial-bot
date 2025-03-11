@@ -8,27 +8,28 @@ export default async function (interaction, pool) {
     const betAmount = parseFormattedNumber(interaction.fields.getTextInputValue("bet_amount"));
     const server = interaction.fields.getTextInputValue("bet_server");
 
+    const lang = await getUserLanguage(interaction.user.id, pool);
     if (isNaN(betAmount)) {
-        await interaction.reply({content: i18n.t("errors.incorrectBetAmount", { lng: await getUserLanguage(interaction.user.id, pool) }), flags: MessageFlags.Ephemeral});
+        await interaction.reply({content: i18n.t("errors.incorrectBetAmount", { lng: lang }), flags: MessageFlags.Ephemeral});
         console.error("Update bet Incorrect amount:", betAmount );
         return ;
     }
 
-    if (server.toLowerCase() !== 'кратос' && server.toLowerCase() !== 'альдеран') {
-        await interaction.reply({content: i18n.t("errors.incorrectServerName", { lng: await getUserLanguage(interaction.user.id, pool) }), flags: MessageFlags.Ephemeral});
+    if (server.toLowerCase() !== 'кратос' && server.toLowerCase() !== 'альдеран' && server.toLowerCase() !== 'kratos' && server.toLowerCase() !== 'alderan') {
+        await interaction.reply({content: i18n.t("errors.incorrectServerName", { lng: lang }), flags: MessageFlags.Ephemeral});
         console.error("Некорректное название сервера:", server );
         return ;
     }
 
     if (betAmount < 200) {
-        return await interaction.reply({ content: i18n.t("errors.betAmountTooLow", { lng: await getUserLanguage(interaction.user.id, pool) }), flags: MessageFlags.Ephemeral });
+        return await interaction.reply({ content: i18n.t("errors.betAmountTooLow", { lng: lang }), flags: MessageFlags.Ephemeral });
     }
 
     const result = await pool.query("SELECT * FROM bet_events");
     const activeEvent = result.rows.find(_event => _event.end_time > new Date().getTime());
 
     if (!JSON.parse(activeEvent.participants).length) {
-        await interaction.reply({ content: i18n.t("errors.noBetParticipants", { lng: await getUserLanguage(interaction.user.id, pool) }), flags: MessageFlags.Ephemeral });
+        await interaction.reply({ content: i18n.t("errors.noBetParticipants", { lng: lang }), flags: MessageFlags.Ephemeral });
         throw new Error("⚠ Ошибка: Не указаны участники для ставки");
     }
 
@@ -39,7 +40,7 @@ export default async function (interaction, pool) {
 
     const targetSelect = new StringSelectMenuBuilder()
         .setCustomId(`bet_target_${nickname}_${betAmount}_${server}`)
-        .setPlaceholder(i18n.t("buttons.chooseBetTarget", { lng: await getUserLanguage(interaction.user.id, pool) }))
+        .setPlaceholder(i18n.t("buttons.chooseBetTarget", { lng: lang }))
         .addOptions(availableTargets);
 
     const row = new ActionRowBuilder().addComponents(targetSelect);
