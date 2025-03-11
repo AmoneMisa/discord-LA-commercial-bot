@@ -57,10 +57,10 @@ export default async function (interaction, pool, page = 1) {
 
     let embedContent = i18n.t("info.betTableHeader", {
         lng: lang,
-        eventId: event.rows[0].id,
-        eventName: event.rows[0].name,
-        startTime: formatDateToCustomString(event.rows[0].start_time),
-        endTime: formatDateToCustomString(event.rows[0].end_time),
+        eventId: event.id,
+        eventName: event.name,
+        startTime: formatDateToCustomString(event.start_time),
+        endTime: formatDateToCustomString(event.end_time),
         page: page,
         totalPages: totalPages
     });
