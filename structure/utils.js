@@ -137,13 +137,13 @@ export function toCamelCase(str) {
 export function getMember(interaction, isContextMenu = false, isMessageContentMenuCommand = false, getType = 'member') {
     if (isContextMenu) {
         if (isMessageContentMenuCommand) {
-            return interaction.targetMessage.author;
+           return interaction.targetMessage.author;
         } else {
-            return interaction.targetUser;
+           return interaction.targetUser;
         }
     } else {
         if (getType === 'user') {
-            if (interaction.options.getUser('user')) {
+            if (interaction?.options?.getUser('user')) {
                 return interaction.options.getUser('user');
             }
             return interaction.user;
@@ -151,7 +151,6 @@ export function getMember(interaction, isContextMenu = false, isMessageContentMe
             if (interaction.options.getUser('member')) {
                 return interaction.options.getUser('member');
             }
-
             return interaction.member;
         }
     }

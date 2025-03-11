@@ -52,6 +52,6 @@ export default async function (interaction, pool, client) {
     }
 
     if (interaction.customId.startsWith('bet_update_modal')) {
-        await updateBet(interaction, pool, true, interaction.isMessageContextMenuCommand());
+        await updateBet(interaction, pool);
     }
 }
