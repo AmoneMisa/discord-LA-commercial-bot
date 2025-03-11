@@ -8,9 +8,10 @@ export default async function (interaction, pool, page = 1) {
     const messageIdResult = await pool.query(`SELECT * FROM settings WHERE key = 'bet_leaderboard_message_id'`);
     const channelIdResult = await pool.query(`SELECT * FROM settings WHERE key = 'bet_leaderboard_channel_id'`);
 
+    const lang = await getUserLanguage(interaction.user.id, pool);
     if (channelIdResult.rows.length === 0) {
         console.error(`Не установлен id для канала-таблицы ставок!`);
-        return interaction.reply({content: i18n.t("errors.betLeaderboardChannelDoesntSetup", { lng: await getUserLanguage(interaction.user.id, pool)}), flags: MessageFlags.Ephemeral });
+        return interaction.reply({content: i18n.t("errors.betLeaderboardChannelDoesntSetup", { lng: lang}), flags: MessageFlags.Ephemeral });
     }
 
     const channel = await interaction.guild.channels.fetch(channelIdResult.rows[0].value);
@@ -30,7 +31,7 @@ export default async function (interaction, pool, page = 1) {
 
     if (bets.rowCount === 0) {
         const emptyMsg = i18n.t("info.noBets", {
-            lng: await getUserLanguage(interaction.user.id, pool),
+            lng: lang,
             eventName: event.rows[0].name,
             startTime: formatDateToCustomString(event.rows[0].start_time),
             endTime: formatDateToCustomString(event.rows[0].end_time)
@@ -52,7 +53,7 @@ export default async function (interaction, pool, page = 1) {
     const paginatedBets = bets.rows.slice(startIndex, endIndex);
 
     let embedContent = i18n.t("info.betTableHeader", {
-        lng: await getUserLanguage(interaction.user.id, pool),
+        lng: lang,
         eventId: event.rows[0].id,
         eventName: event.rows[0].name,
         startTime: formatDateToCustomString(event.rows[0].start_time),
@@ -65,7 +66,7 @@ export default async function (interaction, pool, page = 1) {
     for (const bet of paginatedBets) {
         const index = paginatedBets.indexOf(bet);
         embedContent += i18n.t("info.betRow", {
-            lng: await getUserLanguage(interaction.user.id, pool),
+            lng: lang,
             position: startIndex + index + 1,
             userId: bet.user_id,
             amount: bet.amount,
@@ -76,7 +77,7 @@ export default async function (interaction, pool, page = 1) {
     }
 
     embedContent += i18n.t("info.betCommission", {
-        lng: await getUserLanguage(interaction.user.id, pool)
+        lng: lang
     });
 
     const row = new ActionRowBuilder();
@@ -85,7 +86,7 @@ export default async function (interaction, pool, page = 1) {
             new ButtonBuilder()
                 .setCustomId(`bet_page_${page - 1}`)
                 .setLabel(i18n.t("buttons.back", {
-                    lng: await getUserLanguage(interaction.user.id, pool)
+                    lng: lang
                 }))
                 .setStyle(ButtonStyle.Primary)
         );
@@ -95,7 +96,7 @@ export default async function (interaction, pool, page = 1) {
             new ButtonBuilder()
                 .setCustomId(`bet_page_${page + 1}`)
                 .setLabel(i18n.t("buttons.next", {
-                    lng: await getUserLanguage(interaction.user.id, pool)
+                    lng: lang
                 }))
                 .setStyle(ButtonStyle.Primary)
         );
@@ -108,7 +109,7 @@ export default async function (interaction, pool, page = 1) {
         }
     } catch (e) {
         console.info(i18n.t("errors.messageNotFound", {
-            lng: await getUserLanguage(interaction.user.id, pool),
+            lng: lang,
             channelId: channelIdResult.rows[0].value,
             messageId: messageId
         }));
