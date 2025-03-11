@@ -49,6 +49,8 @@ export default async function (interaction, pool) {
                 .setDisabled(currentPage >= Math.ceil(result.rows.length / itemsPerPage) - 1)
         );
 
+    await interaction.reply({content: "Сообщение с победителями было отправлено в личные сообщения. Получения списка победителей не завершает событие автоматически.", flags: MessageFlags.Ephemeral});
+
     const message = await user.send({embeds: [await generateEmbed(currentPage, result.rows, eventId, targetWinner, itemsPerPage, interaction, lang)], components: [row], flags: MessageFlags.Ephemeral})
         .catch(err => console.error(`Не удалось отправить сообщение: ${err}`));
     const collector = message.createMessageComponentCollector();
