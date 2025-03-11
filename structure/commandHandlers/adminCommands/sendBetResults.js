@@ -103,7 +103,7 @@ async function generateEmbed(page, result, eventId, targetWinner, itemsPerPage, 
             },
             {
                 name: i18n.t("info.winnings", {lng: lang}),
-                value: `${Math.ceil(row.winnings)}💰`,
+                value: `${Math.round(row.winnings)}💰`,
                 inline: true
             }
         );
