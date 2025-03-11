@@ -2,16 +2,27 @@ import updateBetTable from "./updateBetTable.js";
 import {getCurrentUserOdd, getUserLanguage, updateUsersOdds} from "../../dbUtils.js";
 import {MessageFlags} from "discord.js";
 import i18n from "../../../locales/i18n.js";
+import {getActiveEvent} from "../../utils.js";
 
 export default async function (interaction, pool) {
     const [, action, userId, eventId, amount, target, server, nickname, isUpdate] = interaction.customId.split("_");
     if (!["accept", "reject"].includes(action)) {
         return;
     }
+    const lang = await getUserLanguage(interaction.user.id, pool);
+
+    const event = await getActiveEvent(pool);
+    if (!event) {
+        return await interaction.reply({
+            content: i18n.t("errors.noBetEventExist", { lng: lang}),
+            flags: MessageFlags.Ephemeral
+        });
+    }
+
 
     const user = await interaction.guild.members.fetch(userId);
     if (!user) {
-        return interaction.reply({content: i18n.t("errors.incorrectMember", { lng: await getUserLanguage(interaction.user.id, pool)}), flags: MessageFlags.Ephemeral});
+        return interaction.reply({content: i18n.t("errors.incorrectMember", { lng: lang}), flags: MessageFlags.Ephemeral});
     }
 
     if (action === "accept") {
@@ -19,7 +30,7 @@ export default async function (interaction, pool) {
             const betResult = await pool.query("SELECT amount FROM bets WHERE user_id = $1 AND event_id = $2", [userId, eventId]);
             if (betResult.rows[0].amount === parseInt(amount)) {
                 await interaction.reply({
-                    content: i18n.t("errors.betAlreadyAccepted", { lng: await getUserLanguage(interaction.user.id, pool) }),
+                    content: i18n.t("errors.betAlreadyAccepted", { lng: lang }),
                     flags: MessageFlags.Ephemeral
                 });
 
@@ -32,7 +43,7 @@ export default async function (interaction, pool) {
 
             if (betResult.rowCount > 0) {
                 return await interaction.reply({
-                    content: i18n.t("errors.betAlreadyAccepted", { lng: await getUserLanguage(interaction.user.id, pool) }),
+                    content: i18n.t("errors.betAlreadyAccepted", { lng: lang }),
                     flags: MessageFlags.Ephemeral
                 });
             }
@@ -43,7 +54,7 @@ export default async function (interaction, pool) {
         await updateUsersOdds(pool, eventId);
         await updateBetTable(interaction, pool, 1);
         await interaction.reply({
-            content: i18n.t("info.betAccepted", { lng: await getUserLanguage(interaction.user.id, pool) }),
+            content: i18n.t("info.betAccepted", { lng: lang }),
             flags: MessageFlags.Ephemeral
         });
         const user = await interaction.guild.members.fetch(userId);
@@ -61,7 +72,7 @@ export default async function (interaction, pool) {
 
     if (action === "reject") {
         await interaction.reply({
-            content: i18n.t("info.betRejected", { lng: await getUserLanguage(interaction.user.id, pool) }),
+            content: i18n.t("info.betRejected", { lng: lang }),
             flags: MessageFlags.Ephemeral
         });
 
