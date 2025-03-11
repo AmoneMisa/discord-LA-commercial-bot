@@ -46,7 +46,7 @@ export default async function (interaction, pool) {
     const row = new ActionRowBuilder().addComponents(targetSelect);
 
     await interaction.reply({
-        content: i18n.t("info.selectTarget", { targets: JSON.parse(activeEvent.participants).join(", "), lng }),
+        content: i18n.t("info.selectTarget", { targets: JSON.parse(activeEvent.participants).join(", "), lng: lang }),
         components: [row],
         flags: MessageFlags.Ephemeral
     });

@@ -19,7 +19,6 @@ export default async function (interaction, pool) {
         });
     }
 
-
     const user = await interaction.guild.members.fetch(userId);
     if (!user) {
         return interaction.reply({content: i18n.t("errors.incorrectMember", { lng: lang}), flags: MessageFlags.Ephemeral});
