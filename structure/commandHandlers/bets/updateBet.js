@@ -63,7 +63,7 @@ export default async function updateBet(interaction, pool, isContextMenu = false
     }
 
     await interaction.reply({
-        content: i18n.t("info.updateBetRequestUserInfo", { lng: await getUserLanguage(interaction.user.id, pool), amount, oldAmount: bet.rows[0].amount}),
+        content: i18n.t("info.updateBetRequestUserInfo", { lng: await getUserLanguage(interaction.user.id, pool), amount, oldAmount: bet.rows[0].amount, newAmount: amount - bet.rows[0].amount}),
         flags: MessageFlags.Ephemeral
     });
 
