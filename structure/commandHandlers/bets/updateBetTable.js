@@ -65,7 +65,6 @@ export default async function (interaction, pool, page = 1) {
         totalPages: totalPages
     });
 
-    embedContent += `\n💰 **Таблица ставок | (стр. ${page}/${totalPages})**:\n`;
     for (const bet of paginatedBets) {
         const index = paginatedBets.indexOf(bet);
         embedContent += i18n.t("info.betRow", {
