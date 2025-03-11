@@ -26,7 +26,7 @@ export default async function (interaction, pool) {
     }
 
     const modal = new ModalBuilder()
-        .setCustomId(`bet_update_modal`)
+        .setCustomId(`bet_update_modal_${interaction.user.id}`)
         .setTitle(i18n.t("buttons.updateBetTitle", { lng: lang}));
 
     const input = new TextInputBuilder()

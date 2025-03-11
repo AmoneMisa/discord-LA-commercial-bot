@@ -25,10 +25,10 @@ export default async function updateBet(interaction, pool, isContextMenu = false
 
     let amount;
 
-    if (isContextMenu) {
-        amount = parseFormattedNumber(interaction.fields.getTextInputValue("amount"));
-    } else {
+    if (interaction?.options?.getInteger("amount")) {
         amount = interaction.options.getInteger("amount");
+    } else {
+        amount = parseFormattedNumber(interaction.fields.getTextInputValue("amount"));
     }
 
     if (isNaN(amount)) {
