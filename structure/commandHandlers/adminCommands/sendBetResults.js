@@ -75,14 +75,14 @@ async function generateEmbed(page, result, eventId, targetWinner, itemsPerPage, 
         .setTitle(i18n.t("info.betResultsTitle", {eventId, lng: lang}))
         .setDescription(i18n.t("info.betResultsDescription", {
             targetWinner,
-            lng: await getUserLanguage(interaction.user.id, pool)
+            lng: lang
         }))
         .setColor("#1396e7")
         .setFooter({
             text: i18n.t("info.pageFooter", {
                 page: page + 1,
                 totalPages: Math.ceil(result.length / itemsPerPage),
-                lng: await getUserLanguage(interaction.user.id, pool)
+                lng: lang
             })
         });
 
