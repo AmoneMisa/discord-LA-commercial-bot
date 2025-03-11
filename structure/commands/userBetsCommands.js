@@ -9,7 +9,7 @@ export default [
         .setDescription("🎲 Изменить ставку")
         .addIntegerOption(option =>
         option.setName("amount")
-            .setDescription("Новое значение ставки. Должна быть больше предыдущей")
+            .setDescription("Новое значение ставки. Должно быть больше предыдущей")
             .setRequired(true)
             .setMinValue(201)
         )
