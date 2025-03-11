@@ -81,7 +81,7 @@ export default async function (interaction, pool, client) {
         await createBetHandler(interaction, pool, true, interaction.isMessageContextMenuCommand());
     }
 
-    if (interaction.commandName === 'Увеличить ставку') {
+    if (interaction.commandName === 'Изменить ставку') {
         await updateBetModal(interaction, pool, true, interaction.isMessageContextMenuCommand());
     }
 }
