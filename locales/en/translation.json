@@ -148,7 +148,7 @@
     "setLeaderboardChannel": "✅ Betting leaderboard channel set: <#{{channelId}}>",
     "topFiveWorstSellers": "📉 **Top 5 worst sellers**",
     "updateBetRequestAdminInfo": "🔔 Event #{{eventId}} | **Bet update!**\n\n**Player:** <@{{memberId}}>\n**Nickname:** {{nickname}}\n**Server:** {{server}}\n**Bet amount:** {{amount}}\n**Target:** {{target}}",
-    "updateBetRequestUserInfo": ":bangbang: **ATTENTION**\nTo successfully update your bet, send an additional **{{amount - oldAmount}} Fate Stones** to one of the **banks**, depending on your server.\nKratos Bank: **Xzbit**\nAlderaan Bank: **QQbite**\n\n✅ Your bet has been submitted for approval. You want to increase it from {{oldAmount}} to **{{amount}}**",
+    "updateBetRequestUserInfo": ":bangbang: **ATTENTION**\nTo successfully update your bet, send an additional **{{newAmount}} Fate Stones** to one of the **banks**, depending on your server.\nKratos Bank: **Xzbit**\nAlderaan Bank: **QQbite**\n\n✅ Your bet has been submitted for approval. You want to increase it from {{oldAmount}} to **{{amount}}**",
     "userBlockedForReviews": "⏳ **{{username}}** has been blocked from receiving reviews for **{{hours}} hours**.",
     "userBlockedFromLeavingReviews": "🚫 **{{username}}** can no longer leave reviews.",
     "userBlockedFromReviewing": "⏳ **{{username}}** has been blocked from leaving reviews for **{{hours}} hours**.",

@@ -148,7 +148,7 @@
     "setLeaderboardChannel": "✅ 投注排行榜频道设置为：<#{{channelId}}>",
     "topFiveWorstSellers": "📉 **最差5名卖家**",
     "updateBetRequestAdminInfo": "🔔 事件 #{{eventId}} | **投注更新！**\n\n**玩家:** <@{{memberId}}>\n**昵称:** {{nickname}}\n**服务器:** {{server}}\n**投注金额:** {{amount}}\n**目标:** {{target}}",
-    "updateBetRequestUserInfo": ":bangbang: **注意**\n要成功更新您的投注，请额外存入 **{{amount - oldAmount}} 命运之石** 到指定银行:\n克拉托斯银行: **Xzbit**\n阿尔德兰银行: **QQbite**\n\n✅ 你的投注已提交审批，你希望将投注从 {{oldAmount}} 增加到 **{{amount}}**",
+    "updateBetRequestUserInfo": ":bangbang: **注意**\n要成功更新您的投注，请额外存入 **{{newAmount}} 命运之石** 到指定银行:\n克拉托斯银行: **Xzbit**\n阿尔德兰银行: **QQbite**\n\n✅ 你的投注已提交审批，你希望将投注从 {{oldAmount}} 增加到 **{{amount}}**",
     "userBlockedForReviews": "⏳ **{{username}}** 被禁止接收评价 **{{hours}} 小时**。",
     "userBlockedFromLeavingReviews": "🚫 **{{username}}** 不能再留下评价。",
     "userBlockedFromReviewing": "⏳ **{{username}}** 被禁止留下评价 **{{hours}} 小时**。",
