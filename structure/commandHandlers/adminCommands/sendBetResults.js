@@ -24,8 +24,9 @@ export default async function (interaction, pool) {
                  JOIN users u ON w.user_id = u.user_id;
     `, [eventId, targetWinner.toLowerCase()]);
 
+    const lang = await getUserLanguage(interaction.user.id, pool);
     if (result.rowCount === 0) {
-        await interaction.reply({content: i18n.t("errors.noWinners", { lng: await getUserLanguage(interaction.user.id, pool) }), flags: MessageFlags.Ephemeral});
+        await interaction.reply({content: i18n.t("errors.noWinners", { lng: lang }), flags: MessageFlags.Ephemeral});
         throw new Error(`Произошла ошибка при попытке получить победителей. EventId: ${eventId}\nTargetWinner: ${targetWinner}\nResult: ${result.rows}`);
     }
 
@@ -37,18 +38,18 @@ export default async function (interaction, pool) {
         .addComponents(
             new ButtonBuilder()
                 .setCustomId("prev_page")
-                .setLabel(i18n.t("buttons.back", { lng: await getUserLanguage(interaction.user.id, pool) }))
+                .setLabel(i18n.t("buttons.back", { lng: lang }))
                 .setStyle(ButtonStyle.Secondary)
                 .setDisabled(currentPage === 0),
 
             new ButtonBuilder()
                 .setCustomId("next_page")
-                .setLabel(i18n.t("buttons.next", { lng: await getUserLanguage(interaction.user.id, pool) }))
+                .setLabel(i18n.t("buttons.next", { lng: lang }))
                 .setStyle(ButtonStyle.Secondary)
                 .setDisabled(currentPage >= Math.ceil(result.rows.length / itemsPerPage) - 1)
         );
 
-    const message = await user.send({embeds: [await generateEmbed(currentPage, result.rows, eventId, targetWinner, itemsPerPage, interaction, await getUserLanguage(interaction.user.id, pool))], components: [row], flags: MessageFlags.Ephemeral})
+    const message = await user.send({embeds: [await generateEmbed(currentPage, result.rows, eventId, targetWinner, itemsPerPage, interaction, lang)], components: [row], flags: MessageFlags.Ephemeral})
         .catch(err => console.error(`Не удалось отправить сообщение: ${err}`));
     const collector = message.createMessageComponentCollector();
 
@@ -60,7 +61,7 @@ export default async function (interaction, pool) {
         }
 
         await i.update({
-            embeds: [await generateEmbed(currentPage, result.rows, eventId, targetWinner, itemsPerPage, interaction, await getUserLanguage(interaction.user.id, pool))],
+            embeds: [await generateEmbed(currentPage, result.rows, eventId, targetWinner, itemsPerPage, interaction, lang)],
             components: [row]
         });
     });
