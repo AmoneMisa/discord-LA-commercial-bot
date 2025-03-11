@@ -1,4 +1,6 @@
 import { MessageFlags } from 'discord.js';
+import i18n from "../../../locales/i18n.js";
+import {getUserLanguage} from "../../dbUtils.js";
 
 /**
  * Resets user statistics by truncating the relevant database table and restarting identity sequence.
@@ -12,7 +14,7 @@ export default async function resetStats(interaction, pool) {
     await pool.query('TRUNCATE TABLE users RESTART IDENTITY CASCADE');
 
     await interaction.reply({
-        content: `🔄 Статистика полностью сброшена.`,
+        content: i18n.t("info.resetStats", { lng: await getUserLanguage(interaction.user.id, pool)}),
         flags: MessageFlags.Ephemeral
     });
 }

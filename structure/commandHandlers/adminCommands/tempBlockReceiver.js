@@ -1,4 +1,6 @@
 import { MessageFlags } from 'discord.js';
+import i18n from "../../../locales/i18n.js";
+import {getUserLanguage} from "../../dbUtils.js";
 
 /**
  * Temporarily blocks a user from receiving feedback for a specified number of hours.
@@ -20,7 +22,11 @@ export default async function tempBlockReceiver(interaction, pool) {
     await pool.query('INSERT INTO blocked_receivers (user_id, unblock_time) VALUES ($1, $2) ON CONFLICT (user_id) DO UPDATE SET unblock_time = EXCLUDED.unblock_time', [user.id, unblockTime]);
 
     await interaction.reply({
-        content: `⏳ **${user.username}** заблокирован для получения отзывов на **${hours} часов**.`,
+        content: i18n.t("info.userBlockedForReviews", {
+            username: user.username,
+            hours,
+            lng: await getUserLanguage(interaction.user.id, pool)
+        }),
         flags: MessageFlags.Ephemeral
     });
 }

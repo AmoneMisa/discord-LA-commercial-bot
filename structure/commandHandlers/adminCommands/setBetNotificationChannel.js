@@ -1,5 +1,6 @@
 import {MessageFlags} from "discord.js";
 import i18n from "../../../locales/i18n.js";
+import {getUserLanguage} from "../../dbUtils.js";
 
 /**
  * Updates or inserts a record in the `bet_settings` table with the specified guild and channel IDs,
@@ -21,5 +22,5 @@ export default async function (interaction, pool) {
         [channelId]
     );
 
-    await interaction.reply({ content: i18n.t("info.betNotificationChannelSet", { channelId, lng: interaction.client.language[interaction.user.id] }), flags: MessageFlags.Ephemeral });
+    await interaction.reply({ content: i18n.t("info.betNotificationChannelSet", { channelId, lng: await getUserLanguage(interaction.user.id, pool) }), flags: MessageFlags.Ephemeral });
 }

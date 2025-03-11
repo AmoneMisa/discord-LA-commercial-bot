@@ -1,5 +1,6 @@
 import {MessageFlags} from "discord.js";
 import i18n from "../../../locales/i18n.js";
+import {getUserLanguage} from "../../dbUtils.js";
 
 /**
  * Deletes a betting event from the database based on the provided event ID.
@@ -25,10 +26,10 @@ export default async function (interaction, pool) {
 
     if (result.rowCount === 0) {
         return interaction.reply({
-            content: i18n.t("errors.eventNotFound", { lng: interaction.client.language[interaction.user.id] }),
+            content: i18n.t("errors.eventNotFound", { lng: await getUserLanguage(interaction.user.id, pool) }),
             flags: MessageFlags.Ephemeral
         });
     }
 
-    await interaction.reply({ content: i18n.t("info.betEventDeleted", { lng: interaction.client.language[interaction.user.id], eventId }), flags: MessageFlags.Ephemeral });
+    await interaction.reply({ content: i18n.t("info.betEventDeleted", { lng: await getUserLanguage(interaction.user.id, pool), eventId }), flags: MessageFlags.Ephemeral });
 }

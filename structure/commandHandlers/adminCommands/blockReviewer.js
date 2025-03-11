@@ -1,4 +1,6 @@
 import { MessageFlags } from 'discord.js';
+import i18n from "../../../locales/i18n.js";
+import {getUserLanguage} from "../../dbUtils.js";
 
 /**
  * Blocks a user from leaving reviews by adding their user ID to the blocked reviewers database.
@@ -13,7 +15,7 @@ export default async function blockReviewer(interaction, pool) {
     await pool.query('INSERT INTO blocked_reviewers (user_id) VALUES ($1) ON CONFLICT DO NOTHING', [user.id]);
 
     await interaction.reply({
-        content: `🚫 **${user.username}** теперь не может оставлять отзывы.`,
+        content: i18n.t("info.userBlockedFromLeavingReviews", { lng: await getUserLanguage(interaction.user.id, pool), username: user.username }),
         flags: MessageFlags.Ephemeral
     });
 }

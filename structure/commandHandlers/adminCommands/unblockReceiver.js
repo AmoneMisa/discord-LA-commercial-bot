@@ -1,4 +1,6 @@
 import { MessageFlags } from 'discord.js';
+import {getUserLanguage} from "../../dbUtils.js";
+import i18n from "../../../locales/i18n.js";
 
 /**
  * Unblocks a user, allowing them to receive feedback again.
@@ -13,7 +15,10 @@ export default async function unblockReceiver(interaction, pool) {
     await pool.query('DELETE FROM blocked_receivers WHERE user_id = $1', [user.id]);
 
     await interaction.reply({
-        content: `✅ **${user.username}** теперь может получать отзывы.`,
+        content: i18n.t("info.userCanReceiveReviews", {
+            lng: await getUserLanguage(interaction.user.id, pool),
+            username: user.username
+        }),
         flags: MessageFlags.Ephemeral
     });
 }

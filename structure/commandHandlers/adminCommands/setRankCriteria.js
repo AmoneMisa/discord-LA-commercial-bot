@@ -1,4 +1,6 @@
 import { MessageFlags } from 'discord.js';
+import {getUserLanguage} from "../../dbUtils.js";
+import i18n from "../../../locales/i18n.js";
 
 /**
  * Updates the rank criteria for a specified role in the database and notifies the user about the changes.
@@ -19,7 +21,7 @@ export default async function setRankCriteria(interaction, pool) {
     const role = await pool.query('SELECT * FROM roles WHERE role_name = $1', [roleName]);
 
     if (role.rows.length === 0) {
-        return interaction.reply({ content: `❌ Роль **${roleName}** не найдена.`, flags: MessageFlags.Ephemeral });
+        return interaction.reply({ content: i18n.t("errors.roleNotFound", { roleName, lng: await getUserLanguage(interaction.user.id, pool) }), flags: MessageFlags.Ephemeral });
     }
 
     await pool.query(`
@@ -32,7 +34,14 @@ export default async function setRankCriteria(interaction, pool) {
     `, [requiredRating, minReviews, minPositiveReviews, minNegativeReviews, roleName]);
 
     await interaction.reply({
-        content: `✅ Критерии для роли **${roleName}** обновлены:\n- Рейтинг: **${requiredRating}**\n- Мин. отзывов: **${minReviews}**\n- Мин. положительных: **${minPositiveReviews}**\n- Макс. отрицательных: **${minNegativeReviews}**`,
+        content: i18n.t("info.roleCriteriaUpdated", {
+            roleName,
+            requiredRating,
+            minReviews,
+            minPositiveReviews,
+            minNegativeReviews,
+            lng: await getUserLanguage(interaction.user.id, pool)
+        }),
         flags: MessageFlags.Ephemeral
     });
 }

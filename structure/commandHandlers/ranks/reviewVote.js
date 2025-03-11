@@ -1,6 +1,7 @@
 import {MessageFlags} from "discord.js";
 import showReviewModal from "./showReviewModal.js";
 import i18n from "../../../locales/i18n.js";
+import {getUserLanguage} from "../../dbUtils.js";
 
 /**
  * Handles an interaction event for submitting or managing reviews.
@@ -26,7 +27,7 @@ export default async function(interaction, pool) {
     const blockedReviewer = await pool.query('SELECT * FROM blocked_reviewers WHERE user_id = $1', [reviewerId]);
     if (blockedReviewer.rows.length > 0) {
         return interaction.reply({
-            content: i18n.t("errors.blockedReviewer", { lng: interaction.client.language[interaction.user.id] }),
+            content: i18n.t("errors.blockedReviewer", { lng: await getUserLanguage(interaction.user.id, pool) }),
             flags: MessageFlags.Ephemeral
         });
     }
@@ -34,7 +35,7 @@ export default async function(interaction, pool) {
     const blockedReceiver = await pool.query('SELECT * FROM blocked_receivers WHERE user_id = $1', [userId]);
     if (blockedReceiver.rows.length > 0) {
         return interaction.reply({
-            content: i18n.t("errors.blockedReceiver", { lng: interaction.client.language[interaction.user.id] }),
+            content: i18n.t("errors.blockedReceiver", { lng: await getUserLanguage(interaction.user.id, pool) }),
             flags: MessageFlags.Ephemeral
         });
     }
@@ -58,7 +59,7 @@ export default async function(interaction, pool) {
             if (timePassed < cooldownTime) {
                 const remainingTime = Math.ceil((cooldownTime - timePassed) / 60000);
                 return interaction.reply({
-                    content: i18n.t("errors.reviewCooldown", { lng: interaction.client.language[interaction.user.id], time: remainingTime }),
+                    content: i18n.t("errors.reviewCooldown", { lng: await getUserLanguage(interaction.user.id, pool), time: remainingTime }),
                     flags: MessageFlags.Ephemeral
                 });
             }
@@ -70,7 +71,7 @@ export default async function(interaction, pool) {
 
     if (userId.toString() === reviewerId.toString() && !selfVotingEnabled) {
         return interaction.reply({
-            content: i18n.t("errors.selfReview", { lng: interaction.client.language[interaction.user.id] }),
+            content: i18n.t("errors.selfReview", { lng: await getUserLanguage(interaction.user.id, pool) }),
             flags: MessageFlags.Ephemeral
         });
     }

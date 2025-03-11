@@ -2,6 +2,10 @@ import setRolesByRanks from "../setRolesByRanks.js";
 import updateRatings from "../updateRatings.js";
 import updateLeaderboard from "../commandHandlers/updateLeaderboard.js";
 import cron from 'node-cron';
+import {saveProfileToDB} from "../../scrapping/parser.js";
+import checkMatching from "../commandHandlers/tradeSystem/checkMatching.js";
+import removeExpiredLots from "../commandHandlers/tradeSystem/removeExpiredLots.js";
+import {cleanOldData, givePointsForActivity, resetActivityPoints, updateFactionLeaderboard} from "../dbUtils.js";
 
 /**
  * Schedules rank updates based on the provided frequency or the default stored in the database.
@@ -62,9 +66,33 @@ export async function scheduleRankUpdates(frequency, pool, guild) {
  */
 export function schedulersList(pool, client, guild) {
     cron.schedule('0 0 * * *', async () => {
+        console.log('🔄 Обновление данных профилей из оружейной...');
+        const players = await pool.query('SELECT main_nickname FROM profiles');
+        for (const player of players.rows) {
+            await saveProfileToDB(pool, player.nickname);
+        }
+        console.log('🔄 Обновление данных профилей из оружейной завершено!');
+
         await updateRatings(pool);
         await updateLeaderboard(client, pool);
     });
 
     scheduleRankUpdates(null, pool, guild);
+
+    cron.schedule('* * * * *', async () => {
+        await removeExpiredLots(pool, client);
+        await checkMatching(pool, client);
+    });
+
+    cron.schedule('0 0 * * 1', async () => {
+        console.log("🔄 Сбрасываем очки активности...");
+        await resetActivityPoints(pool);
+        console.log("✅ Очки сброшены!");
+    });
+
+    cron.schedule('0 3 1 * *', async () => {
+        console.log("🗑️ Очищаем старые записи...");
+        await cleanOldData(pool);
+        console.log("✅ Очистка завершена!");
+    });
 }

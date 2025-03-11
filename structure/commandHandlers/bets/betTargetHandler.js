@@ -1,6 +1,7 @@
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from "discord.js";
 import {getActiveEvent} from "../../utils.js";
 import i18n from "../../../locales/i18n.js";
+import {getUserLanguage} from "../../dbUtils.js";
 
 export default async function (interaction, pool) {
     const userId = interaction.user.id;
@@ -10,14 +11,14 @@ export default async function (interaction, pool) {
 
     if (!event) {
         return await interaction.reply({
-            content: i18n.t("errors.noBetEventExist", { lng: interaction.client.language[interaction.user.id] }),
+            content: i18n.t("errors.noBetEventExist", { lng: await getUserLanguage(interaction.user.id, pool) }),
             flags: MessageFlags.Ephemeral
         });
     }
 
     await interaction.update({
         content: i18n.t("info.betProcessing", {
-            lng: interaction.client.language[interaction.user.id],
+            lng: await getUserLanguage(interaction.user.id, pool),
             betAmount,
             nickname,
             server,
@@ -30,7 +31,7 @@ export default async function (interaction, pool) {
     const settings = await pool.query("SELECT * FROM settings WHERE key = 'bet_info_private_channel_id'");
     if (settings.rowCount === 0 || !settings.rows[0].value) {
         return await interaction.reply({
-            content: i18n.t("errors.betChannelDoesntSetup", { lng: interaction.client.language[interaction.user.id] }),
+            content: i18n.t("errors.betChannelDoesntSetup", { lng: await getUserLanguage(interaction.user.id, pool) }),
             flags: MessageFlags.Ephemeral
         });
     }
@@ -44,14 +45,14 @@ export default async function (interaction, pool) {
         } catch (error) {
             console.error(i18n.t("errors.betChannelDoesntExist", { channelId }), error);
             return interaction.reply({
-                content: i18n.t("errors.betChannelDoesntExist", { lng: interaction.client.language[interaction.user.id] }),
+                content: i18n.t("errors.betChannelDoesntExist", { lng: await getUserLanguage(interaction.user.id, pool) }),
                 flags: MessageFlags.Ephemeral
             });
         }
 
         await adminChannel.send({
             content: i18n.t("info.betRequestAdminInfo", {
-                    lng: interaction.client.language[interaction.user.id],
+                    lng: await getUserLanguage(interaction.user.id, pool),
                     eventId: event.id,
                     userId,
                     nickname,
@@ -61,8 +62,8 @@ export default async function (interaction, pool) {
                 }),
             components: [
                 new ActionRowBuilder().addComponents(
-                    new ButtonBuilder().setCustomId(`bet_accept_${userId}_${event.id}_${betAmount}_${target}_${server}_${nickname}`).setLabel(i18n.t("buttons.accept", { lng: interaction.client.language[interaction.user.id] })).setStyle(ButtonStyle.Success),
-                    new ButtonBuilder().setCustomId(`bet_reject_${userId}_${event.id}_${betAmount}_${target}_${server}_${nickname}`).setLabel(i18n.t("buttons.reject", { lng: interaction.client.language[interaction.user.id] })).setStyle(ButtonStyle.Danger)
+                    new ButtonBuilder().setCustomId(`bet_accept_${userId}_${event.id}_${betAmount}_${target}_${server}_${nickname}`).setLabel(i18n.t("buttons.accept", { lng: await getUserLanguage(interaction.user.id, pool) })).setStyle(ButtonStyle.Success),
+                    new ButtonBuilder().setCustomId(`bet_reject_${userId}_${event.id}_${betAmount}_${target}_${server}_${nickname}`).setLabel(i18n.t("buttons.reject", { lng: await getUserLanguage(interaction.user.id, pool) })).setStyle(ButtonStyle.Danger)
                 )
             ]
         });

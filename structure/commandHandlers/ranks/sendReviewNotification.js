@@ -1,3 +1,6 @@
+import i18n from "../../../locales/i18n.js";
+import {getUserLanguage} from "../../dbUtils.js";
+
 /**
  * Sends a review notification to a target user if their notification settings allow it.
  * The notification includes information about the review such as the reviewer, positivity, and review text.
@@ -26,16 +29,16 @@ export default async function sendReviewNotification(pool, targetUserId, reviewe
         const targetUser = await client.users.fetch(targetUserId);
         const reviewer = await client.users.fetch(reviewerId);
         const emoji = isPositive ? "✅" : "❌";
-        const type = isPositive ? "положительный" : "отрицательный";
+        const type = isPositive ? i18n.t("info.reviewPositive", { lng: await getUserLanguage(interaction.user.id, pool)}) : i18n.t("info.reviewNegative", { lng: await getUserLanguage(interaction.user.id, pool)});
 
         if (targetUser) {
             await targetUser.send({
-                content: `${emoji} **Вы получили ${type} отзыв от <@${reviewer.id}>!**\n\n> ${reviewText || "_Без комментария_"}`
+                content: `${emoji} **${i18n.t("info.receivedReview", { lng: userLanguage, reviewer: `<@${reviewer.id}>`, type })}**\n\n> ${reviewText || i18n.t("info.noComment", { lng: userLanguage })}`
             }).catch((e) => {
                 console.log(`Не удалось отправить уведомление пользователю: ${targetUserId}`, `Объект пользователя: ${targetUser}`, e);
             });
         }
     } catch (err) {
-        console.error("Ошибка при отправке уведомления о новом отзыве:", err);
+        throw new Error(`Ошибка при отправке уведомления о новом отзыве:" ${err}`);
     }
 }

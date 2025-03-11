@@ -1,4 +1,6 @@
 import { MessageFlags } from 'discord.js';
+import i18n from "../../../locales/i18n.js";
+import {getUserLanguage} from "../../dbUtils.js";
 
 /**
  * Temporarily blocks a reviewer for a specified number of hours by updating the database
@@ -16,7 +18,11 @@ export default async function tempBlockReviewer(interaction, pool) {
     await pool.query('INSERT INTO blocked_reviewers (user_id, unblock_time) VALUES ($1, $2) ON CONFLICT (user_id) DO UPDATE SET unblock_time = EXCLUDED.unblock_time', [user.id, unblockTime]);
 
     await interaction.reply({
-        content: `⏳ **${user.username}** заблокирован для оставления отзывов на **${hours} часов**.`,
+        content: i18n.t("info.userBlockedFromReviewing", {
+            username: user.username,
+            hours,
+            lng: await getUserLanguage(interaction.user.id, pool)
+        }),
         flags: MessageFlags.Ephemeral
     });
 }

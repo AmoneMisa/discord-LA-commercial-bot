@@ -1,4 +1,6 @@
 import { MessageFlags } from 'discord.js';
+import i18n from "../../../locales/i18n.js";
+import {getUserLanguage} from "../../dbUtils.js";
 
 /**
  * Asynchronously removes a user from the database and sends a confirmation reply.
@@ -13,7 +15,7 @@ export default async function removeUser(interaction, pool) {
     await pool.query('DELETE FROM users WHERE user_id = $1', [user.id]);
 
     await interaction.reply({
-        content: `❌ **${user.username}** удалён из статистики.`,
+        content: i18n.t("info.userRegistrationDeleted", { username: user.username, lng: await getUserLanguage(interaction.user.id, pool)}),
         flags: MessageFlags.Ephemeral
     });
 }

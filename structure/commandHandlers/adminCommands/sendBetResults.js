@@ -1,5 +1,5 @@
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, MessageFlags} from "discord.js";
-import {updateUsersOdds} from "../../dbUtils.js";
+import {getUserLanguage, updateUsersOdds} from "../../dbUtils.js";
 import i18n from "../../../locales/i18n.js";
 
 export default async function (interaction, pool) {
@@ -25,7 +25,7 @@ export default async function (interaction, pool) {
     `, [eventId, targetWinner.toLowerCase()]);
 
     if (result.rowCount === 0) {
-        await interaction.reply({content: i18n.t("errors.noWinners", { lng: interaction.client.language[interaction.user.id] }), flags: MessageFlags.Ephemeral});
+        await interaction.reply({content: i18n.t("errors.noWinners", { lng: await getUserLanguage(interaction.user.id, pool) }), flags: MessageFlags.Ephemeral});
         throw new Error(`Произошла ошибка при попытке получить победителей. EventId: ${eventId}\nTargetWinner: ${targetWinner}\nResult: ${result.rows}`);
     }
 
@@ -37,18 +37,18 @@ export default async function (interaction, pool) {
         .addComponents(
             new ButtonBuilder()
                 .setCustomId("prev_page")
-                .setLabel(i18n.t("buttons.back", { lng: interaction.client.language[interaction.user.id] }))
+                .setLabel(i18n.t("buttons.back", { lng: await getUserLanguage(interaction.user.id, pool) }))
                 .setStyle(ButtonStyle.Secondary)
                 .setDisabled(currentPage === 0),
 
             new ButtonBuilder()
                 .setCustomId("next_page")
-                .setLabel(i18n.t("buttons.next", { lng: interaction.client.language[interaction.user.id] }))
+                .setLabel(i18n.t("buttons.next", { lng: await getUserLanguage(interaction.user.id, pool) }))
                 .setStyle(ButtonStyle.Secondary)
                 .setDisabled(currentPage >= Math.ceil(result.rows.length / itemsPerPage) - 1)
         );
 
-    const message = await user.send({embeds: [generateEmbed(currentPage, result.rows, eventId, targetWinner, itemsPerPage, interaction)], components: [row], flags: MessageFlags.Ephemeral})
+    const message = await user.send({embeds: [await generateEmbed(currentPage, result.rows, eventId, targetWinner, itemsPerPage, interaction, await getUserLanguage(interaction.user.id, pool))], components: [row], flags: MessageFlags.Ephemeral})
         .catch(err => console.error(`Не удалось отправить сообщение: ${err}`));
     const collector = message.createMessageComponentCollector();
 
@@ -60,28 +60,49 @@ export default async function (interaction, pool) {
         }
 
         await i.update({
-            embeds: [generateEmbed(currentPage, result.rows, eventId, targetWinner, itemsPerPage, interaction)],
+            embeds: [await generateEmbed(currentPage, result.rows, eventId, targetWinner, itemsPerPage, interaction, await getUserLanguage(interaction.user.id, pool))],
             components: [row]
         });
     });
 }
 
-function generateEmbed(page, result, eventId, targetWinner, itemsPerPage, interaction) {
+async function generateEmbed(page, result, eventId, targetWinner, itemsPerPage, interaction, lang) {
     const start = page * itemsPerPage;
     const end = start + itemsPerPage;
     const pageData = result.slice(start, end);
 
     const embed = new EmbedBuilder()
-        .setTitle(i18n.t("info.betResultsTitle", { eventId, lng: interaction.client.language[interaction.user.id] }))
-        .setDescription(i18n.t("info.betResultsDescription", { targetWinner, lng: interaction.client.language[interaction.user.id] }))
+        .setTitle(i18n.t("info.betResultsTitle", {eventId, lng: lang}))
+        .setDescription(i18n.t("info.betResultsDescription", {
+            targetWinner,
+            lng: await getUserLanguage(interaction.user.id, pool)
+        }))
         .setColor("#1396e7")
-        .setFooter({ text: i18n.t("info.pageFooter", { page: page + 1, totalPages: Math.ceil(result.length / itemsPerPage), lng: interaction.client.language[interaction.user.id] }) });
+        .setFooter({
+            text: i18n.t("info.pageFooter", {
+                page: page + 1,
+                totalPages: Math.ceil(result.length / itemsPerPage),
+                lng: await getUserLanguage(interaction.user.id, pool)
+            })
+        });
 
     for (const row of pageData) {
         embed.addFields(
-            { name: i18n.t("info.nickname", { lng: interaction.client.language[interaction.user.id] }), value: row.nickname, inline: true },
-            { name: i18n.t("info.server", { lng: interaction.client.language[interaction.user.id] }), value: row.server, inline: true },
-            { name: i18n.t("info.winnings", { lng: interaction.client.language[interaction.user.id] }), value: `${Math.ceil(row.winnings)}💰`, inline: true }
+            {
+                name: i18n.t("info.nickname", {lng: lang}),
+                value: row.nickname,
+                inline: true
+            },
+            {
+                name: i18n.t("info.server", {lng: lang}),
+                value: row.server,
+                inline: true
+            },
+            {
+                name: i18n.t("info.winnings", {lng: lang}),
+                value: `${Math.ceil(row.winnings)}💰`,
+                inline: true
+            }
         );
     }
 
