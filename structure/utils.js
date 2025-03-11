@@ -172,6 +172,8 @@ export async function getActiveEvent(pool, isCreateEvent = false) {
         if (eventEndTime > now) {
             return activeEvent;
         }
+
+        return null;
     } else {
         if (isCreateEvent) {
             return null;
