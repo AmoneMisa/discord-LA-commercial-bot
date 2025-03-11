@@ -20,13 +20,10 @@ import {schedulersList} from "./structure/cron/scheduleUpdates.js";
 import buttons from "./structure/interactions/buttons.js";
 import modals from "./structure/interactions/modals.js";
 import commands from "./structure/interactions/commands.js";
-import {addUserIfNotExists,getUserLanguage, getModulesSettings, givePointsForActivity} from "./structure/dbUtils.js";
+import {addUserIfNotExists, getUserLanguage} from "./structure/dbUtils.js";
 import createRoles from "./structure/createRoles.js";
 import errorsHandler from "./errorsHandler.js";
 import messageComponent from "./structure/interactions/messageComponent.js";
-import handleMessageSubscription from "./structure/commandHandlers/subscribe/handleMessageSubscription.js";
-import sendRaidResponse from "./structure/commandHandlers/responses/sendRaidResponse.js";
-import autocomplete from "./structure/interactions/autocomplete.js";
 import i18n from "./locales/i18n.js";
 
 const {Pool} = pkg;
@@ -137,8 +134,6 @@ async interaction => {
             await buttons(interaction, pool, client);
         } else if (interaction.isModalSubmit()) {
             await modals(interaction, pool, client);
-        } else if (interaction.isAutocomplete()) {
-            await autocomplete(interaction, pool);
         } else if (interaction.isMessageComponent()) {
             await messageComponent(interaction, pool, client);
             // console.log(interaction);
@@ -148,40 +143,6 @@ async interaction => {
     } catch (e) {
         console.error('interactionCreate:',e);
         errorsHandler.error(e);
-    }
-});
-
-const settings = await getModulesSettings(pool);
-client.on(Events.MessageCreate, /**
- * Handles the incoming message event, performing several operations such as awarding points for activity,
- * managing message-based subscriptions, and sending raid response if applicable.
- *
- * @param {Object} message - The message object from the client, representing the user's message.
- * @throws Logs an error to the console if any of the internal operations fail.
- *
- * @async
- */
-async message => {
-    try {
-        if (message.author.bot) {
-            return
-        }
-
-        if (settings.rows.find(setting => setting.name === 'factions')) {
-            await givePointsForActivity(pool, message.author.id, 1);
-        }
-
-        if (settings.rows.find(setting => setting.name === 'subscriptions')) {
-            await handleMessageSubscription(message, pool, client);
-        }
-
-        if (settings.rows.find(setting => setting.name === 'fastResponse')) {
-            await sendRaidResponse(message, pool);
-        }
-
-    } catch (e) {
-        console.error('messageCreate:', e);
-        errorsHandler.error(e.message);
     }
 });
 
