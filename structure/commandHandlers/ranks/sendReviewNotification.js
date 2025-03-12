@@ -5,6 +5,7 @@ import {getUserLanguage} from "../../dbUtils.js";
  * Sends a review notification to a target user if their notification settings allow it.
  * The notification includes information about the review such as the reviewer, positivity, and review text.
  *
+ * @param interaction
  * @param {Object} pool - The database connection pool for querying user settings.
  * @param {string} targetUserId - The ID of the user who will receive the notification.
  * @param {string} reviewerId - The ID of the user who wrote the review.
@@ -13,7 +14,7 @@ import {getUserLanguage} from "../../dbUtils.js";
  * @param {Object} client - The client instance used to fetch Discord user data and send messages.
  * @return {Promise<void>} A promise that resolves when the notification process is complete.
  */
-export default async function sendReviewNotification(pool, targetUserId, reviewerId, isPositive, reviewText, client) {
+export default async function sendReviewNotification(interaction, pool, targetUserId, reviewerId, isPositive, reviewText, client) {
     try {
         // Получаем настройки пользователя
         const userSettings = await pool.query(

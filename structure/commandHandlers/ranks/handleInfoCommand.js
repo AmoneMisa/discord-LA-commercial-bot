@@ -70,8 +70,11 @@ export default async function (interaction, pool, isContextMenu = false, isMessa
     let lastNegativeReview = i18n.t("errors.noData", { lng: lang});
 
     lastReviews.rows.forEach(review => {
-        if (review.is_positive) lastPositiveReview = formatDate(review.last_review_time);
-        else lastNegativeReview = formatDate(review.last_review_time);
+        if (review.is_positive) {
+            lastPositiveReview = formatDate(review.last_review_time);
+        } else {
+            lastNegativeReview = formatDate(review.last_review_time);
+        }
     });
 
     const message = i18n.t("info.rankInfoMessage", { lng: lang, username: member.username, userRole, rating: userData.rating, positiveReviews: userData.positive_reviews, negativeReviews: userData.negative_reviews, lastPositiveReview, lastNegativeReview });

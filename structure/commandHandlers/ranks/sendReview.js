@@ -60,7 +60,7 @@ export default async function (interaction, pool, client) {
         });
 
         await updateRatings(pool);
-        await sendReviewNotification(pool, userId, reviewerId, isPositive, reviewText, client);
+        await sendReviewNotification(interaction, pool, userId, reviewerId, isPositive, reviewText, client);
     } catch (error) {
         errorsHandler.error(`'❌ Ошибка при сохранении отзыва: ${error}`);
         await interaction.reply({
