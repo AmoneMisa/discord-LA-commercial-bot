@@ -74,7 +74,7 @@ export default async function (interaction, pool, isContextMenu = false, isMessa
         else lastNegativeReview = formatDate(review.last_review_time);
     });
 
-    const message = i18n.t("info.rankInfoMessage", { lng: lang, userName: member.username, userRole, rating: userData.rating, positiveReviews: userData.positive_reviews, negativeReviews: userData.negative_reviews, lastPositiveReview, lastNegativeReview });
+    const message = i18n.t("info.rankInfoMessage", { lng: lang, username: member.username, userRole, rating: userData.rating, positiveReviews: userData.positive_reviews, negativeReviews: userData.negative_reviews, lastPositiveReview, lastNegativeReview });
 
     const upvoteButton = new ButtonBuilder()
         .setCustomId(`upvote_${member.id}`)
