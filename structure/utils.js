@@ -68,25 +68,26 @@ export async function sendPaginatedReviews(interaction, pool, page = 1, isPositi
         );
     }
 
+    const lang = await getUserLanguage(interaction.user.id, pool);
     if (reviews.rows.length === 0) {
         return interaction.reply({
-            content: i18n.t("info.userDontHaveReviews", { lng: await getUserLanguage(interaction.user.id, pool), memberId: member.id}),
+            content: i18n.t("info.userDontHaveReviews", { lng: lang, memberId: member.id}),
             flags: MessageFlags.Ephemeral
         });
     }
 
-    let message = i18n.t("info.reviewsAboutUser", { lng: await getUserLanguage(interaction.user.id, pool), memberId: member.id, page});
+    let message = i18n.t("info.reviewsAboutUser", { lng: lang, memberId: member.id, page});
     let buttons = new ActionRowBuilder();
 
     for (const review of reviews.rows) {
         const index = reviews.rows.indexOf(review);
-        message += `**${index + 1}.** <@${review.reviewer_id}>: ${review.is_positive ? '✅' : '❌'} "${review.review_text.subStr(0, 300)}" *(${formatDate(review.timestamp)})* \n`;
+        message += `**${index + 1}.** <@${review.reviewer_id}>: ${review.is_positive ? '✅' : '❌'} "${review.review_text.substring(0, 300)}" *(${formatDate(review.timestamp)})* \n`;
 
         if (isAdmin) {
             buttons.addComponents(
                 new ButtonBuilder()
                     .setCustomId(`delete_review_${review.id}_${member.id}_${page}`)
-                    .setLabel(i18n.t("buttons.delete", { lng: await getUserLanguage(interaction.user.id, pool), index: index + 1}))
+                    .setLabel(i18n.t("buttons.delete", { lng: lang, index: index + 1}))
                     .setStyle(ButtonStyle.Danger)
             );
         }
@@ -100,7 +101,7 @@ export async function sendPaginatedReviews(interaction, pool, page = 1, isPositi
         paginationButtons.addComponents(
             new ButtonBuilder()
                 .setCustomId(`prev_reviews_${member.id}_${page - 1}_${isPositive}`)
-                .setLabel(i18n.t("buttons.back", { lng: await getUserLanguage(interaction.user.id, pool)}))
+                .setLabel(i18n.t("buttons.back", { lng: lang}))
                 .setStyle(ButtonStyle.Secondary)
         );
     }
@@ -108,7 +109,7 @@ export async function sendPaginatedReviews(interaction, pool, page = 1, isPositi
         paginationButtons.addComponents(
             new ButtonBuilder()
                 .setCustomId(`next_reviews_${member.id}_${page + 1}_${isPositive}`)
-                .setLabel(i18n.t("buttons.next", { lng: await getUserLanguage(interaction.user.id, pool)}))
+                .setLabel(i18n.t("buttons.next", { lng: lang}))
                 .setStyle(ButtonStyle.Secondary)
         );
     }
