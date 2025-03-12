@@ -30,13 +30,14 @@ export default async function sendReviewNotification(interaction, pool, targetUs
         const targetUser = await client.users.fetch(targetUserId);
         const reviewer = await client.users.fetch(reviewerId);
         const emoji = isPositive ? "✅" : "❌";
-        const type = isPositive ? i18n.t("info.reviewPositive", { lng: await getUserLanguage(interaction.user.id, pool)}) : i18n.t("info.reviewNegative", { lng: await getUserLanguage(interaction.user.id, pool)});
+        const lang = await getUserLanguage(interaction.user.id, pool);
+        const type = isPositive ? i18n.t("info.reviewPositive", { lng: lang}) : i18n.t("info.reviewNegative", { lng: lang});
 
         if (targetUser) {
             await targetUser.send({
-                content: `${emoji} **${i18n.t("info.receivedReview", { lng: userLanguage, reviewer: `<@${reviewer.id}>`, type })}**\n\n> ${reviewText || i18n.t("info.noComment", { lng: userLanguage })}`
+                content: `${emoji} **${i18n.t("info.receivedReview", { lng: lang, reviewer: `<@${reviewer.id}>`, type })}**\n\n> ${reviewText || i18n.t("info.noComment", { lng: lang })}`
             }).catch((e) => {
-                console.log(`Не удалось отправить уведомление пользователю: ${targetUserId}`, `Объект пользователя: ${targetUser}`, e);
+                console.error(`Не удалось отправить уведомление пользователю: ${targetUserId}`, `Объект пользователя: ${targetUser}`, e);
             });
         }
     } catch (err) {
