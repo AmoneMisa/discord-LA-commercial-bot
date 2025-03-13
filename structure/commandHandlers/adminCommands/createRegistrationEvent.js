@@ -16,19 +16,20 @@ export default async function (interaction, pool) {
     const eventId = insertEvent.rows[0].id;
 
     // Добавляем кнопку под сообщением
+    const lang = await getUserLanguage(interaction.user.id, pool);
     const row = new ActionRowBuilder().addComponents(
         new ButtonBuilder()
             .setCustomId(`register_event_${eventId}`)
-            .setLabel(i18n.t("buttons.registerEvent", { lng: await getUserLanguage(interaction.user.id, pool) }))
+            .setLabel(i18n.t("buttons.registerEvent", { lng: lang }))
             .setStyle(ButtonStyle.Primary),
         new ButtonBuilder()
             .setCustomId(`unregister_event_${eventId}`)
-            .setLabel(i18n.t("buttons.unregisterEvent", { lng: await getUserLanguage(interaction.user.id, pool) }))
+            .setLabel(i18n.t("buttons.unregisterEvent", { lng: lang }))
             .setStyle(ButtonStyle.Danger)
     );
 
     const targetMessage = await interaction.channel.messages.fetch(messageId);
     await targetMessage.edit({ components: [row] });
 
-    await interaction.reply({ content: i18n.t("info.eventCreated", { lng: await getUserLanguage(interaction.user.id, pool) }), flags: MessageFlags.Ephemeral });
+    await interaction.reply({ content: i18n.t("info.eventCreated", { lng: lang }), flags: MessageFlags.Ephemeral });
 }

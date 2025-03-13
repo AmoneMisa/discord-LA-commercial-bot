@@ -19,16 +19,17 @@ export default async function viewReviews(interaction, pool) {
         [member.id]
     );
 
+    const lang = await getUserLanguage(interaction.user.id, pool);
     if (reviews.rows.length === 0) {
         return interaction.reply({ content: i18n.t("errors.userDontHaveReviews", {
                 username: member.username,
-                lng: await getUserLanguage(interaction.user.id, pool)
+                lng: lang
             }), flags: MessageFlags.Ephemeral });
     }
 
     let message = i18n.t("info.reviewsAboutUser", {
         username: member.username,
-        lng: await getUserLanguage(interaction.user.id, pool)
+        lng: lang
     });
     let buttons = new ActionRowBuilder();
 
@@ -41,7 +42,7 @@ export default async function viewReviews(interaction, pool) {
                 .setCustomId(`delete_review_${review.id}_${member.id}_1`)
                 .setLabel(i18n.t("buttons.delete", {
                     index: index + 1,
-                    lng: await getUserLanguage(interaction.user.id, pool)
+                    lng: lang
                 }))
                 .setStyle(ButtonStyle.Danger)
         );

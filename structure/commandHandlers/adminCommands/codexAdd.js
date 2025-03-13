@@ -23,6 +23,7 @@ export default async function (interaction, pool) {
     const sourceUrl = interaction.options.getString("source_url");
     const image = interaction.options.getAttachment("image");
 
+    const lang = await getUserLanguage(interaction.user.id, pool);
     try {
         // Проверяем, существует ли категория
         const categoryResult = await pool.query(
@@ -31,7 +32,7 @@ export default async function (interaction, pool) {
         );
 
         if (categoryResult.rows.length === 0) {
-            return await interaction.reply({ content: i18n.t("errors.categoryNotFound", { lng: await getUserLanguage(interaction.user.id, pool)}), flags: MessageFlags.Ephemeral });
+            return await interaction.reply({ content: i18n.t("errors.categoryNotFound", { lng: lang}), flags: MessageFlags.Ephemeral });
         }
 
         const categoryId = categoryResult.rows[0].id;
@@ -53,10 +54,10 @@ export default async function (interaction, pool) {
             );
         }
 
-        await interaction.reply({ content: i18n.t("info.entryAddedToCodex", { lng: await getUserLanguage(interaction.user.id, pool)}), flags: MessageFlags.Ephemeral });
+        await interaction.reply({ content: i18n.t("info.entryAddedToCodex", { lng: lang}), flags: MessageFlags.Ephemeral });
 
     } catch (error) {
         console.error("Ошибка при добавлении в кодекс:", error);
-        await interaction.reply({ content: i18n.t("errors.entryAdditionFailed", { lng: await getUserLanguage(interaction.user.id, pool)}), flags: MessageFlags.Ephemeral });
+        await interaction.reply({ content: i18n.t("errors.entryAdditionFailed", { lng: lang}), flags: MessageFlags.Ephemeral });
     }
 }

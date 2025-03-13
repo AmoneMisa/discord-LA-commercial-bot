@@ -20,10 +20,11 @@ export default async function (interaction, pool) {
         [enabled, interaction.user.id]
     );
 
+    const lang = await getUserLanguage(interaction.user.id, pool);
     return interaction.reply({
         content: enabled
-            ? i18n.t("info.reviewNotificationsEnabled", { lng: await getUserLanguage(interaction.user.id, pool)})
-            : i18n.t("info.reviewNotificationsDisabled", { lng: await getUserLanguage(interaction.user.id, pool)}),
+            ? i18n.t("info.reviewNotificationsEnabled", { lng: lang})
+            : i18n.t("info.reviewNotificationsDisabled", { lng: lang}),
         flags: MessageFlags.Ephemeral
     });
 }

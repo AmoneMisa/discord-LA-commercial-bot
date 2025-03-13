@@ -14,10 +14,11 @@ export default async function toggleSelfVoting(interaction, pool) {
 
     await pool.query('UPDATE settings SET value = $1 WHERE key = \'allow_self_voting\'', [enabled]);
 
+    const lang = await getUserLanguage(interaction.user.id, pool);
     await interaction.reply({
         content: i18n.t("info.selfVotingStatus", {
-            lng: await getUserLanguage(interaction.user.id, pool),
-            status: enabled ? i18n.t("info.allowed", { lng: await getUserLanguage(interaction.user.id, pool) }) : i18n.t("info.forbidden", { lng: await getUserLanguage(interaction.user.id, pool) })
+            lng: lang,
+            status: enabled ? i18n.t("info.allowed", { lng: lang }) : i18n.t("info.forbidden", { lng: lang })
         }),
         flags: MessageFlags.Ephemeral
     });

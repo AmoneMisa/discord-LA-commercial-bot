@@ -24,6 +24,7 @@ export default async function editCodexEntry(interaction, pool) {
 
     const categoryId = await pool.query(`SELECT id FROM codex_categories WHERE name = $1`, [category]);
 
+    const lang = await getUserLanguage(interaction.user.id, pool);
     try {
         const result = await pool.query(
             `UPDATE codex_entries
@@ -36,12 +37,12 @@ export default async function editCodexEntry(interaction, pool) {
         );
 
         if (result.rowCount === 0) {
-            return await interaction.reply({ content: i18n.t("errors.entryNotFound", { lng: await getUserLanguage(interaction.user.id, pool)}), flags: MessageFlags.Ephemeral });
+            return await interaction.reply({ content: i18n.t("errors.entryNotFound", { lng: lang}), flags: MessageFlags.Ephemeral });
         }
 
-        await interaction.reply({ content: i18n.t("info.entryUpdatedInCodex", { lng: await getUserLanguage(interaction.user.id, pool)}), flags: MessageFlags.Ephemeral });
+        await interaction.reply({ content: i18n.t("info.entryUpdatedInCodex", { lng: lang}), flags: MessageFlags.Ephemeral });
     } catch (error) {
         console.error("Ошибка при редактировании записи кодекса:", error);
-        await interaction.reply({ content: i18n.t("errors.entryUpdateFailed", { lng: await getUserLanguage(interaction.user.id, pool)}), flags: MessageFlags.Ephemeral });
+        await interaction.reply({ content: i18n.t("errors.entryUpdateFailed", { lng: lang}), flags: MessageFlags.Ephemeral });
     }
 }

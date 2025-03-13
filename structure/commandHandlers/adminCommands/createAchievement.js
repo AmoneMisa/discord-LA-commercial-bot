@@ -18,22 +18,23 @@ export default async function createAchievement(interaction, pool) {
     const description = interaction.options.getString('description');
     const icon = interaction.options.getAttachment('icon');
 
+    const lang = await getUserLanguage(interaction.user.id, pool);
     if (!icon) {
-        return await interaction.reply({ content: i18n.t("errors.attachmentMustBePng", { lng: await getUserLanguage(interaction.user.id, pool)}), flags: MessageFlags.Ephemeral });
+        return await interaction.reply({ content: i18n.t("errors.attachmentMustBePng", { lng: lang}), flags: MessageFlags.Ephemeral });
     }
 
     const isAchievementExist = await pool.query(`SELECT * FROM achievements WHERE name = $1`, [name]);
 
     if (isAchievementExist.rows.length) {
-        return await interaction.reply({ content: i18n.t("errors.achievementAlreadyExists", { lng: await getUserLanguage(interaction.user.id, pool)}), flags: MessageFlags.Ephemeral });
+        return await interaction.reply({ content: i18n.t("errors.achievementAlreadyExists", { lng: lang}), flags: MessageFlags.Ephemeral });
     }
 
     const savedPath = await saveAchievementIcon(name, icon);
 
     if (savedPath) {
-        await interaction.reply({ content: i18n.t("info.achievementCreated", { lng: await getUserLanguage(interaction.user.id, pool), name, savedPath}), flags: MessageFlags.Ephemeral });
+        await interaction.reply({ content: i18n.t("info.achievementCreated", { lng: lang, name, savedPath}), flags: MessageFlags.Ephemeral });
     } else {
-        return await interaction.reply({ content: i18n.t("errors.achievementIconSaveFailed", { lng: await getUserLanguage(interaction.user.id, pool)}), flags: MessageFlags.Ephemeral });
+        return await interaction.reply({ content: i18n.t("errors.achievementIconSaveFailed", { lng: lang}), flags: MessageFlags.Ephemeral });
     }
 
     await pool.query(

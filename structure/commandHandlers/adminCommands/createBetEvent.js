@@ -15,8 +15,9 @@ import {getUserLanguage} from "../../dbUtils.js";
 export default async function (interaction, pool) {
     const isEventExist = await getActiveEvent(pool, true);
 
+    const lang = await getUserLanguage(interaction.user.id, pool);
     if (isEventExist) {
-        await interaction.reply({content: i18n.t("errors.eventAlreadyExists", { lng: await getUserLanguage(interaction.user.id, pool) }), flags: MessageFlags.Ephemeral });
+        await interaction.reply({content: i18n.t("errors.eventAlreadyExists", { lng: lang }), flags: MessageFlags.Ephemeral });
         return;
     }
 
@@ -30,7 +31,7 @@ export default async function (interaction, pool) {
     participants = [...new Set(participants)];
 
     if (participants.length === 0) {
-        return interaction.reply({ content: i18n.t("errors.emptyParticipantsList", { lng: await getUserLanguage(interaction.user.id, pool) }), flags: MessageFlags.Ephemeral });
+        return interaction.reply({ content: i18n.t("errors.emptyParticipantsList", { lng: lang }), flags: MessageFlags.Ephemeral });
     }
     await pool.query(
         `INSERT INTO bet_events (name, description, start_time, end_time, participants) 
@@ -39,7 +40,7 @@ export default async function (interaction, pool) {
     );
 
     await interaction.reply({ content: i18n.t("info.betEventCreated", {
-            lng: await getUserLanguage(interaction.user.id, pool),
+            lng: lang,
             name,
             description,
             startTime,

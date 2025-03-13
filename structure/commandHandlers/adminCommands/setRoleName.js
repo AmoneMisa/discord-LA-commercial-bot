@@ -17,10 +17,11 @@ export default async function setRoleName(interaction, pool, guild) {
 
     const roleData = await pool.query('SELECT * FROM roles WHERE role_name = $1', [oldName]);
 
+    const lang = await getUserLanguage(interaction.user.id, pool);
     if (roleData.rows.length === 0) {
         return interaction.reply({ content: i18n.t("errors.roleNotFound", {
                 oldName,
-                lng: await getUserLanguage(interaction.user.id, pool)
+                lng: lang
             }), flags: MessageFlags.Ephemeral });
     }
 
@@ -32,6 +33,6 @@ export default async function setRoleName(interaction, pool, guild) {
     await interaction.reply({ content: i18n.t("info.roleRenamed", {
             oldName,
             newName,
-            lng: await getUserLanguage(interaction.user.id, pool)
+            lng: lang
         }), flags: MessageFlags.Ephemeral });
 }

@@ -15,9 +15,10 @@ export default async function setRaidRole(interaction, pool) {
 
     const raid = await pool.query('SELECT id FROM raids WHERE LOWER(raid_name) = LOWER($1)', [raidName]);
 
+    const lang = await getUserLanguage(interaction.user.id, pool);
     if (raid.rowCount === 0) {
         return interaction.reply({
-            content: i18n.t("errors.raidNotFound", { raidName, lng: await getUserLanguage(interaction.user.id, pool) }),
+            content: i18n.t("errors.raidNotFound", { raidName, lng: lang }),
             flags: MessageFlags.Ephemeral
         });
     }
@@ -36,7 +37,7 @@ export default async function setRaidRole(interaction, pool) {
     `, [raidId, role.id]);
 
     return interaction.reply({
-        content: i18n.t("info.roleLinkedToRaid", { roleName: role.name, raidName, lng: await getUserLanguage(interaction.user.id, pool) }),
+        content: i18n.t("info.roleLinkedToRaid", { roleName: role.name, raidName, lng: lang }),
         flags: MessageFlags.Ephemeral
     });
 }

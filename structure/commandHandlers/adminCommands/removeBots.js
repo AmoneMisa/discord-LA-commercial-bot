@@ -13,9 +13,10 @@ import {getUserLanguage} from "../../dbUtils.js";
  * @return {Promise<void>} A promise resolved once the operation is completed or rejected in case of an error.
  */
 export default async function removeBots(interaction, pool) {
+    const lang = await getUserLanguage(interaction.user.id, pool);
     if (!interaction.member.permissions.has('Administrator')) {
         return interaction.reply({
-            content: i18n.t("errors.notAdmin", { lng: await getUserLanguage(interaction.user.id, pool)}),
+            content: i18n.t("errors.notAdmin", { lng: lang}),
             flags: MessageFlags.Ephemeral
         });
     }
@@ -27,7 +28,7 @@ export default async function removeBots(interaction, pool) {
 
         if (bots.size === 0) {
             return interaction.editReply({
-                content: i18n.t("info.noBotsInDB", { lng: await getUserLanguage(interaction.user.id, pool)}),
+                content: i18n.t("info.noBotsInDB", { lng: lang}),
                 flags: MessageFlags.Ephemeral
             });
         }
@@ -38,14 +39,14 @@ export default async function removeBots(interaction, pool) {
         await pool.query(`DELETE FROM users WHERE user_id = ANY($1)`, [botIds]);
 
         await interaction.editReply({
-            content: i18n.t("info.botsRemovedFromDB", { lng: await getUserLanguage(interaction.user.id, pool), botsCount: botIds.length}),
+            content: i18n.t("info.botsRemovedFromDB", { lng: lang, botsCount: botIds.length}),
             flags: MessageFlags.Ephemeral
         });
 
     } catch (error) {
-        console.error(i18n.t("errors.deleteBotFromDB", { lng: await getUserLanguage(interaction.user.id, pool)}), error);
+        console.error(i18n.t("errors.deleteBotFromDB", { lng: lang}), error);
         await interaction.editReply({
-            content: i18n.t("errors.deleteBotFromDB", { lng: await getUserLanguage(interaction.user.id, pool)}),
+            content: i18n.t("errors.deleteBotFromDB", { lng: lang}),
             flags: MessageFlags.Ephemeral
         });
     }

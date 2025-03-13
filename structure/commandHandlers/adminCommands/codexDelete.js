@@ -18,6 +18,7 @@ export default async function (interaction, pool) {
 
     const categoryId = await pool.query(`SELECT id FROM codex_categories WHERE name = $1`, [category]);
 
+    const lang = await getUserLanguage(interaction.user.id, pool);
     try {
         const result = await pool.query(
             `DELETE FROM codex_entries WHERE category_id = $1 AND title = $2`,
@@ -25,12 +26,12 @@ export default async function (interaction, pool) {
         );
 
         if (result.rowCount === 0) {
-            return await interaction.reply({ content: i18n.t("errors.entryNotFound", { lng: await getUserLanguage(interaction.user.id, pool)}), flags: MessageFlags.Ephemeral });
+            return await interaction.reply({ content: i18n.t("errors.entryNotFound", { lng: lang}), flags: MessageFlags.Ephemeral });
         }
 
-        await interaction.reply({ content: i18n.t("info.entryDeletedFromCodex", { lng: await getUserLanguage(interaction.user.id, pool)}), flags: MessageFlags.Ephemeral });
+        await interaction.reply({ content: i18n.t("info.entryDeletedFromCodex", { lng: lang}), flags: MessageFlags.Ephemeral });
     } catch (error) {
         console.error("Ошибка при удалении записи кодекса:", error);
-        await interaction.reply({ content: i18n.t("errors.entryDeletionFailed", { lng: await getUserLanguage(interaction.user.id, pool)}), flags: MessageFlags.Ephemeral });
+        await interaction.reply({ content: i18n.t("errors.entryDeletionFailed", { lng: lang}), flags: MessageFlags.Ephemeral });
     }
 }

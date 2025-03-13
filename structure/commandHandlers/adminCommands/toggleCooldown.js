@@ -14,10 +14,11 @@ export default async function toggleCooldown(interaction, pool) {
 
     await pool.query('UPDATE settings SET value = $1 WHERE key = \'cooldown_enabled\'', [enabled]);
 
+    const lang = await getUserLanguage(interaction.user.id, pool);
     await interaction.reply({
         content: i18n.t("info.votingCooldown", {
-            lng: await getUserLanguage(interaction.user.id, pool),
-            status: enabled ? i18n.t("common.enabled", { lng: await getUserLanguage(interaction.user.id, pool) }) : i18n.t("common.disabled", { lng: await getUserLanguage(interaction.user.id, pool) })
+            lng: lang,
+            status: enabled ? i18n.t("common.enabled", { lng: lang }) : i18n.t("common.disabled", { lng: lang })
         }),
         flags: MessageFlags.Ephemeral
     });

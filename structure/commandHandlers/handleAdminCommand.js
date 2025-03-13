@@ -78,9 +78,10 @@ const adminCommandMap = {
  */
 export default async function (interaction, pool, guild) {
     const subcommand = interaction.options.getSubcommand();
+    const lang = await getUserLanguage(interaction.user.id, pool);
     if (!interaction.member.permissions.has('Administrator')) {
         return await interaction.reply({
-            content: i18n.t("errors.notAdmin", { lng: await getUserLanguage(interaction.user.id, pool)}),
+            content: i18n.t("errors.notAdmin", { lng: lang}),
             flags: MessageFlags.Ephemeral
         });
     }
@@ -89,6 +90,6 @@ export default async function (interaction, pool, guild) {
     if (typeof subcommandsHandlers[handlerName] === "function") {
         await subcommandsHandlers[handlerName](interaction, pool, guild);
     } else {
-        await interaction.reply({content: i18n.t("errors.unknownCommand", { lng: await getUserLanguage(interaction.user.id, pool)}), flags: MessageFlags.Ephemeral});
+        await interaction.reply({content: i18n.t("errors.unknownCommand", { lng: lang}), flags: MessageFlags.Ephemeral});
     }
 }

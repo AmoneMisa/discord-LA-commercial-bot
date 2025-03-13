@@ -16,8 +16,9 @@ export default async function giveAchievementToRole(interaction, pool, guild) {
 
     const achievement = await pool.query(`SELECT id FROM achievements WHERE name = $1`, [achievementName]);
 
+    const lang = await getUserLanguage(interaction.user.id, pool);
     if (!achievement.rows.length) {
-        return interaction.reply({ content: i18n.t("errors.achievementNotFound", { achievementName, lng: await getUserLanguage(interaction.user.id, pool) }), flags: MessageFlags.Ephemeral });
+        return interaction.reply({ content: i18n.t("errors.achievementNotFound", { achievementName, lng: lang }), flags: MessageFlags.Ephemeral });
     }
 
     const membersWithRole = guild.members.cache.filter(member => member.roles.cache.has(role.id));
@@ -31,5 +32,5 @@ export default async function giveAchievementToRole(interaction, pool, guild) {
         await givePointsForActivity(pool, member.id, 50);
     }
 
-    await interaction.reply({ content: i18n.t("info.achievementGrantedToRole", { achievementName, roleName: role.name, lng: await getUserLanguage(interaction.user.id, pool)}), flags: MessageFlags.Ephemeral });
+    await interaction.reply({ content: i18n.t("info.achievementGrantedToRole", { achievementName, roleName: role.name, lng: lang}), flags: MessageFlags.Ephemeral });
 }

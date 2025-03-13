@@ -17,12 +17,13 @@ import {getUserLanguage} from "../../dbUtils.js";
 export default async function (interaction, pool, isContextMenu = false, isMessageContentMenuCommand = false) {
     let member = getMember(interaction, isContextMenu, isMessageContentMenuCommand);
 
+    const lang = await getUserLanguage(interaction.user.id, pool);
     if (!member) {
-        return interaction.reply({content: i18n.t("errors.incorrectMember", { lng: await getUserLanguage(interaction.user.id, pool)}), flags: MessageFlags.Ephemeral});
+        return interaction.reply({content: i18n.t("errors.incorrectMember", { lng: lang}), flags: MessageFlags.Ephemeral});
     }
 
     if (member.bot) {
-        return await interaction.reply({content: i18n.t("errors.userIsBot", { lng: await getUserLanguage(interaction.user.id, pool)}), flags: MessageFlags.Ephemeral});
+        return await interaction.reply({content: i18n.t("errors.userIsBot", { lng: lang}), flags: MessageFlags.Ephemeral});
     }
 
 

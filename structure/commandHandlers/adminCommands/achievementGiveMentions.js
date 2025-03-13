@@ -35,6 +35,7 @@ export default async function (interaction, pool) {
     const achievement = interaction.options.getString("achievement");
     const channel = interaction.channel;
 
+    const lang = await getUserLanguage(interaction.user.id, pool);
     try {
         // 🔎 Проверяем, существует ли достижение
         const achievementCheck = await pool.query(
@@ -46,7 +47,7 @@ export default async function (interaction, pool) {
 
         if (achievementCheck.rowCount === 0) {
             return interaction.reply({
-                content: i18n.t("errors.achievementNotFound", { lng: await getUserLanguage(interaction.user.id, pool), achievement }),
+                content: i18n.t("errors.achievementNotFound", { lng: lang, achievement }),
                 flags: MessageFlags.Ephemeral,
             });
         }
@@ -55,7 +56,7 @@ export default async function (interaction, pool) {
         const message = await channel.messages.fetch(messageId);
         if (!message) {
             return interaction.reply({
-                content: i18n.t("errors.messageNotFound", { lng: await getUserLanguage(interaction.user.id, pool) }),
+                content: i18n.t("errors.messageNotFound", { lng: lang }),
                 flags: MessageFlags.Ephemeral,
             });
         }
@@ -64,7 +65,7 @@ export default async function (interaction, pool) {
         const mentionedUsers = message.mentions.users;
         if (mentionedUsers.size === 0) {
             return interaction.reply({
-                content: i18n.t("errors.noMentions", { lng: await getUserLanguage(interaction.user.id, pool) }),
+                content: i18n.t("errors.noMentions", { lng: lang }),
                 flags: MessageFlags.Ephemeral,
             });
         }
@@ -85,11 +86,11 @@ export default async function (interaction, pool) {
         }
 
         await interaction.reply({
-            content: i18n.t("info.achievementGranted", { lng: await getUserLanguage(interaction.user.id, pool), achievement, count: successCount })
+            content: i18n.t("info.achievementGranted", { lng: lang, achievement, count: successCount })
         });
     } catch (err) {
         await interaction.reply({
-            content: i18n.t("errors.unexpectedError", { lng: await getUserLanguage(interaction.user.id, pool) }),
+            content: i18n.t("errors.unexpectedError", { lng: lang }),
             flags: MessageFlags.Ephemeral,
         });
         throw new Error(`❌ Ошибка при обработке команды achievement_give_mentions: ${err}`);

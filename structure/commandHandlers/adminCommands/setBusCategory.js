@@ -15,9 +15,10 @@ export default async function setBusCategory(interaction, pool) {
     await interaction.deferReply({flags: MessageFlags.Ephemeral});
     const category = interaction.options.getChannel('category');
 
+    const lang = await getUserLanguage(interaction.user.id, pool);
     if (category.type !== 4) { // 4 = категория в Discord API
         return interaction.reply({
-            content: i18n.t("errors.mustSelectCategory", { lng: await getUserLanguage(interaction.user.id, pool) }),
+            content: i18n.t("errors.mustSelectCategory", { lng: lang }),
             flags: MessageFlags.Ephemeral
         });
     }
@@ -28,7 +29,7 @@ export default async function setBusCategory(interaction, pool) {
     `, [category.id]);
 
     await interaction.editReply({
-        content: i18n.t("info.categoryNowTracked", { categoryId: category.id, lng: await getUserLanguage(interaction.user.id, pool) }),
+        content: i18n.t("info.categoryNowTracked", { categoryId: category.id, lng: lang }),
         flags: MessageFlags.Ephemeral
     });
 }

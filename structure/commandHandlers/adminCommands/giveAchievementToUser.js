@@ -15,8 +15,9 @@ export default async function giveAchievementToUser(interaction, pool) {
 
     const achievement = await pool.query(`SELECT id FROM achievements WHERE name = $1`, [achievementName]);
 
+    const lang = await getUserLanguage(interaction.user.id, pool);
     if (!achievement.rows.length) {
-        return interaction.reply({ content: i18n.t("errors.achievementNotFound", { achievementName, lng: await getUserLanguage(interaction.user.id, pool) }), flags: MessageFlags.Ephemeral });
+        return interaction.reply({ content: i18n.t("errors.achievementNotFound", { achievementName, lng: lang }), flags: MessageFlags.Ephemeral });
     }
 
     await pool.query(
@@ -26,5 +27,5 @@ export default async function giveAchievementToUser(interaction, pool) {
 
     await givePointsForActivity(pool, user.id, 50);
 
-    await interaction.reply({ content: i18n.t("info.achievementGrantedToUser", { achievementName, username: user.username, lng: await getUserLanguage(interaction.user.id, pool) }), flags: MessageFlags.Ephemeral });
+    await interaction.reply({ content: i18n.t("info.achievementGrantedToUser", { achievementName, username: user.username, lng: lang }), flags: MessageFlags.Ephemeral });
 }

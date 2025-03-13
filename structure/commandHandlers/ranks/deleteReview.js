@@ -31,9 +31,10 @@ export default async function (interaction, pool) {
     const parsedReviewId = parseInt(reviewId);
     const parsedPage = parseInt(page);
 
+    const lang = await getUserLanguage(interaction.user.id, pool);
     if (isNaN(parsedReviewId) || isNaN(parsedPage)) {
         return interaction.reply({
-            content: i18n.t("errors.incorrectId", {lng: await getUserLanguage(interaction.user.id, pool)}),
+            content: i18n.t("errors.incorrectId", {lng: lang}),
             flags: MessageFlags.Ephemeral
         });
     }
@@ -43,7 +44,7 @@ export default async function (interaction, pool) {
 
     if (!isAdmin) {
         return interaction.reply({
-            content: i18n.t("errors.notAdmin", {lng: await getUserLanguage(interaction.user.id, pool)}),
+            content: i18n.t("errors.notAdmin", {lng: lang}),
             flags: MessageFlags.Ephemeral
         });
     }
@@ -52,7 +53,7 @@ export default async function (interaction, pool) {
 
     if (reviewData.rows.length === 0) {
         return interaction.reply({
-            content: i18n.t("errors.reviewDontFound", {lng: await getUserLanguage(interaction.user.id, pool)}),
+            content: i18n.t("errors.reviewDontFound", {lng: lang}),
             flags: MessageFlags.Ephemeral
         });
     }

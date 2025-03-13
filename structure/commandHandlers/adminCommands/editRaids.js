@@ -13,14 +13,15 @@ import {getUserLanguage} from "../../dbUtils.js";
 export default async function editRaids(interaction, pool) {
     const raids = await pool.query('SELECT id, raid_name FROM raids ORDER BY id LIMIT 20');
 
+    const lang = await getUserLanguage(interaction.user.id, pool);
     if (raids.rows.length === 0) {
         return interaction.reply({
-            content: i18n.t("info.noRaids", { lng: await getUserLanguage(interaction.user.id, pool) }),
+            content: i18n.t("info.noRaids", { lng: lang }),
             components: [
                 new ActionRowBuilder().addComponents(
                     new ButtonBuilder()
                         .setCustomId('create_raid')
-                        .setLabel(i18n.t("buttons.createRaid", { lng: await getUserLanguage(interaction.user.id, pool) }))
+                        .setLabel(i18n.t("buttons.createRaid", { lng: lang }))
                         .setStyle(ButtonStyle.Primary)
                 )
             ],
@@ -47,19 +48,19 @@ export default async function editRaids(interaction, pool) {
     rows.unshift(new ActionRowBuilder().addComponents(
         new ButtonBuilder()
             .setCustomId('create_raid')
-            .setLabel(i18n.t("buttons.createRaid", { lng: await getUserLanguage(interaction.user.id, pool) }))
+            .setLabel(i18n.t("buttons.createRaid", { lng: lang }))
             .setStyle(ButtonStyle.Success)
     ));
 
     if (interaction.replied) {
         await interaction.editReply({
-            content: i18n.t("info.raidList", { lng: await getUserLanguage(interaction.user.id, pool) }),
+            content: i18n.t("info.raidList", { lng: lang }),
             components: rows,
             flags: MessageFlags.Ephemeral
         });
     } else {
         await interaction.reply({
-            content: i18n.t("info.raidList", { lng: await getUserLanguage(interaction.user.id, pool) }),
+            content: i18n.t("info.raidList", { lng: lang }),
             components: rows,
             flags: MessageFlags.Ephemeral
         });

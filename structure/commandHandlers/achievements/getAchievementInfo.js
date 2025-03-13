@@ -20,22 +20,23 @@ export default async function getAchievementInfo(interaction, pool) {
         [achievementName]
     );
 
+    const lang = await getUserLanguage(interaction.user.id, pool);
     if (!result.rows.length) {
-        return interaction.reply({ content: i18n.t("errors.achievementNotFound", { lng: await getUserLanguage(interaction.user.id, pool), achievement: achievementName }), flags: MessageFlags.Ephemeral });
+        return interaction.reply({ content: i18n.t("errors.achievementNotFound", { lng: lang, achievement: achievementName }), flags: MessageFlags.Ephemeral });
     }
 
     const achievement = result.rows[0];
 
     const embed = new EmbedBuilder()
-        .setTitle(`🏆 ${i18n.t("info.achievementTitle", { lng: await getUserLanguage(interaction.user.id, pool), achievement: achievement.name })}`)
+        .setTitle(`🏆 ${i18n.t("info.achievementTitle", { lng: lang, achievement: achievement.name })}`)
         .setDescription(achievement.description)
         .setThumbnail(achievement.icon)
         .addFields(
             {
-                name: i18n.t("info.achievementIssued", { lng: await getUserLanguage(interaction.user.id, pool) }),
+                name: i18n.t("info.achievementIssued", { lng: lang }),
                 value: achievement.assigned_at
                     ? `<@${achievement.user_id}> - ${achievement.assigned_at}`
-                    : i18n.t("info.achievementNotIssued", { lng: await getUserLanguage(interaction.user.id, pool) })
+                    : i18n.t("info.achievementNotIssued", { lng: lang })
             }
         )
         .setColor("#FFD700");

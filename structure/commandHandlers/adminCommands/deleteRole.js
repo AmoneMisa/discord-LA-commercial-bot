@@ -15,9 +15,10 @@ export default async function deleteRole(interaction, pool, guild) {
 
     const roleData = await pool.query('SELECT * FROM roles WHERE role_name = $1', [name]);
 
+    const lang = await getUserLanguage(interaction.user.id, pool);
     if (roleData.rows.length === 0) {
         return interaction.reply({ content: i18n.t("errors.roleNotFound", {
-                lng: await getUserLanguage(interaction.user.id, pool),
+                lng: lang,
                 name
             }), flags: MessageFlags.Ephemeral });
     }
@@ -28,7 +29,7 @@ export default async function deleteRole(interaction, pool, guild) {
     await pool.query('DELETE FROM roles WHERE role_name = $1', [name]);
 
     await interaction.reply({ content: i18n.t("info.roleDeleted", {
-            lng: await getUserLanguage(interaction.user.id, pool),
+            lng: lang,
             name
         }), flags: MessageFlags.Ephemeral });
 }

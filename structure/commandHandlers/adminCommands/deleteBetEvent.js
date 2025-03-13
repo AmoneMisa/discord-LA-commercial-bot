@@ -24,12 +24,13 @@ export default async function (interaction, pool) {
 
     const result = await pool.query(`DELETE FROM bet_events WHERE id = $1 RETURNING *`, [eventId]);
 
+    const lang = await getUserLanguage(interaction.user.id, pool);
     if (result.rowCount === 0) {
         return interaction.reply({
-            content: i18n.t("errors.eventNotFound", { lng: await getUserLanguage(interaction.user.id, pool) }),
+            content: i18n.t("errors.eventNotFound", { lng: lang }),
             flags: MessageFlags.Ephemeral
         });
     }
 
-    await interaction.reply({ content: i18n.t("info.betEventDeleted", { lng: await getUserLanguage(interaction.user.id, pool), eventId }), flags: MessageFlags.Ephemeral });
+    await interaction.reply({ content: i18n.t("info.betEventDeleted", { lng: lang, eventId }), flags: MessageFlags.Ephemeral });
 }

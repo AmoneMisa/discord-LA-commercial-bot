@@ -14,9 +14,10 @@ import i18n from "../../../locales/i18n.js";
  * @return {Promise<void>} Resolves when the leaderboard channel is successfully set and the leaderboard is updated.
  */
 export default async function setLeaderboardChannel(interaction, pool, client) {
+    const lang = await getUserLanguage(interaction.user.id, pool);
     if (!interaction.member.permissions.has('Administrator')) {
         return interaction.reply({
-            content: i18n.t("errors.notAdmin", { lng: await getUserLanguage(interaction.user.id, pool)}),
+            content: i18n.t("errors.notAdmin", { lng: lang}),
             flags: MessageFlags.Ephemeral
         });
     }
@@ -25,14 +26,14 @@ export default async function setLeaderboardChannel(interaction, pool, client) {
 
     if (!channel) {
         return interaction.reply({
-            content: i18n.t("errors.channelDoesntChoose", { lng: await getUserLanguage(interaction.user.id, pool)}),
+            content: i18n.t("errors.channelDoesntChoose", { lng: lang}),
             flags: MessageFlags.Ephemeral
         });
     }
 
     if (channel.type !== 0) { // 0 = текстовый канал
         return interaction.reply({
-            content: i18n.t("errors.channelMustBeTextType", { lng: await getUserLanguage(interaction.user.id, pool)}),
+            content: i18n.t("errors.channelMustBeTextType", { lng: lang}),
             flags: MessageFlags.Ephemeral
         });
     }
@@ -40,7 +41,7 @@ export default async function setLeaderboardChannel(interaction, pool, client) {
     await setLeaderboardChannelId(pool, channel.id);
 
     await interaction.reply({
-        content: i18n.t("info.setLeaderboardChannel", { lng: await getUserLanguage(interaction.user.id, pool), channelId: channel.id}),
+        content: i18n.t("info.setLeaderboardChannel", { lng: lang, channelId: channel.id}),
         flags: MessageFlags.Ephemeral
     });
 
