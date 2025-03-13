@@ -65,23 +65,11 @@ export default async function (interaction, pool, client) {
         await handleInfoCommand(interaction, pool, true, interaction.isMessageContextMenuCommand());
     }
 
-    if (interaction.commandName === 'Последние положительные отзывы пользователя') {
-        await lastPositiveReviewsCommand(interaction, pool, true, interaction.isMessageContextMenuCommand());
-    }
-
-    if (interaction.commandName === 'Последние отрицательные отзывы пользователя') {
-        await lastNegativeReviewsCommand(interaction, pool, true, interaction.isMessageContextMenuCommand());
-    }
-
-    if (interaction.commandName === 'Последние отзывы пользователя') {
-        await lastReviewsCommand(interaction, pool, true, interaction.isMessageContextMenuCommand());
-    }
-
     if (interaction.commandName === 'Поставить ставку') {
         await createBetHandler(interaction, pool, true, interaction.isMessageContextMenuCommand());
     }
 
     if (interaction.commandName === 'Изменить ставку') {
--        await updateBetModal(interaction, pool);
+        await updateBetModal(interaction, pool);
     }
 }
