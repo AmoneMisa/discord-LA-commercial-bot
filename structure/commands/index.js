@@ -11,9 +11,10 @@ import adminRegistrationCommands from "./adminRegistrationCommands.js";
 import adminAchievementsCommands from "./adminAchievementsCommands.js";
 import adminCodexCommands from "./adminCodexCommands.js";
 import userCodexCommands from "./userCodexCommands.js";
-import {getModulesSettings} from "../dbUtils.js";
 import userSettingsCommands from "./userSettingsCommands.js";
-
+import dotenv from 'dotenv';
+import userRandomCommands from "./userRandomCommands.js";
+dotenv.config();
 /***
  ('ranks', 'Система рейтинга', true),
  ('fastResponses', 'Кнопки быстрой связи с продавцом в канале для продаж', false),
@@ -27,43 +28,44 @@ import userSettingsCommands from "./userSettingsCommands.js";
  ('codex', 'Кодекс - система знаний', false)`);
  ***/
 
-export default async function getCommands(pool) {
+export default function getCommands() {
     let commandsArray = [...adminSettingsCommands, ...userSettingsCommands];
-    const settings = await getModulesSettings(pool);
 
-    for (const module of settings.rows) {
-        if (module.name === 'ranks') {
+        if (process.env.RANKS_MODULE) {
             commandsArray = [...commandsArray, ...adminRankCommands, ...userRanksCommands];
         }
 
-        if (module.name === 'trade') {
+        if (process.env.TRADE_MODULE) {
             commandsArray = [...commandsArray, ...userTradeCommands];
         }
 
-        if (module.name === 'bets') {
+        if (process.env.BET_MODULE) {
             commandsArray = [...commandsArray, ...adminBetsCommands, ...userBetsCommands];
         }
 
-        if (module.name === 'subscriptions') {
+        if (process.env.SUBSCRIPTION_MODULE) {
             commandsArray = [...commandsArray, ...userSubscriptionCommands, ...adminSubscriptionCommands];
         }
 
-        if (module.name === 'profiles') {
+        if (process.env.PROFILES_MODULE) {
             commandsArray = [...commandsArray, ...userProfileCommands];
         }
 
-        if (module.name === 'registration') {
+        if (process.env.REGISTRATION_MODULE) {
             commandsArray = [...commandsArray, ...adminRegistrationCommands];
         }
 
-        if (module.name === 'achievements') {
+        if (process.env.ACHIEVEMENTS_MODULE) {
             commandsArray = [...commandsArray, ...adminAchievementsCommands];
         }
 
-        if (module.name === 'codex') {
+        if (process.env.CODEX_MODULE) {
             commandsArray = [...commandsArray, ...adminCodexCommands, ...userCodexCommands];
         }
-    }
+
+        if (process.env.RANDOM_GAMES_MODULE) {
+            commandsArray = [...commandsArray, ...userRandomCommands];
+        }
 
     return commandsArray;
 }

@@ -13,7 +13,7 @@ export default async function registerCommands() {
 
     console.log('Обновление (регистрация) команд...');
     await rest.put(Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID), {
-        body: [...await getCommands(), ...contextMenuCommands].map(cmd => {
+        body: [...getCommands(), ...contextMenuCommands].map(cmd => {
             try {
                 return cmd.toJSON();
             } catch (e) {

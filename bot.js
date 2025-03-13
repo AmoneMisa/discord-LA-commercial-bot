@@ -151,7 +151,6 @@ async interaction => {
     }
 });
 
-const settings = await getModulesSettings(pool);
 client.on(Events.MessageCreate, /**
  * Handles the incoming message event, performing several operations such as awarding points for activity,
  * managing message-based subscriptions, and sending raid response if applicable.
@@ -167,15 +166,15 @@ async message => {
             return
         }
 
-        if (settings.rows.find(setting => setting.name === 'factions')) {
+        if (process.env.FACTIONS_MODULE) {
             await givePointsForActivity(pool, message.author.id, 1);
         }
 
-        if (settings.rows.find(setting => setting.name === 'subscriptions')) {
+        if (process.env.SUBSCRIPTION_MODULE) {
             await handleMessageSubscription(message, pool, client);
         }
 
-        if (settings.rows.find(setting => setting.name === 'fastResponse')) {
+        if (process.env.FAST_RESPONSE) {
             await sendRaidResponse(message, pool);
         }
 
