@@ -27,6 +27,7 @@ export default async function (interaction, pool, client) {
     const reviewText = interaction.fields.getTextInputValue('review_text');
     const isPositive = action === 'upvote';
 
+    const lang = await getUserLanguage(interaction.user.id, pool);
     try {
         await pool.query(
             `INSERT INTO reviews (target_user, reviewer_id, is_positive, review_text, timestamp)
@@ -55,16 +56,16 @@ export default async function (interaction, pool, client) {
         );
 
         await interaction.reply({
-            content: i18n.t("info.reviewSaved", { lng: await getUserLanguage(interaction.user.id, pool) }),
+            content: i18n.t("info.reviewSaved", { lng: lang }),
             flags: MessageFlags.Ephemeral
         });
 
         await updateRatings(pool);
-        await sendReviewNotification(pool, userId, reviewerId, isPositive, reviewText, client);
+        await sendReviewNotification(interaction, pool, userId, reviewerId, isPositive, reviewText, client);
     } catch (error) {
         errorsHandler.error(`'❌ Ошибка при сохранении отзыва: ${error}`);
         await interaction.reply({
-            content: i18n.t("errors.reviewSaveError", { lng: await getUserLanguage(interaction.user.id, pool) }),
+            content: i18n.t("errors.reviewSaveError", { lng: lang }),
             flags: MessageFlags.Ephemeral
         });
     }

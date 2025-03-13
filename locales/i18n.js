@@ -11,7 +11,10 @@ i18next
         },
         preload: ["ru", "ua", "by", "ch", "en"], // Принудительная загрузка всех языков
         load: "languageOnly",
-        nonExplicitSupportedLngs: true
+        nonExplicitSupportedLngs: true,
+        interpolation: {
+            escapeValue: false
+        }
     });
 
 export default i18next;

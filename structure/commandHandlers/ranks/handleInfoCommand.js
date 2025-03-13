@@ -32,12 +32,13 @@ import {getUserLanguage} from "../../dbUtils.js";
 export default async function (interaction, pool, isContextMenu = false, isMessageContentMenuCommand = false) {
     let member = getMember(interaction, isContextMenu, isMessageContentMenuCommand);
 
+    const lang = await getUserLanguage(interaction.user.id, pool);
     if (!member) {
-        return await interaction.reply({ content: i18n.t("errors.incorrectMember", { lng: await getUserLanguage(interaction.user.id, pool)}), flags: MessageFlags.Ephemeral });
+        return await interaction.reply({ content: i18n.t("errors.incorrectMember", { lng: lang}), flags: MessageFlags.Ephemeral });
     }
 
     if (member.bot) {
-        return await interaction.reply({content: i18n.t("errors.userIsBot", { lng: await getUserLanguage(interaction.user.id, pool)}), flags: MessageFlags.Ephemeral});
+        return await interaction.reply({content: i18n.t("errors.userIsBot", { lng: lang}), flags: MessageFlags.Ephemeral});
     }
 
     const userStats = await pool.query('SELECT * FROM users WHERE user_id = $1', [member.id]);
@@ -65,15 +66,18 @@ export default async function (interaction, pool, isContextMenu = false, isMessa
         [member.id]
     );
 
-    let lastPositiveReview = i18n.t("errors.noData", { lng: await getUserLanguage(interaction.user.id, pool)});
-    let lastNegativeReview = i18n.t("errors.noData", { lng: await getUserLanguage(interaction.user.id, pool)});
+    let lastPositiveReview = i18n.t("errors.noData", { lng: lang});
+    let lastNegativeReview = i18n.t("errors.noData", { lng: lang});
 
     lastReviews.rows.forEach(review => {
-        if (review.is_positive) lastPositiveReview = formatDate(review.last_review_time);
-        else lastNegativeReview = formatDate(review.last_review_time);
+        if (review.is_positive) {
+            lastPositiveReview = formatDate(review.last_review_time);
+        } else {
+            lastNegativeReview = formatDate(review.last_review_time);
+        }
     });
 
-    const message = i18n.t("errors.noData", { lng: await getUserLanguage(interaction.user.id, pool), userName: member.username, userRole, rating: userData.rating, positiveReviews: userData.positive_reviews, negativeReviews: userData.negative_reviews, lastPositiveReview, lastNegativeReview });
+    const message = i18n.t("info.rankInfoMessage", { lng: lang, username: member.username, userRole, rating: userData.rating, positiveReviews: userData.positive_reviews, negativeReviews: userData.negative_reviews, lastPositiveReview, lastNegativeReview });
 
     const upvoteButton = new ButtonBuilder()
         .setCustomId(`upvote_${member.id}`)

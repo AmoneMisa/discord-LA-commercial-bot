@@ -23,6 +23,6 @@ export default [
         .setName("Поставить ставку")
         .setType(ApplicationCommandType.Message),
     new ContextMenuCommandBuilder()
-        .setName("Увеличить ставку")
+        .setName("Изменить ставку")
         .setType(ApplicationCommandType.Message),
 ];

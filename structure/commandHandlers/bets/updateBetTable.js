@@ -74,7 +74,7 @@ export default async function (interaction, pool, page = 1) {
             amount: bet.amount,
             target: bet.target,
             odds: bet.odds,
-            winnings: (Math.ceil(bet.amount * bet.odds * 0.9))
+            winnings: (Math.round(bet.amount * bet.odds * 0.9))
         });
     }
 

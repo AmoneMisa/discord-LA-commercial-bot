@@ -25,9 +25,10 @@ export default async function(interaction, pool) {
     const reviewerId = interaction.user.id;
 
     const blockedReviewer = await pool.query('SELECT * FROM blocked_reviewers WHERE user_id = $1', [reviewerId]);
+    const lang = await getUserLanguage(interaction.user.id, pool);
     if (blockedReviewer.rows.length > 0) {
         return interaction.reply({
-            content: i18n.t("errors.blockedReviewer", { lng: await getUserLanguage(interaction.user.id, pool) }),
+            content: i18n.t("errors.blockedReviewer", { lng: lang }),
             flags: MessageFlags.Ephemeral
         });
     }
@@ -35,7 +36,7 @@ export default async function(interaction, pool) {
     const blockedReceiver = await pool.query('SELECT * FROM blocked_receivers WHERE user_id = $1', [userId]);
     if (blockedReceiver.rows.length > 0) {
         return interaction.reply({
-            content: i18n.t("errors.blockedReceiver", { lng: await getUserLanguage(interaction.user.id, pool) }),
+            content: i18n.t("errors.blockedReceiver", { lng: lang }),
             flags: MessageFlags.Ephemeral
         });
     }
@@ -59,7 +60,7 @@ export default async function(interaction, pool) {
             if (timePassed < cooldownTime) {
                 const remainingTime = Math.ceil((cooldownTime - timePassed) / 60000);
                 return interaction.reply({
-                    content: i18n.t("errors.reviewCooldown", { lng: await getUserLanguage(interaction.user.id, pool), time: remainingTime }),
+                    content: i18n.t("errors.reviewCooldown", { lng: lang, time: remainingTime }),
                     flags: MessageFlags.Ephemeral
                 });
             }
@@ -71,10 +72,10 @@ export default async function(interaction, pool) {
 
     if (userId.toString() === reviewerId.toString() && !selfVotingEnabled) {
         return interaction.reply({
-            content: i18n.t("errors.selfReview", { lng: await getUserLanguage(interaction.user.id, pool) }),
+            content: i18n.t("errors.selfReview", { lng: lang }),
             flags: MessageFlags.Ephemeral
         });
     }
 
-    await showReviewModal(interaction, action, userId);
+    await showReviewModal(interaction, pool, action, userId);
 }

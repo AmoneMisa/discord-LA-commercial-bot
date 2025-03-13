@@ -2,6 +2,7 @@
   "buttons": {
     "accept": "✅ 接受",
     "back": "⬅️ 返回",
+    "chooseBetServer": "选择您的服务器",
     "chooseBetTarget": "选择投注目标",
     "createBetAmountField": "输入投注金额（最低200）",
     "createBetNicknameField": "输入您的游戏昵称",
@@ -34,6 +35,7 @@
     "betAmountTooLow": "⚠ 错误：最低投注金额为200。",
     "betChannelDoesntExist": "⚠️ 错误：投注频道未找到或不存在。",
     "betChannelDoesntSetup": "⚠️ 投注频道未配置。",
+    "betDontExist": "❌ 该投注不存在！",
     "betLeaderboardChannelDoesntSetup": "⚠️ 投注排行榜频道未设置。",
     "blockedReceiver": "🚫 此用户无法接收评论。",
     "blockedReviewer": "🚫 您无法提交评论。",
@@ -142,6 +144,7 @@
     "roleLinkedToRaid": "✅ 角色 **{{roleName}}** 现已链接到突袭 '{{raidName}}'！",
     "roleRenamed": "✅ 角色 **{{oldName}}** 现已更名为 **{{newName}}**。",
     "roleUpdateFrequencySet": "✅ 角色更新频率设为 **{{frequency}}**。",
+    "selectServer": "✅ 选择您的服务器",
     "selectTarget": "✅ 选择投注目标:\n📌 **可投注目标:** {{targets}}",
     "selfVotingStatus": "✅ 自投票现在 **{{status}}**。",
     "server": "服务器",

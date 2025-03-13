@@ -728,7 +728,7 @@ export async function getCurrentUserOdd(pool, eventId, userId, target) {
 export async function updateUsersOdds(pool, eventId) {
     await pool.query(`
         WITH total_bank AS (
-            SELECT SUM(amount) AS total FROM bets WHERE event_id = $1 -- Удерживаем 10%
+            SELECT SUM(amount) AS total FROM bets WHERE event_id = $1
         ),
              target_bets AS (
                  SELECT target, SUM(amount) AS total_bets
@@ -737,7 +737,7 @@ export async function updateUsersOdds(pool, eventId) {
                  GROUP BY target
              )
         UPDATE bets
-        SET odds = tb.total / tbets.total_bets
+        SET odds = 1.0 * tb.total / tbets.total_bets
         FROM total_bank tb, target_bets tbets
         WHERE bets.event_id = $1
           AND bets.target = tbets.target;

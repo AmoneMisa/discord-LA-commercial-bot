@@ -6,18 +6,11 @@ import {getUserLanguage} from "../../dbUtils.js";
 export default async function (interaction, pool) {
     const nickname = interaction.fields.getTextInputValue("bet_nickname");
     const betAmount = parseFormattedNumber(interaction.fields.getTextInputValue("bet_amount"));
-    const server = interaction.fields.getTextInputValue("bet_server");
 
     const lang = await getUserLanguage(interaction.user.id, pool);
     if (isNaN(betAmount)) {
         await interaction.reply({content: i18n.t("errors.incorrectBetAmount", { lng: lang }), flags: MessageFlags.Ephemeral});
         console.error("Update bet Incorrect amount:", betAmount );
-        return ;
-    }
-
-    if (server.toLowerCase() !== 'кратос' && server.toLowerCase() !== 'альдеран' && server.toLowerCase() !== 'kratos' && server.toLowerCase() !== 'alderan') {
-        await interaction.reply({content: i18n.t("errors.incorrectServerName", { lng: lang }), flags: MessageFlags.Ephemeral});
-        console.error("Некорректное название сервера:", server );
         return ;
     }
 
@@ -39,7 +32,7 @@ export default async function (interaction, pool) {
     }));
 
     const targetSelect = new StringSelectMenuBuilder()
-        .setCustomId(`bet_target_${nickname}_${betAmount}_${server}`)
+        .setCustomId(`bet_target_${nickname}_${betAmount}`)
         .setPlaceholder(i18n.t("buttons.chooseBetTarget", { lng: lang }))
         .addOptions(availableTargets);
 

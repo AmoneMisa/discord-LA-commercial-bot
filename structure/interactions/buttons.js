@@ -8,15 +8,15 @@ import handleRemoveLotButtons from "../commandHandlers/tradeSystem/handleRemoveL
 import handleExtendLot from "../commandHandlers/tradeSystem/handleExtendLot.js";
 import {handleAuctionButtons} from "../commandHandlers/tradeSystem/handleAuctionButtons.js";
 import reviewVote from "../commandHandlers/ranks/reviewVote.js";
+import betContinueHandler from "../commandHandlers/bets/betContinueHandler.js";
+import betTargetHandler from "../commandHandlers/bets/betTargetHandler.js";
+import {getUserLanguage} from "../dbUtils.js";
 import handleSendRaidResponseJoin from "../commandHandlers/responses/handleSendRaidResponseJoin.js";
 import handleBuyButtonsResponse from "../commandHandlers/responses/createModalBuyResponse.js";
 import handleSendRaidResponseBuy from "../commandHandlers/responses/handleSendRaidResponseBuy.js";
-import betContinueHandler from "../commandHandlers/bets/betContinueHandler.js";
-import betTargetHandler from "../commandHandlers/bets/betTargetHandler.js";
-import i18n from "../../locales/i18n.js";
-import {getUserLanguage} from "../dbUtils.js";
 import handleBetActionButton from "../commandHandlers/bets/handleBetActionButton.js";
 import handleBetPagination from "../commandHandlers/bets/handleBetPagination.js";
+import i18n from "../../locales/i18n.js";
 
 /**
  * Handles various types of button interactions in a Discord bot and delegates
