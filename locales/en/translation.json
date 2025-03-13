@@ -2,6 +2,7 @@
   "buttons": {
     "accept": "✅ Accept",
     "back": "⬅️ Back",
+    "chooseBetServer": "Select server",
     "chooseBetTarget": "Choose who to bet on",
     "createBetAmountField": "Enter bet amount (from 200)",
     "createBetNicknameField": "Enter your in-game nickname",
@@ -34,6 +35,7 @@
     "betAmountTooLow": "⚠ Error: Minimum bet - 200.",
     "betChannelDoesntExist": "⚠️ Error: Betting channel not found or does not exist.",
     "betChannelDoesntSetup": "⚠️ Betting channel is not configured.",
+    "betDontExist": "❌ The bet does not exist!",
     "betLeaderboardChannelDoesntSetup": "⚠️ Betting leaderboard channel is not set.",
     "blockedReceiver": "🚫 This user cannot receive reviews.",
     "blockedReviewer": "🚫 You are not allowed to leave reviews.",
@@ -142,6 +144,7 @@
     "roleLinkedToRaid": "✅ Role **{{roleName}}** is now linked to the raid '{{raidName}}'!",
     "roleRenamed": "✅ Role **{{oldName}}** is now called **{{newName}}**.",
     "roleUpdateFrequencySet": "✅ Role update frequency set to **{{frequency}}**.",
+    "selectServer": "✅ Select your server",
     "selectTarget": "✅ Choose who to bet on:\n📌 **Available targets:** {{targets}}",
     "selfVotingStatus": "✅ Self-voting is now **{{status}}**.",
     "server": "Server",
