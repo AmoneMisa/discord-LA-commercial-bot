@@ -14,8 +14,8 @@ import {getUserLanguage} from "../../dbUtils.js";
  * - Ensures users are not allowed to review themselves unless self-voting is explicitly permitted.
  * - Finally, invokes a modal to proceed with the review submission if all conditions are satisfied.
  *
- * @param {Interaction} interaction - The interaction object containing the review action and user details.
- * @param {Pool} pool - The database connection pool to query necessary data.
+ * @param {Object} interaction - The interaction object containing the review action and user details.
+ * @param {Object} pool - The database connection pool to query necessary data.
  *
  * @async
  * @throws Will reply to the interaction with an appropriate error message if any condition (e.g., blocked user, cooldown, self-voting restriction) is violated.

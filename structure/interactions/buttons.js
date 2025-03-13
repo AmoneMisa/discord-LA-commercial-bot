@@ -44,7 +44,6 @@ export default async function (interaction, pool, client) {
     }
 
     if (interaction.customId.startsWith('upvote_') || interaction.customId.startsWith('downvote_')) {
-        const [action, userId] = interaction.customId.split('_');
         const reviewerId = interaction.user.id;
 
         const blockedReviewer = await pool.query('SELECT * FROM blocked_reviewers WHERE user_id = $1', [reviewerId]);
