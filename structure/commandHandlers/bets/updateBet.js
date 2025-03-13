@@ -49,16 +49,16 @@ export default async function updateBet(interaction, pool, isContextMenu = false
         return;
     }
 
-    if (amount <= bet.rows[0].amount) {
+    if (amount < bet.rows[0].amount) {
         return await interaction.reply({
-            content: i18n.t("errors.incorrectBetAmount", { lng: lang}),
+            content: i18n.t("errors.userCanOnlyUpBet", { lng: lang}),
             flags: MessageFlags.Ephemeral
         });
     }
 
     if (amount === bet.rows[0].amount) {
         return await interaction.reply({
-            content: i18n.t("errors.incorrectBetAmount", { lng: lang}),
+            content: i18n.t("errors.userBetsSame", { lng: lang}),
             flags: MessageFlags.Ephemeral
         });
     }
