@@ -116,7 +116,6 @@ export default async function (interaction, pool, client) {
             }
         }
 
-
         if (interaction.commandName === "Подписаться на продавца") {
             await subscribeToBuy(interaction, pool, true, interaction.isMessageContextMenuCommand());
         }

@@ -16,7 +16,7 @@ export default async function tempBlockSubscription(interaction, pool) {
 
     await pool.query('INSERT INTO blocked_subscriptions (user_id, blocked_until, block_type) VALUES ($1, NOW() + INTERVAL \'$2 hours\') ON CONFLICT (user_id) DO UPDATE SET blocked_until = NOW() + INTERVAL \'$2 hours\'', [userId, hours, blockType]);
 
-    await interaction.reply({ content: i18n.t("errors.subscriptionBlocked", {
+    await interaction.reply({ content: i18n.t("errors.subscriptionTempBlocked", {
             lng: await getUserLanguage(interaction.user.id, pool),
             hours: hours
         }), flags: MessageFlags.Ephemeral });

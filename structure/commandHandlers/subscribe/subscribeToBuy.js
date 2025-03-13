@@ -1,6 +1,7 @@
 import {MessageFlags} from "discord.js";
-import {getSubscriptions} from "../../dbUtils.js";
+import {getSubscriptions, getUserLanguage} from "../../dbUtils.js";
 import {getMember} from "../../utils.js";
+import i18n from "../../../locales/i18n.js";
 
 /**
  * Handles the user's subscription to notifications for a specific seller and raid.
@@ -16,6 +17,7 @@ import {getMember} from "../../utils.js";
  */
 export default async function subscribeToBuy(interaction, pool, isContextMenu = false, isMessageContentMenuCommand = false) {
     const categoryResult = await pool.query('SELECT value FROM settings WHERE key = $1', ['bus_category']);
+    const lang = await getUserLanguage(interaction.user.id, pool);
 
     if (categoryResult.rows.length === 0) {
         console.error("Не выбрана категория для отслеживания рейдов.");
@@ -25,11 +27,11 @@ export default async function subscribeToBuy(interaction, pool, isContextMenu = 
     let seller =  getMember(interaction, isContextMenu, isMessageContentMenuCommand, 'user');
 
     if (seller.bot) {
-        return await interaction.reply({content: "Эту команду нельзя применять на ботах", flags: MessageFlags.Ephemeral});
+        return await interaction.reply({content: i18n.t("errors.userIsBot", { lng: lang}), flags: MessageFlags.Ephemeral});
     }
 
     if (seller.id === interaction.user.id) {
-        return await interaction.reply({content: "Эту команду нельзя применять на самого себя", flags: MessageFlags.Ephemeral});
+        return await interaction.reply({content: i18n.t("errors.selfSubscription", { lng: lang }), flags: MessageFlags.Ephemeral});
     }
 
     const buyerId = interaction.user.id;
@@ -38,7 +40,7 @@ export default async function subscribeToBuy(interaction, pool, isContextMenu = 
     const blockedBuyer = await pool.query('SELECT * FROM blocked_reviewers WHERE user_id = $1', [buyerId]);
     if (blockedBuyer.rowCount > 0) {
         return await interaction.reply({
-            content: '🚫 Вам запрещено подписываться на продавцов.',
+            content: i18n.t("errors.subscriptionBlocked", { lng: lang }),
             flags: MessageFlags.Ephemeral
         });
     }
@@ -50,17 +52,15 @@ export default async function subscribeToBuy(interaction, pool, isContextMenu = 
         console.error("Выбранный рейд не имеет связи с ролью. Пожалуйста, установите роль.", raid);
 
         return await interaction.reply({
-            content: '🚫 Произошла ошибка при попытке подписаться на этот рейд. Свяжитесь с администратором.',
+            content: i18n.t("errors.raidNotLinked", { lng: lang }),
             flags: MessageFlags.Ephemeral
         });
     }
 
     for (const availableRaid of result.rows) {
-        console.log(buyerId, seller.id, availableRaid.id);
-
         if (await getSubscriptions(pool, buyerId, seller.id, availableRaid.id).length > 0) {
             await interaction.reply({
-                content: '🚫 Вы не можете подписаться на одного и того же продавца повторно, на один и тот же рейд.',
+                content: i18n.t("errors.duplicateSubscription", { lng: lang }),
                 flags: MessageFlags.Ephemeral
             });
             continue;
@@ -74,7 +74,7 @@ export default async function subscribeToBuy(interaction, pool, isContextMenu = 
     }
 
     return interaction.reply({
-        content: `✅ Вы подписались на уведомления от **<@${seller.id}>** по рейдам: ${raid}.`,
+        content: i18n.t("info.subscriptionSuccess", { sellerId: seller.id, raid, lng: lang }),
         flags: MessageFlags.Ephemeral
     });
 }
