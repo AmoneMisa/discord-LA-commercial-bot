@@ -353,8 +353,8 @@ export function parseFormattedNumber(str) {
  */
 export async function reply(interaction, content, components = [], isEphemeral = true) {
     if (interaction.replied || interaction.deferred) {
-        await interaction.editReply({ content, components, flags: isEphemeral ? MessageFlags.Ephemeral : null });
+        await interaction.editReply({ content: content, components: components, flags: isEphemeral ? MessageFlags.Ephemeral : null });
     } else {
-        await interaction.reply({ content, components, flags: isEphemeral ? MessageFlags.Ephemeral : null });
+        await interaction.reply({ content: content, components: components, flags: isEphemeral ? MessageFlags.Ephemeral : null });
     }
 }
