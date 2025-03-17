@@ -14,13 +14,13 @@ export default async function (interaction, pool) {
 
     const event = await getActiveEvent(pool);
     if (!event) {
-        await reply(interaction, i18n.t("errors.noBetEventExist", {lng: lang}), [], true);
+        await reply(interaction, i18n.t("errors.noBetEventExist", {lng: lang}), undefined, true);
         return;
     }
 
     const user = await interaction.guild.members.fetch(userId);
     if (!user) {
-        await reply(interaction, i18n.t("errors.incorrectMember", {lng: lang}), [], true);
+        await reply(interaction, i18n.t("errors.incorrectMember", {lng: lang}), undefined, true);
         return;
     }
 
@@ -43,7 +43,7 @@ export default async function (interaction, pool) {
             const betResult = await pool.query("SELECT * FROM bets WHERE user_id = $1 AND event_id = $2", [userId, eventId]);
 
             if (betResult.rowCount > 0) {
-                await reply(interaction, i18n.t("errors.betAlreadyAccepted", {lng: lang}), [], true);
+                await reply(interaction, i18n.t("errors.betAlreadyAccepted", {lng: lang}), undefined, true);
 
                 await updateBetTable(interaction, pool, 1);
                 return;
