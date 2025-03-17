@@ -357,7 +357,7 @@ export async function reply(interaction, content, components = undefined, isEphe
         content: content
     };
 
-    if (components && components.length > 0) {
+    if (components && components.length > 0 && components.some(row => row.components.length > 0)) {
         options['components'] = components;
     }
 
