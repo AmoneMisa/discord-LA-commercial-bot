@@ -32,7 +32,7 @@ export default async function (interaction, pool) {
 
     const user = await interaction.guild.members.fetch(interaction.user.id);
     let currentPage = 0;
-    const itemsPerPage = 15;
+    const itemsPerPage = 10;
 
     const row = new ActionRowBuilder()
         .addComponents(

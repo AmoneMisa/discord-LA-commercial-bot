@@ -56,9 +56,17 @@ export default async function (interaction, pool) {
         );
     }
 
-    await interaction.reply({
-        content: getBetTableMessage(parseInt(page), bets, lang, event),
-        components: [],
-        flags: MessageFlags.Ephemeral
-    });
+    if (interaction.replied || interaction.deferred) {
+        await interaction.followUp({
+            content: getBetTableMessage(parseInt(page), bets, lang, event),
+            components: row,
+            flags: MessageFlags.Ephemeral
+        });
+    } else {
+        await interaction.reply({
+            content: getBetTableMessage(parseInt(page), bets, lang, event),
+            components: row,
+            flags: MessageFlags.Ephemeral
+        });
+    }
 }
