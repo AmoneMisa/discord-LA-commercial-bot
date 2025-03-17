@@ -351,7 +351,7 @@ export function parseFormattedNumber(str) {
  * @param isEphemeral {Boolean}
  * @returns {Promise<void>}
  */
-export async function reply(interaction, content, components = [], isEphemeral = true) {
+export async function reply(interaction, content, components = undefined, isEphemeral = true) {
     let options = {
         content: content
     };
