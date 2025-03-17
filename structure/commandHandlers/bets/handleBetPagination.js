@@ -5,7 +5,7 @@ import {formatDateToCustomString, getActiveEvent, reply} from "../../utils.js";
 import i18n from "../../../locales/i18n.js";
 
 export default async function (interaction, pool) {
-    const [_, page] = interaction.customId.split("_");
+    const [_, , page] = interaction.customId.split("_");
     const lang = await getUserLanguage(interaction.user.id, pool);
     const event = await getActiveEvent(pool);
 

@@ -352,7 +352,6 @@ export function parseFormattedNumber(str) {
  * @returns {Promise<void>}
  */
 export async function reply(interaction, content, components = undefined, isEphemeral = true) {
-    console.log("components", components);
     let options = {
         content: content
     };
