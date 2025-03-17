@@ -1,8 +1,7 @@
-import updateBetTable from "./updateBetTable.js";
 import getBetTableMessage from "./getBetTableMessage.js";
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from "discord.js";
 import {getUserLanguage} from "../../dbUtils.js";
-import {formatDateToCustomString, getActiveEvent} from "../../utils.js";
+import {formatDateToCustomString, getActiveEvent, reply} from "../../utils.js";
 import i18n from "../../../locales/i18n.js";
 
 export default async function (interaction, pool) {
@@ -31,7 +30,7 @@ export default async function (interaction, pool) {
         return ;
     }
 
-    const perPage = 12;
+    const perPage = 10;
     const totalPages = Math.ceil(bets.rowCount / perPage);
 
     const row = new ActionRowBuilder();
@@ -56,17 +55,5 @@ export default async function (interaction, pool) {
         );
     }
 
-    if (interaction.replied || interaction.deferred) {
-        await interaction.followUp({
-            content: getBetTableMessage(parseInt(page), bets, lang, event),
-            components: row,
-            flags: MessageFlags.Ephemeral
-        });
-    } else {
-        await interaction.reply({
-            content: getBetTableMessage(parseInt(page), bets, lang, event),
-            components: row,
-            flags: MessageFlags.Ephemeral
-        });
-    }
+    await reply(interaction, getBetTableMessage(parseInt(page), bets, lang, event), row, true);
 }

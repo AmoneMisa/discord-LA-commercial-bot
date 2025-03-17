@@ -2,29 +2,26 @@ import updateBetTable from "./updateBetTable.js";
 import {getCurrentUserOdd, getUserLanguage, updateUsersOdds} from "../../dbUtils.js";
 import {MessageFlags} from "discord.js";
 import i18n from "../../../locales/i18n.js";
-import {getActiveEvent} from "../../utils.js";
+import {getActiveEvent, reply} from "../../utils.js";
 
 export default async function (interaction, pool) {
     const [, action, userId, eventId, amount, target, server, nickname, isUpdate] = interaction.customId.split("_");
     if (!["accept", "reject"].includes(action)) {
         return;
     }
+
     const lang = await getUserLanguage(interaction.user.id, pool);
 
     const event = await getActiveEvent(pool);
     if (!event) {
-        return await interaction.reply({
-            content: i18n.t("errors.noBetEventExist", {lng: lang}),
-            flags: MessageFlags.Ephemeral
-        });
+        await reply(interaction, i18n.t("errors.noBetEventExist", {lng: lang}), null, true);
+        return;
     }
 
     const user = await interaction.guild.members.fetch(userId);
     if (!user) {
-        return interaction.reply({
-            content: i18n.t("errors.incorrectMember", {lng: lang}),
-            flags: MessageFlags.Ephemeral
-        });
+        await reply(interaction, i18n.t("errors.incorrectMember", {lng: lang}), null, true);
+        return;
     }
 
     await interaction.deferUpdate();
@@ -38,7 +35,6 @@ export default async function (interaction, pool) {
                 });
 
                 await updateBetTable(interaction, pool, 1);
-
                 return;
             }
 
@@ -47,10 +43,8 @@ export default async function (interaction, pool) {
             const betResult = await pool.query("SELECT * FROM bets WHERE user_id = $1 AND event_id = $2", [userId, eventId]);
 
             if (betResult.rowCount > 0) {
-                await interaction.reply({
-                    content: i18n.t("errors.betAlreadyAccepted", {lng: lang}),
-                    flags: MessageFlags.Ephemeral
-                });
+                await reply(interaction, i18n.t("errors.betAlreadyAccepted", {lng: lang}), null, true);
+
                 await updateBetTable(interaction, pool, 1);
                 return;
             }

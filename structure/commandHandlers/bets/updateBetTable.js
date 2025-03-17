@@ -6,13 +6,20 @@ import {getUserLanguage} from "../../dbUtils.js";
 import getBetTableMessage from "./getBetTableMessage.js";
 
 export default async function (interaction, pool, page = 1) {
-    const messageIdResult = await pool.query(`SELECT * FROM settings WHERE key = 'bet_leaderboard_message_id'`);
-    const channelIdResult = await pool.query(`SELECT * FROM settings WHERE key = 'bet_leaderboard_channel_id'`);
+    const messageIdResult = await pool.query(`SELECT *
+                                              FROM settings
+                                              WHERE key = 'bet_leaderboard_message_id'`);
+    const channelIdResult = await pool.query(`SELECT *
+                                              FROM settings
+                                              WHERE key = 'bet_leaderboard_channel_id'`);
 
     const lang = await getUserLanguage(interaction.user.id, pool);
     if (channelIdResult.rows.length === 0) {
         console.error(`Не установлен id для канала-таблицы ставок!`);
-        return interaction.reply({content: i18n.t("errors.betLeaderboardChannelDoesntSetup", { lng: lang}), flags: MessageFlags.Ephemeral });
+        return interaction.reply({
+            content: i18n.t("errors.betLeaderboardChannelDoesntSetup", {lng: lang}),
+            flags: MessageFlags.Ephemeral
+        });
     }
 
     const channel = await interaction.guild.channels.fetch(channelIdResult.rows[0].value);
@@ -26,7 +33,7 @@ export default async function (interaction, pool, page = 1) {
     const event = await getActiveEvent(pool);
     if (!event) {
         return await interaction.reply({
-            content: i18n.t("errors.noBetEventExist", { lng: lang}),
+            content: i18n.t("errors.noBetEventExist", {lng: lang}),
             flags: MessageFlags.Ephemeral
         });
     }
@@ -90,22 +97,16 @@ export default async function (interaction, pool, page = 1) {
 
     const message = getBetTableMessage(page, bets, lang, event);
     if (isMessageExist) {
-        if (page > 1) {
-            await interaction.reply({
-                content: message,
-                flags: MessageFlags.Ephemeral,
-                components: row.components.length ? [row] : []
-            });
-        } else {
-            const msg = await channel.messages.fetch(messageId);
-            await msg.edit({ content: message, components: row.components.length ? [row] : [] });
-        }
+        const msg = await channel.messages.fetch(messageId);
+        await msg.edit({content: message, components: row.components.length ? [row] : []});
     } else {
-        const newMessage = await channel.send({ content: message, components: row.components.length ? [row] : [] })
+        const newMessage = await channel.send({content: message, components: row.components.length ? [row] : []})
             .catch(e => {
                 console.error(`Ошибка при отправке сообщения-таблицы в канал для ставок: ${e}`, `Канал Id: ${channelIdResult.rows[0].value}`, channel)
                 errorsHandler.error(`Ошибка при отправке сообщения-таблицы в канал для ставок: ${e}`, `Канал Id: ${channelIdResult.rows[0].value}\n\nChannel: ${channel}`);
             });
-        await pool.query(`UPDATE settings SET value = $1 WHERE key = 'bet_leaderboard_message_id'`, [newMessage.id]);
+        await pool.query(`UPDATE settings
+                          SET value = $1
+                          WHERE key = 'bet_leaderboard_message_id'`, [newMessage.id]);
     }
 }
