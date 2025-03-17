@@ -55,5 +55,8 @@ export default async function (interaction, pool) {
         );
     }
 
+    console.log("[row]", [row]);
+    console.log("[row].length", [row].length);
+    console.log("getBetTableMessage(parseInt(page), bets, lang, event)", getBetTableMessage(parseInt(page), bets, lang, event));
     await reply(interaction, getBetTableMessage(parseInt(page), bets, lang, event), [row], true);
 }
