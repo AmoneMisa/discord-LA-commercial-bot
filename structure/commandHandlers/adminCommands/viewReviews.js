@@ -27,7 +27,8 @@ export default async function viewReviews(interaction, pool) {
     }
 
     let message = i18n.t("info.reviewsAboutUser", {
-        username: member.username,
+        memberId: member.id,
+        page: 1,
         lng: await getUserLanguage(interaction.user.id, pool)
     });
     let buttons = new ActionRowBuilder();
