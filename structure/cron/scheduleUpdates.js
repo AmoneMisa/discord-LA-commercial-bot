@@ -6,6 +6,7 @@ import {saveProfileToDB} from "../../scrapping/parser.js";
 import checkMatching from "../commandHandlers/tradeSystem/checkMatching.js";
 import removeExpiredLots from "../commandHandlers/tradeSystem/removeExpiredLots.js";
 import {cleanOldData, givePointsForActivity, resetActivityPoints, updateFactionLeaderboard} from "../dbUtils.js";
+import {updateCurrencyRates} from "../utils.js";
 
 /**
  * Schedules rank updates based on the provided frequency or the default stored in the database.
@@ -75,6 +76,7 @@ export function schedulersList(pool, client, guild) {
 
         await updateRatings(pool);
         await updateLeaderboard(client, pool);
+        await updateCurrencyRates(pool);
     });
 
     scheduleRankUpdates(null, pool, guild);

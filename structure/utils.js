@@ -12,6 +12,7 @@ import customParseFormat from "dayjs/plugin/customParseFormat.js";
 import utc from "dayjs/plugin/utc.js";
 import timezone from "dayjs/plugin/timezone.js";
 import i18n from "../locales/i18n.js";
+import axios from "axios";
 
 /**
  * Formats a date string into the format "DD/MM/YYYY HH:mm".
@@ -341,4 +342,67 @@ export function parseFormattedNumber(str) {
     }
 
     return parseInt(cleanedStr, 10);
+}
+
+/**
+ * Получает курс валюты из БД на основе локали пользователя.
+ * @param {string} locale - Локаль пользователя
+ * @param {object} pool - Подключение к БД
+ * @returns {{ rate: number, currency: string }}
+ */
+export async function getExchangeRate(locale = 'ru', pool) {
+    const currencyMap = {
+        ru: { code: 'rub', symbol: '₽' },
+        en: { code: 'usd', symbol: '$' },
+        ch: { code: 'cny', symbol: '¥' },
+        ua: { code: 'uah', symbol: '₴' },
+        by: { code: 'byn', symbol: 'Br' },
+    };
+
+    const { code: targetCurrency, symbol } = currencyMap[locale] || currencyMap['ru'];
+
+    // Если валюта рубли — ничего не конвертируем
+    if (targetCurrency === 'rub') {
+        return { rate: 1, currency: symbol };
+    }
+
+    try {
+        const result = await pool.query(
+            'SELECT rate_to_rub FROM currency_rates WHERE currency = $1',
+            [targetCurrency]
+        );
+
+        if (result.rowCount === 0) {
+            console.warn(`❌ Курс для ${targetCurrency} не найден в БД. Используем fallback.`);
+            return { rate: 1, currency: symbol };
+        }
+
+        return { rate: result.rows[0].rate_to_rub, currency: symbol };
+    } catch (err) {
+        console.error('❌ Ошибка при получении курса из БД:', err);
+        return { rate: 1, currency: symbol };
+    }
+}
+
+export async function updateCurrencyRates(pool) {
+    try {
+        const { data } = await axios.get("https://api.exchangerate.host/latest?base=RUB");
+
+        const currencies = ['usd', 'cny', 'eur', 'uah', 'byn'];
+        const now = new Date();
+
+        for (const currency of currencies) {
+            const rate = 1 / data.rates[currency.toUpperCase()]; // переводим из RUB в валюту
+            await pool.query(`
+                INSERT INTO currency_rates (currency, rate_to_rub, updated_at)
+                VALUES ($1, $2, $3)
+                ON CONFLICT (currency)
+                DO UPDATE SET rate_to_rub = EXCLUDED.rate_to_rub, updated_at = EXCLUDED.updated_at
+            `, [currency, rate, now]);
+        }
+
+        console.log("✅ Курсы валют обновлены");
+    } catch (err) {
+        console.error("❌ Ошибка при обновлении курсов валют:", err);
+    }
 }

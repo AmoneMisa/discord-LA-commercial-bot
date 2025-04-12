@@ -28,6 +28,7 @@ import handleMessageSubscription from "./structure/commandHandlers/subscribe/han
 import sendRaidResponse from "./structure/commandHandlers/responses/sendRaidResponse.js";
 import autocomplete from "./structure/interactions/autocomplete.js";
 import i18n from "./locales/i18n.js";
+import {updateCurrencyRates} from "./structure/utils.js";
 
 const {Pool} = pkg;
 /**
@@ -86,6 +87,7 @@ client.once('ready', async () => {
         await setRolesByRanks(pool, guild);
         await updateLeaderboard(client, pool);
         await createRoles(pool, guild);
+        await updateCurrencyRates(pool);
     } catch (e) {
         console.error('ready:',e);
         errorsHandler.error(e);
