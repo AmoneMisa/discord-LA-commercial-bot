@@ -1,6 +1,5 @@
 import {
     SlashCommandBuilder,
-    PermissionFlagsBits
 } from "discord.js";
 
 export default new SlashCommandBuilder()

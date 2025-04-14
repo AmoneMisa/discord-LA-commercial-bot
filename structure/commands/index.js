@@ -12,8 +12,10 @@ import adminAchievementsCommands from "./adminAchievementsCommands.js";
 import adminCodexCommands from "./adminCodexCommands.js";
 import userCodexCommands from "./userCodexCommands.js";
 import userSettingsCommands from "./userSettingsCommands.js";
+import adminMarketCommands from "./adminMarketCommands.js";
 import dotenv from 'dotenv';
 import userRandomCommands from "./userRandomCommands.js";
+import userMarketCommands from "./userMarketCommands.js";
 dotenv.config();
 /***
  ('ranks', 'Система рейтинга', true),
@@ -65,6 +67,10 @@ export default function getCommands() {
 
         if (process.env.RANDOM_GAMES_MODULE) {
             commandsArray = [...commandsArray, ...userRandomCommands];
+        }
+
+        if (process.env.MARKET_MODULE) {
+            commandsArray = [...commandsArray, ...adminMarketCommands, ...userMarketCommands];
         }
 
     return commandsArray;

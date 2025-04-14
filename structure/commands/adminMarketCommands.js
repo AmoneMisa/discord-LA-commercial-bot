@@ -28,7 +28,7 @@ export default new SlashCommandBuilder()
             )
             .addIntegerOption(opt =>
                 opt.setName("min_order")
-                    .setDescription("Минимальное количество заказа")
+                    .setDescription("Минимальное количество для заказа")
                     .setRequired(true)
             )
             .addStringOption(opt =>

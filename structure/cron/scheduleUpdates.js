@@ -5,7 +5,7 @@ import cron from 'node-cron';
 import {saveProfileToDB} from "../../scrapping/parser.js";
 import checkMatching from "../commandHandlers/tradeSystem/checkMatching.js";
 import removeExpiredLots from "../commandHandlers/tradeSystem/removeExpiredLots.js";
-import {cleanOldData, givePointsForActivity, resetActivityPoints, updateFactionLeaderboard} from "../dbUtils.js";
+import {cleanOldData, resetActivityPoints} from "../dbUtils.js";
 
 /**
  * Schedules rank updates based on the provided frequency or the default stored in the database.

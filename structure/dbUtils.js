@@ -620,11 +620,9 @@ export async function givePointsForActivity( userId, points) {
 /**
  * Updates the faction leaderboard by fetching the top players from the database
  * and displaying the leaderboard in a designated Discord channel.
- *
- * @param {Client} client - Discord client used to interact with Discord API and fetch the channel.
  * @return {Promise<void>} Resolves when the leaderboard is successfully updated or if an error occurs.
  */
-export async function updateFactionLeaderboard( client) {
+export async function updateFactionLeaderboard() {
     try {
         // Получаем ID канала для вывода статистики
         const channelRes = await pool.query(`
