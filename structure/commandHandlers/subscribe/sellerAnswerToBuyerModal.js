@@ -11,14 +11,12 @@ import {getRaidName} from "../../dbUtils.js";
  * @async
  * @function
  * @param {Object} interaction - The interaction object representing the interaction event.
- * @param {Object} pool - The database connection pool used to fetch raid details.
- * @param {Object} client - The Discord client instance used to interact with the Discord API.
  */
-export default async function (interaction, pool, client) {
+export default async function (interaction) {
     try {
         const [, , buyerId, raidId] = interaction.customId.split('_');
         const buyer = await client.users.fetch(buyerId);
-        const raidName = await getRaidName(pool, raidId);
+        const raidName = await getRaidName(raidId);
 
         if (interaction.customId.startsWith('seller_answer_')) {
             const modal = new ModalBuilder()

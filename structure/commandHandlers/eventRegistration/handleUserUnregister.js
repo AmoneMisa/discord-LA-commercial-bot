@@ -1,4 +1,6 @@
-export default async function (interaction, pool) {
+import {MessageFlags} from "discord.js";
+
+export default async function (interaction) {
     const eventId = interaction.options.getInteger("event_id");
     const userId = interaction.user.id;
 

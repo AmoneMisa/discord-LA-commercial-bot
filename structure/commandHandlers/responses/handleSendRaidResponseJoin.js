@@ -21,7 +21,7 @@ const tempMessageStorage = new Map();
  * Handles edge cases such as missing profiles, missing characters, and duplicate interactions.
  * Temporarily stores the interaction message ID and user interaction to prevent repeat actions, with a timeout to clear stored data.
  */
-export default async function (interaction, pool, client) {
+export default async function (interaction) {
     // Кнопка "Хочу в рейд"
     if (tempMessageStorage.has(interaction.message.id)
         && tempMessageStorage.get(interaction.message.id).includes(interaction.user.id)) {
@@ -38,7 +38,7 @@ export default async function (interaction, pool, client) {
         });
     }
 
-    const userProfile = await getUserProfile(pool, interaction.user.id);
+    const userProfile = await getUserProfile(interaction.user.id);
 
     if (!userProfile) {
         return interaction.reply({
@@ -56,7 +56,7 @@ export default async function (interaction, pool, client) {
     const seller = await client.users.fetch(sellerId);
 
     if (seller) {
-        const achievements = await getUserAchievements(pool, interaction.user.id);
+        const achievements = await getUserAchievements(interaction.user.id);
         await sendCharacterList(interaction, `Игрок: <@${interaction.user.id}> отправил запрос на вступление в рейд в качестве ${type === 'dd' ? '**ДД**' : '**Саппорта**'}\n:peacock: **Имя:** ${userProfile.name || 'Не указано'}\n`, userProfile.characters, seller, achievements);
         interaction.reply({content: "Запрос отправлен", flags: MessageFlags.Ephemeral});
         tempMessageStorage.set(interaction.message.id, []);

@@ -8,10 +8,9 @@ import editRaids from "../adminCommands/editRaids.js";
  * @async
  * @function
  * @param {Object} interaction - The interaction object containing user input and methods for replying.
- * @param {Object} pool - The database connection pool used to execute the query.
  * @throws Will throw an error if the database query fails or if there are issues in subsequent operations.
  */
-export default async function(interaction, pool) {
+export default async function(interaction) {
     const raidName = interaction.fields.getTextInputValue('raid_name');
 
     await pool.query('INSERT INTO raids (raid_name) VALUES ($1)', [raidName]);
@@ -21,5 +20,5 @@ export default async function(interaction, pool) {
         flags: MessageFlags.Ephemeral
     });
 
-    await editRaids(interaction, pool);
+    await editRaids(interaction);
 }

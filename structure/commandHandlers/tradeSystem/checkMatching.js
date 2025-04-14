@@ -5,8 +5,6 @@ import {getWTBtoWTSMatching, getWTTMatching} from "../../dbUtils.js";
  *
  * @async
  * @function
- * @param {Object} pool - Database connection pool used to retrieve matching data.
- * @param {Object} client - Client object for interacting with users (e.g., sending notifications).
  * @returns {Promise<void>} Resolves when all matches have been processed and notifications sent.
  *
  * @description
@@ -17,9 +15,9 @@ import {getWTBtoWTSMatching, getWTTMatching} from "../../dbUtils.js";
  * Buyers and sellers are notified of relevant trades in `wtsMatching`, including item details, prices, and negotiability.
  * Traders in `wttMatching` are notified about potential exchanges, specifying items offered and requested.
  */
-export default async function (pool, client){
-    const wtsMatching = await getWTBtoWTSMatching(pool);
-    const wttMatching = await getWTTMatching(pool);
+export default async function (){
+    const wtsMatching = await getWTBtoWTSMatching();
+    const wttMatching = await getWTTMatching();
 
     for (const match of wtsMatching.rows) {
         const buyer = await client.users.fetch(match.buyer_id);

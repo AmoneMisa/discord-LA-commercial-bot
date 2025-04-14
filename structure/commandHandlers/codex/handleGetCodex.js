@@ -1,13 +1,12 @@
-import { EmbedBuilder } from "discord.js";
+import {EmbedBuilder, MessageFlags} from "discord.js";
 
 /**
  * Handles the retrieval of codex entries based on category and title, and sends the resulting information as an embedded message.
  *
  * @param {Object} interaction - The interaction object containing user's input data.
- * @param {Object} pool - The database connection pool used for querying data.
  * @return {Promise<void>} A promise that resolves when the interaction reply is sent, or rejects if an error occurs during processing.
  */
-export async function handleGetCodex(interaction, pool) {
+export async function handleGetCodex(interaction) {
     const category = interaction.options.getString("category");
     const title = interaction.options.getString("title");
 

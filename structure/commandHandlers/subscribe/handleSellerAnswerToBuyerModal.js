@@ -8,15 +8,13 @@ import {MessageFlags} from "discord.js";
  * @async
  * @function
  * @param {Object} interaction - The interaction object containing details of the user's action.
- * @param {Object} pool - The database connection pool used to fetch raid data.
- * @param {Object} client - The Discord client instance used to interact with the Discord API.
  * @throws Will log an error if sending the response to the buyer fails.
  */
-export default async function (interaction, pool, client) {
+export default async function (interaction) {
     try {
         const [ , , , buyerId, raidId] = interaction.customId.split('_');
         const buyer = await client.users.fetch(buyerId);
-        const raidName = await getRaidName(pool, raidId);
+        const raidName = await getRaidName(raidId);
 
         await client.channels.fetch(interaction.message.channelId);
         await interaction.message.edit({

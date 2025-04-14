@@ -1,5 +1,5 @@
 import {MessageFlags} from "discord.js";
-import {sendPaginatedReviews} from "../utils.js";
+import {sendPaginatedReviews, translatedMessage} from "../utils.js";
 import deleteReview from "../commandHandlers/ranks/deleteReview.js";
 import handleEditRaidsButtons from "../commandHandlers/subscribe/handleEditRaidsButtons.js";
 import handleBuyButtons from "../commandHandlers/subscribe/handleBuyButtons.js";
@@ -10,13 +10,11 @@ import {handleAuctionButtons} from "../commandHandlers/tradeSystem/handleAuction
 import reviewVote from "../commandHandlers/ranks/reviewVote.js";
 import betContinueHandler from "../commandHandlers/bets/betContinueHandler.js";
 import betTargetHandler from "../commandHandlers/bets/betTargetHandler.js";
-import {getUserLanguage} from "../dbUtils.js";
 import handleSendRaidResponseJoin from "../commandHandlers/responses/handleSendRaidResponseJoin.js";
-import handleBuyButtonsResponse from "../commandHandlers/responses/createModalBuyResponse.js";
 import handleSendRaidResponseBuy from "../commandHandlers/responses/handleSendRaidResponseBuy.js";
 import handleBetActionButton from "../commandHandlers/bets/handleBetActionButton.js";
 import handleBetPagination from "../commandHandlers/bets/handleBetPagination.js";
-import i18n from "../../locales/i18n.js";
+import handleOrderActions from "../commandHandlers/market/handleOrderActions.js";
 
 /**
  * Handles various types of button interactions in a Discord bot and delegates
@@ -25,8 +23,6 @@ import i18n from "../../locales/i18n.js";
  * @async
  * @function
  * @param {Object} interaction - The interaction object that triggered the event. Contains data such as the customId and message details.
- * @param {Object} pool - The database connection pool used for executing database operations.
- * @param {Object} client - The Discord bot client instance.
  * @returns {Promise<void>} Resolves when the interaction is fully processed.
  *
  * The function processes the following types of interactions:
@@ -43,10 +39,10 @@ import i18n from "../../locales/i18n.js";
  * - Manages "join raid" interactions by invoking `handleSendRaidResponseJoin`.
  * - Handles responses to raid buy actions via `handleSendRaidResponseBuy`.
  */
-export default async function (interaction, pool, client) {
+export default async function (interaction) {
     if (Date.now() - interaction.message.createdTimestamp > 5 * 60 * 1000 && !interaction.customId.startsWith("bet")) {
         return await interaction.update({
-            content: i18n.t("errors.buttonsTimeout", { lng: await getUserLanguage(interaction.user.id, pool)}),
+            content: await translatedMessage(interaction, "errors.buttonsTimeout"),
             components: [],
             flags: MessageFlags.Ephemeral
         });
@@ -63,20 +59,20 @@ export default async function (interaction, pool, client) {
             });
         }
 
-        await reviewVote(interaction, pool);
+        await reviewVote(interaction);
     }
 
     if (interaction.customId.startsWith('prev_reviews_') || interaction.customId.startsWith('next_reviews_')) {
         const [, , memberId, page, isPositive] = interaction.customId.split('_');
-        await sendPaginatedReviews(interaction, pool, parseInt(page), isPositive, memberId);
+        await sendPaginatedReviews(interaction, parseInt(page), isPositive, memberId);
     }
 
     if (interaction.customId.startsWith('delete_review_')) {
-        await deleteReview(interaction, pool);
+        await deleteReview(interaction);
     }
 
     if (interaction.customId === 'create_raid' || interaction.customId.startsWith('delete_raid')) {
-        await handleEditRaidsButtons(interaction, pool);
+        await handleEditRaidsButtons(interaction);
     }
 
     if (interaction.customId.startsWith('raid_buy')) {
@@ -84,41 +80,45 @@ export default async function (interaction, pool, client) {
     }
 
     if (interaction.customId.startsWith('seller_answer_') || interaction.customId.startsWith('seller_reject_')) {
-        await sellerAnswerToBuyer(interaction, pool, client);
+        await sellerAnswerToBuyer(interaction);
     }
 
     if (interaction.customId.startsWith('remove_lot_')) {
-        await handleRemoveLotButtons(interaction, pool);
+        await handleRemoveLotButtons(interaction);
     }
 
     if (interaction.customId.startsWith('extend_lot_')) {
-        await handleExtendLot(interaction, pool);
+        await handleExtendLot(interaction);
     }
 
     if (interaction.customId.startsWith("contact_")) {
-        await handleAuctionButtons(interaction, pool, client);
+        await handleAuctionButtons(interaction);
     }
 
     if (interaction.customId.startsWith("join_raid_")) {
-        await handleSendRaidResponseJoin(interaction, pool, client);
+        await handleSendRaidResponseJoin(interaction);
     }
 
     if (interaction.customId.startsWith("response_raid_buy_")) {
-        await handleSendRaidResponseBuy(interaction, pool, client);
+        await handleSendRaidResponseBuy(interaction);
     }
     if (interaction.customId.startsWith("bet_continue")) {
-        await betContinueHandler(interaction, pool);
+        await betContinueHandler(interaction);
     }
 
     if (interaction.customId.startsWith("bet_target")) {
-        await betTargetHandler(interaction, pool);
+        await betTargetHandler(interaction);
     }
 
     if (interaction.customId.startsWith("bet_accept") || interaction.customId.startsWith("bet_reject")) {
-        await handleBetActionButton(interaction, pool);
+        await handleBetActionButton(interaction);
     }
 
     if (interaction.customId.startsWith("bet_page_")) {
-        await handleBetPagination(interaction, pool);
+        await handleBetPagination(interaction);
+    }
+
+    if (interaction.customId.startsWith("accept_order_") || interaction.customId.startsWith("reject_order_")) {
+        await handleOrderActions(interaction);
     }
 }

@@ -5,10 +5,9 @@ import {saveProfileToDB} from "../../../scrapping/parser.js";
  * Handles the process of filling out a user profile based on the provided interaction data.
  *
  * @param {Object} interaction - The interaction object representing the user's command or action.
- * @param {Object} pool - The database connection pool used to execute queries.
  * @returns {Promise<void>} Resolves when the process is complete, either by saving the profile or responding to the user.
  */
-export default async function handleProfileFill(interaction, pool) {
+export default async function handleProfileFill(interaction) {
     await interaction.deferReply({flags: MessageFlags.Ephemeral});
 
     const userId = interaction.user.id;
@@ -34,7 +33,7 @@ export default async function handleProfileFill(interaction, pool) {
 
     try {
         if (mainNickname) {
-            await saveProfileToDB(pool,{
+            await saveProfileToDB({
                 userId,
                 name,
                 mainNickname,

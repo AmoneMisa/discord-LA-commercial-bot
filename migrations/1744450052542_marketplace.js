@@ -5,7 +5,7 @@ export const up = (pgm) => {
         seller_id: {
             type: "varchar",
             notNull: true,
-            references: "marketplace_sellers(user_id)",
+            references: "users(user_id)",
             onDelete: "CASCADE"
         },
         gold_amount: {

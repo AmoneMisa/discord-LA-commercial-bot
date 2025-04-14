@@ -1,14 +1,12 @@
+import {ActionRowBuilder, ButtonBuilder, ButtonStyle} from "discord.js";
+
 /**
  * Notifies users about expiring lots in the inventory table.
  * Sends a message to the user to inform them that their lot will expire soon
  * and provides an option to extend the lot's duration.
- *
- * @param {Object} pool - The database connection pool used to query the inventory table.
- * @param {Object} client - The client object used to fetch user information and send messages.
- *
  * @return {Promise<void>} Resolves when the notification process for all expiring lots is complete.
  */
-async function notifyLotExpiry(pool, client) {
+async function notifyLotExpiry() {
     const expiringLots = await pool.query(`
         SELECT id, user_id, item_offer 
         FROM inventory 
@@ -32,7 +30,7 @@ async function notifyLotExpiry(pool, client) {
             components: [row]
         });
 
-        // Помечаем как уведомлённый
+        // Помечаем как уведомленный
         await pool.query("UPDATE inventory SET notified = TRUE WHERE id = $1", [lot.id]);
     }
 }

@@ -1,7 +1,5 @@
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from "discord.js";
-import {formatDate, getMember} from "../../utils.js";
-import i18n from "../../../locales/i18n.js";
-import {getUserLanguage} from "../../dbUtils.js";
+import {formatDate, getMember, translatedMessage} from "../../utils.js";
 
 /**
  * Handles an interaction, processes a user's data from the database,
@@ -9,7 +7,6 @@ import {getUserLanguage} from "../../dbUtils.js";
  * Optionally allows context menu commands to fetch user data.
  *
  * @param {Object} interaction - The interaction object from the Discord API.
- * @param {Object} pool - The PostgreSQL connection pool for executing database queries.
  * @param {boolean} [isContextMenu=false] - Indicates if the command is triggered from a context menu.
  * @param {boolean} [isMessageContentMenuCommand=false] - Indicates if the command is triggered on a message's content in a context menu.
  * @returns {Promise<void>} Resolves upon successfully sending a reply to the interaction.
@@ -29,16 +26,16 @@ import {getUserLanguage} from "../../dbUtils.js";
  * - Replies with an ephemeral message if the user is a bot or not found in the system.
  * - Defaults to "Нет данных" for missing review information.
  */
-export default async function (interaction, pool, isContextMenu = false, isMessageContentMenuCommand = false) {
+export default async function (interaction, isContextMenu = false, isMessageContentMenuCommand = false) {
     let member = getMember(interaction, isContextMenu, isMessageContentMenuCommand);
 
-    const lang = await getUserLanguage(interaction.user.id, pool);
+
     if (!member) {
-        return await interaction.reply({ content: i18n.t("errors.incorrectMember", { lng: lang}), flags: MessageFlags.Ephemeral });
+        return await interaction.reply({ content: await translatedMessage(interaction, "errors.incorrectMember"), flags: MessageFlags.Ephemeral });
     }
 
     if (member.bot) {
-        return await interaction.reply({content: i18n.t("errors.userIsBot", { lng: lang}), flags: MessageFlags.Ephemeral});
+        return await interaction.reply({content: await translatedMessage(interaction, "errors.userIsBot"), flags: MessageFlags.Ephemeral});
     }
 
     const userStats = await pool.query('SELECT * FROM users WHERE user_id = $1', [member.id]);
@@ -66,8 +63,8 @@ export default async function (interaction, pool, isContextMenu = false, isMessa
         [member.id]
     );
 
-    let lastPositiveReview = i18n.t("errors.noData", { lng: lang});
-    let lastNegativeReview = i18n.t("errors.noData", { lng: lang});
+    let lastPositiveReview = await translatedMessage(interaction, "errors.noData");
+    let lastNegativeReview = await translatedMessage(interaction, "errors.noData");
 
     lastReviews.rows.forEach(review => {
         if (review.is_positive) {
@@ -76,8 +73,6 @@ export default async function (interaction, pool, isContextMenu = false, isMessa
             lastNegativeReview = formatDate(review.last_review_time);
         }
     });
-
-    const message = i18n.t("info.rankInfoMessage", { lng: lang, username: member.username, userRole, rating: userData.rating, positiveReviews: userData.positive_reviews, negativeReviews: userData.negative_reviews, lastPositiveReview, lastNegativeReview });
 
     const upvoteButton = new ButtonBuilder()
         .setCustomId(`upvote_${member.id}`)
@@ -91,5 +86,5 @@ export default async function (interaction, pool, isContextMenu = false, isMessa
 
     const row = new ActionRowBuilder().addComponents(upvoteButton, downvoteButton);
 
-    await interaction.reply({ content: message, components: [row], flags: MessageFlags.Ephemeral });
+    await interaction.reply({ content: await translatedMessage(interaction, "info.rankInfoMessage", {username: member.username, userRole, rating: userData.rating, positiveReviews: userData.positive_reviews, negativeReviews: userData.negative_reviews, lastPositiveReview, lastNegativeReview}), components: [row], flags: MessageFlags.Ephemeral });
 }

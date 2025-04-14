@@ -8,9 +8,8 @@ import {MessageFlags} from "discord.js";
  * In the case of an error, logs the error and sends an error message as a reply.
  *
  * @param {Object} interaction - The interaction object containing details about the user's action.
- * @param {Object} pool - The database connection pool used to execute the query.
  */
-export default async function (interaction, pool) {
+export default async function (interaction) {
     const category = interaction.options.getString("category");
     const title = interaction.options.getString("title");
 

@@ -6,10 +6,9 @@ import {ActionRowBuilder, MessageFlags, ModalBuilder, TextInputBuilder, TextInpu
  *
  * @param {Object} interaction - The interaction object containing information about the button click.
  * @param {string} interaction.customId - The custom identifier of the button clicked.
- * @param {Object} pool - The database connection pool used to execute queries.
  * @return {Promise<void>} Resolves when the raid interaction is handled successfully.
  */
-export default async function handleEditRaidsButtons(interaction, pool) {
+export default async function handleEditRaidsButtons(interaction) {
     if (interaction.customId === 'create_raid') {
         const modal = new ModalBuilder()
             .setCustomId('create_raid_modal')
@@ -36,6 +35,6 @@ export default async function handleEditRaidsButtons(interaction, pool) {
             flags: MessageFlags.Ephemeral
         });
 
-        await editRaids(interaction, pool);
+        await editRaids(interaction);
     }
 }

@@ -6,7 +6,6 @@
  * It ensures that each member has the highest applicable role and removes any
  * conflicting roles that they might have.
  *
- * @param {object} pool - The database connection pool used for querying roles and users data.
  * @param {object} guild - The Discord guild in which the roles will be updated.
  *
  * Steps:
@@ -23,7 +22,7 @@
  * - Relies on the guild's role cache for fetching role objects to assign or remove.
  * - Roles are ordered by `required_rating` in descending order to ensure proper assignment.
  */
-export default async function (pool, guild) {
+export default async function (guild) {
     console.log('🔄 Обновление ролей продавцов...');
     const roles = await pool.query('SELECT * FROM roles ORDER BY required_rating DESC');
     const users = await pool.query('SELECT * FROM users');
@@ -63,7 +62,6 @@ export default async function (pool, guild) {
                 }
             }
             await member.roles.add(roleToAssign).catch(() => null);
-            // console.log(`✅ Назначена роль ${bestRole.role_name} пользователю ${member.user.username}`);
         }
     }
 

@@ -4,10 +4,9 @@ import {MessageFlags} from "discord.js";
  * Unsubscribes the user from receiving notifications from a specified seller.
  *
  * @param {object} interaction - The interaction object containing the user's request and related data.
- * @param {object} pool - The database connection pool used to execute the query.
  * @return {Promise<object>} A promise that resolves to the interaction response after successful unsubscription.
  */
-export default async function unSubscribeToBuy(interaction, pool) {
+export default async function unSubscribeToBuy(interaction) {
     const seller = interaction.options.getUser('user');
     const buyer = interaction.user.id;
 

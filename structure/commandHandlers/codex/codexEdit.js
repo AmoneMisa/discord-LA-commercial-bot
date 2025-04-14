@@ -4,7 +4,6 @@ import {MessageFlags} from "discord.js";
  * Edits an existing Codex entry in the database with the provided updated fields.
  *
  * @param {Object} interaction - The interaction object containing user input and context for the command.
- * @param {Object} pool - The database connection pool used to execute queries.
  * @param {string} interaction.options.entry_id - The unique identifier of the Codex entry to be updated.
  * @param {string} interaction.options.title - The updated title for the Codex entry. Optional.
  * @param {string} interaction.options.content - The updated content for the Codex entry. Optional.
@@ -13,7 +12,7 @@ import {MessageFlags} from "discord.js";
  *
  * @return {Promise<void>} A promise that resolves once the entry update is processed. Sends a reply to the interaction about the operation's result.
  */
-export default async function editCodexEntry(interaction, pool) {
+export default async function editCodexEntry(interaction) {
     const category = interaction.options.getString("category");
     const title = interaction.options.getString("title");
     const newContent = interaction.options.getString("content");

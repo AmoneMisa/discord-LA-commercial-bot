@@ -1,7 +1,9 @@
-export default async function(interaction, pool) {
+import {translatedMessage} from "../../utils.js";
+
+export default async function(interaction) {
     const [_, action, buyerId, lotId, goldAmountRaw] = interaction.customId.split("_");
     const buyer = await interaction.client.users.fetch(buyerId);
-    const lot = (await pool.query("SELECT * FROM marketplace_lots WHERE id = $1", [lotId])).rows[0];
+    const lot = await pool.query("SELECT * FROM marketplace_lots WHERE id = $1", [lotId]).rows[0];
 
     if (!lot) {
         return;
@@ -16,12 +18,12 @@ export default async function(interaction, pool) {
             await pool.query("UPDATE marketplace_lots SET gold_amount = $1 WHERE id = $2", [remaining, lotId]);
         }
 
-        await buyer.send("✅ Ваша заявка на покупку золота выполнена!");
-        await interaction.update({ content: "✅ Сделка успешно завершена.", components: [] });
+        await buyer.send(await translatedMessage(interaction,"market.orderDoneUser"));
+        await interaction.update({ content: await translatedMessage(interaction,"market.orderDone"), components: [] });
     }
 
     if (action === "reject") {
-        await buyer.send("❌ Продавец отклонил ваш запрос на покупку.");
-        await interaction.update({ content: "❌ Сделка отклонена.", components: [] });
+        await buyer.send(await translatedMessage(interaction,"market.orderRejectedBuyer"));
+        await interaction.update({ content: await translatedMessage(interaction,"market.orderRejected"), components: [] });
     }
 }

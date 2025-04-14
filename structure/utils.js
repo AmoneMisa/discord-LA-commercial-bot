@@ -12,8 +12,6 @@ import customParseFormat from "dayjs/plugin/customParseFormat.js";
 import utc from "dayjs/plugin/utc.js";
 import timezone from "dayjs/plugin/timezone.js";
 import i18n from "../locales/i18n.js";
-import axios from "axios";
-
 /**
  * Formats a date string into the format "DD/MM/YYYY HH:mm".
  * If the input date string is invalid or not provided, returns "Нет данных".
@@ -38,13 +36,12 @@ export function formatDate(dateString) {
  * If the interaction author has administrative permissions, delete buttons for each review are generated.
  *
  * @param {Object} interaction - The interaction object representing the user interaction.
- * @param {Object} pool - The database connection pool to execute SQL queries.
  * @param {number} [page=1] - The current page number for pagination. Defaults to 1.
  * @param {boolean} [isPositive] - If true, fetches only positive reviews. If false, fetches only negative reviews. Fetches all reviews if not specified.
  * @param {string} memberId - The ID of the member whose reviews are being fetched.
  * @return {Promise<void>} A promise that resolves when the paginated reviews are sent to the interaction.
  */
-export async function sendPaginatedReviews(interaction, pool, page = 1, isPositive, memberId) {
+export async function sendPaginatedReviews(interaction, page = 1, isPositive, memberId) {
     const reviewsPerPage = 5;
     const offset = (page - 1) * reviewsPerPage;
     const member = await interaction.guild.members.fetch(memberId);
@@ -69,15 +66,14 @@ export async function sendPaginatedReviews(interaction, pool, page = 1, isPositi
         );
     }
 
-    const lang = await getUserLanguage(interaction.user.id, pool);
     if (reviews.rows.length === 0) {
         return interaction.reply({
-            content: i18n.t("info.userDontHaveReviews", { lng: lang, memberId: member.id}),
+            content: await translatedMessage(interaction, "info.userDontHaveReviews", {memberId: member.id}),
             flags: MessageFlags.Ephemeral
         });
     }
 
-    let message = i18n.t("info.reviewsAboutUser", { lng: lang, memberId: member.id, page});
+    let message = await translatedMessage(interaction, "info.reviewsAboutUser", {memberId: member.id, page});
     let buttons = new ActionRowBuilder();
 
     for (const review of reviews.rows) {
@@ -88,7 +84,7 @@ export async function sendPaginatedReviews(interaction, pool, page = 1, isPositi
             buttons.addComponents(
                 new ButtonBuilder()
                     .setCustomId(`delete_review_${review.id}_${member.id}_${page}`)
-                    .setLabel(i18n.t("buttons.delete", { lng: lang, index: index + 1}))
+                    .setLabel(await translatedMessage(interaction, "buttons.delete", {index: index + 1}))
                     .setStyle(ButtonStyle.Danger)
             );
         }
@@ -102,7 +98,7 @@ export async function sendPaginatedReviews(interaction, pool, page = 1, isPositi
         paginationButtons.addComponents(
             new ButtonBuilder()
                 .setCustomId(`prev_reviews_${member.id}_${page - 1}_${isPositive}`)
-                .setLabel(i18n.t("buttons.back", { lng: lang}))
+                .setLabel(await translatedMessage(interaction, "buttons.back"))
                 .setStyle(ButtonStyle.Secondary)
         );
     }
@@ -110,7 +106,7 @@ export async function sendPaginatedReviews(interaction, pool, page = 1, isPositi
         paginationButtons.addComponents(
             new ButtonBuilder()
                 .setCustomId(`next_reviews_${member.id}_${page + 1}_${isPositive}`)
-                .setLabel(i18n.t("buttons.next", { lng: lang}))
+                .setLabel(await translatedMessage(interaction, "buttons.next"))
                 .setStyle(ButtonStyle.Secondary)
         );
     }
@@ -162,7 +158,7 @@ export function getMember(interaction, isContextMenu = false, isMessageContentMe
     }
 }
 
-export async function getActiveEvent(pool, isCreateEvent = false) {
+export async function getActiveEvent(isCreateEvent = false) {
     const now = new Date();
 
     const result = await pool.query(
@@ -193,11 +189,10 @@ export async function getActiveEvent(pool, isCreateEvent = false) {
  *
  * @param {object} interaction - The interaction object from Discord API, used for replying to the user.
  * @param {Array} rows - An array of data rows to paginate and display.
- * @param {object} pool - The database connection pool instance used for database operations.
  * @param {number} [page=1] - The current page number of the pagination, defaults to 1.
  * @return {Promise<void>} A promise that resolves when the reply is successfully sent.
  */
-export async function sendPaginatedList(interaction, rows, pool, page = 1) {
+export async function sendPaginatedList(interaction, rows, page = 1) {
     const totalPages = Math.ceil(rows.length / 5);
     const startIndex = (page - 1) * 5;
     const paginatedRows = rows.slice(startIndex, startIndex + 5);
@@ -227,7 +222,6 @@ export async function sendPaginatedList(interaction, rows, pool, page = 1) {
 /**
  * Generates a formatted message describing a lot item based on the provided type and options.
  *
- * @param {Object} pool - The database connection pool for retrieving item names.
  * @param {string} type - The type of the lot item message. Allowed values are "WTT", "WTS", and "WTB".
  * @param {Object} options - An object containing details about the lot item, including offers, requests, levels, amounts, prices, and expiration time.
  * @param {string} options.item_offer - The identifier of the item being offered (applicable for "WTT" and "WTB").
@@ -240,7 +234,7 @@ export async function sendPaginatedList(interaction, rows, pool, page = 1) {
  * @param {Date} options.expires_at - The date and time until the lot item is valid.
  * @return {Promise<string|undefined>} A promise that resolves to the formatted lot item message, or `undefined` if the type is invalid.
  */
-export async function createLotItemMessage(pool, type, options) {
+export async function createLotItemMessage(type, options) {
     if (type !== "WTT" && type !== "WTS" && type !== "WTB") {
         console.error("Переданный тип некорректный", type);
         return;
@@ -257,17 +251,17 @@ export async function createLotItemMessage(pool, type, options) {
             request_level,
             expires_at
         } = options;
-        return `${type} | Предложено: ${await getItemName(pool, item_offer)}, к-во: ${amount_offer}, уровень: ${offer_level ? offer_level : 'нет уровня'}\nЗапрошено: ${await getItemName(pool, item_request)}, к-во: ${amount_request}, уровень: ${request_level ? request_level : 'нет уровня'}.\n⏳ Предложение до: ${expires_at.toLocaleString()}`;
+        return `${type} | Предложено: ${await getItemName(item_offer)}, к-во: ${amount_offer}, уровень: ${offer_level ? offer_level : 'нет уровня'}\nЗапрошено: ${await getItemName(item_request)}, к-во: ${amount_request}, уровень: ${request_level ? request_level : 'нет уровня'}.\n⏳ Предложение до: ${expires_at.toLocaleString()}`;
     }
 
     if (type === "WTS") {
         const {item_request, type, amount_request, request_level, price, expires_at} = options;
-        return `${type} | Запрошено: ${await getItemName(pool, item_request)}, к-во: ${amount_request}, уровень: ${request_level ? request_level : 'нет уровня'}, стоимость: ${price}к золота.\n⏳ Предложение до: ${expires_at.toLocaleString()}`;
+        return `${type} | Запрошено: ${await getItemName(item_request)}, к-во: ${amount_request}, уровень: ${request_level ? request_level : 'нет уровня'}, стоимость: ${price}к золота.\n⏳ Предложение до: ${expires_at.toLocaleString()}`;
     }
 
     if (type === "WTB") {
         const {item_offer, type, amount_offer, offer_level, price, expires_at} = options;
-        return `${type} | Предложено: ${await getItemName(pool, item_offer)}, к-во: ${amount_offer}, уровень: ${offer_level ? offer_level : 'нет уровня'}, стоимость: ${price}к золота.\n⏳ Предложение до: ${expires_at.toLocaleString()}`;
+        return `${type} | Предложено: ${await getItemName(item_offer)}, к-во: ${amount_offer}, уровень: ${offer_level ? offer_level : 'нет уровня'}, стоимость: ${price}к золота.\n⏳ Предложение до: ${expires_at.toLocaleString()}`;
     }
 }
 
@@ -344,65 +338,9 @@ export function parseFormattedNumber(str) {
     return parseInt(cleanedStr, 10);
 }
 
-/**
- * Получает курс валюты из БД на основе локали пользователя.
- * @param {string} locale - Локаль пользователя
- * @param {object} pool - Подключение к БД
- * @returns {{ rate: number, currency: string }}
- */
-export async function getExchangeRate(locale = 'ru', pool) {
-    const currencyMap = {
-        ru: { code: 'rub', symbol: '₽' },
-        en: { code: 'usd', symbol: '$' },
-        ch: { code: 'cny', symbol: '¥' },
-        ua: { code: 'uah', symbol: '₴' },
-        by: { code: 'byn', symbol: 'Br' },
-    };
 
-    const { code: targetCurrency, symbol } = currencyMap[locale] || currencyMap['ru'];
-
-    // Если валюта рубли — ничего не конвертируем
-    if (targetCurrency === 'rub') {
-        return { rate: 1, currency: symbol };
-    }
-
-    try {
-        const result = await pool.query(
-            'SELECT rate_to_rub FROM currency_rates WHERE currency = $1',
-            [targetCurrency]
-        );
-
-        if (result.rowCount === 0) {
-            console.warn(`❌ Курс для ${targetCurrency} не найден в БД. Используем fallback.`);
-            return { rate: 1, currency: symbol };
-        }
-
-        return { rate: result.rows[0].rate_to_rub, currency: symbol };
-    } catch (err) {
-        console.error('❌ Ошибка при получении курса из БД:', err);
-        return { rate: 1, currency: symbol };
-    }
-}
-
-export async function updateCurrencyRates(pool) {
-    try {
-        const { data } = await axios.get("https://api.exchangerate.host/latest?base=RUB");
-
-        const currencies = ['usd', 'cny', 'eur', 'uah', 'byn'];
-        const now = new Date();
-
-        for (const currency of currencies) {
-            const rate = 1 / data.rates[currency.toUpperCase()]; // переводим из RUB в валюту
-            await pool.query(`
-                INSERT INTO currency_rates (currency, rate_to_rub, updated_at)
-                VALUES ($1, $2, $3)
-                ON CONFLICT (currency)
-                DO UPDATE SET rate_to_rub = EXCLUDED.rate_to_rub, updated_at = EXCLUDED.updated_at
-            `, [currency, rate, now]);
-        }
-
-        console.log("✅ Курсы валют обновлены");
-    } catch (err) {
-        console.error("❌ Ошибка при обновлении курсов валют:", err);
-    }
+export async function translatedMessage(interaction, messageCode, options = {}) {
+    const userId = interaction.user.id;
+    const lang = await getUserLanguage(userId);
+    return i18n.t(messageCode, {lng: lang, ...options});
 }

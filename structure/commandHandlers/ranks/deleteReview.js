@@ -1,8 +1,6 @@
 import {MessageFlags, PermissionsBitField} from "discord.js";
-import {sendPaginatedReviews} from "../../utils.js";
+import {sendPaginatedReviews, translatedMessage} from "../../utils.js";
 import updateRatings from "../../updateRatings.js";
-import i18n from "../../../locales/i18n.js";
-import {getUserLanguage} from "../../dbUtils.js";
 
 /**
  * Handles an interaction to delete a review from the database and updates the user's review statistics.
@@ -23,18 +21,16 @@ import {getUserLanguage} from "../../dbUtils.js";
  * @param {Object} interaction.user - The user object that triggered the interaction.
  * @param {string} interaction.customId - The custom ID from the interaction, containing details for parsing.
  * @param {Function} interaction.reply - A method to send a reply to the interaction.
- * @param {Object} pool - The database connection pool object for executing queries.
  * @throws {Error} Throws an error if database queries fail.
  */
-export default async function (interaction, pool) {
+export default async function (interaction) {
     const [, , reviewId, userId, page] = interaction.customId.split('_');
     const parsedReviewId = parseInt(reviewId);
     const parsedPage = parseInt(page);
 
-    const lang = await getUserLanguage(interaction.user.id, pool);
     if (isNaN(parsedReviewId) || isNaN(parsedPage)) {
         return interaction.reply({
-            content: i18n.t("errors.incorrectId", {lng: lang}),
+            content: await translatedMessage(interaction, "errors.incorrectId"),
             flags: MessageFlags.Ephemeral
         });
     }
@@ -44,7 +40,7 @@ export default async function (interaction, pool) {
 
     if (!isAdmin) {
         return interaction.reply({
-            content: i18n.t("errors.notAdmin", {lng: lang}),
+            content: await translatedMessage(interaction, "errors.notAdmin"),
             flags: MessageFlags.Ephemeral
         });
     }
@@ -53,7 +49,7 @@ export default async function (interaction, pool) {
 
     if (reviewData.rows.length === 0) {
         return interaction.reply({
-            content: i18n.t("errors.reviewDontFound", {lng: lang}),
+            content: await translatedMessage(interaction, "errors.reviewDontFound"),
             flags: MessageFlags.Ephemeral
         });
     }
@@ -68,7 +64,7 @@ export default async function (interaction, pool) {
         await pool.query('UPDATE users SET negative_reviews = negative_reviews - 1 WHERE user_id = $1 AND negative_reviews > 0', [userId]);
     }
 
-    await updateRatings(pool);
+    await updateRatings();
 
-    await sendPaginatedReviews(interaction, pool, parsedPage, isPositive || null, userId);
+    await sendPaginatedReviews(interaction, parsedPage, isPositive || null, userId);
 }

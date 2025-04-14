@@ -34,7 +34,7 @@ const priceMap = {
  *                                       is complete (true for listing created, false to continue),
  *                                       or undefined if the function does not return at that point.
  */
-export default async function (pool, client, activeTrades, tradeType, item, interaction) {
+export default async function (activeTrades, tradeType, item, interaction) {
     await interaction.deferUpdate();
 
     if (interaction.customId.startsWith('trade_select_1_')) {
@@ -65,7 +65,7 @@ export default async function (pool, client, activeTrades, tradeType, item, inte
         if (allFilled) {
             await interaction.editReply({
                 content: getMessage(trade, tradeType, item, null),
-                components: await createFields(item, pool, tradeType, trade, 2),
+                components: await createFields(item, tradeType, trade, 2),
                 flags: MessageFlags.Ephemeral
             });
             return false;

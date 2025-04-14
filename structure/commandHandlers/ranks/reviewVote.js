@@ -1,42 +1,31 @@
 import {MessageFlags} from "discord.js";
 import showReviewModal from "./showReviewModal.js";
-import i18n from "../../../locales/i18n.js";
-import {getUserLanguage} from "../../dbUtils.js";
+import {translatedMessage} from "../../utils.js";
 
 /**
  * Handles an interaction event for submitting or managing reviews.
  *
- * This function processes an interaction related to reviews, performing multiple checks and actions:
- * - Splits and retrieves the action type and target user ID from the interaction's custom ID.
- * - Verifies if the reviewer user is blocked from submitting reviews.
- * - Checks if the target user is blocked from receiving reviews.
- * - Implements cooldown restrictions if enabled, preventing review spam for the same user within a configured time window.
- * - Ensures users are not allowed to review themselves unless self-voting is explicitly permitted.
- * - Finally, invokes a modal to proceed with the review submission if all conditions are satisfied.
- *
  * @param {Object} interaction - The interaction object containing the review action and user details.
- * @param {Object} pool - The database connection pool to query necessary data.
- *
  * @async
- * @throws Will reply to the interaction with an appropriate error message if any condition (e.g., blocked user, cooldown, self-voting restriction) is violated.
  */
-export default async function(interaction, pool) {
+export default async function (interaction) {
     const [action, userId] = interaction.customId.split('_');
     const reviewerId = interaction.user.id;
 
     const blockedReviewer = await pool.query('SELECT * FROM blocked_reviewers WHERE user_id = $1', [reviewerId]);
-    const lang = await getUserLanguage(interaction.user.id, pool);
+
     if (blockedReviewer.rows.length > 0) {
         return interaction.reply({
-            content: i18n.t("errors.blockedReviewer", { lng: lang }),
+            content: await translatedMessage(interaction, "errors.blockedReviewer"),
             flags: MessageFlags.Ephemeral
         });
     }
 
     const blockedReceiver = await pool.query('SELECT * FROM blocked_receivers WHERE user_id = $1', [userId]);
+
     if (blockedReceiver.rows.length > 0) {
         return interaction.reply({
-            content: i18n.t("errors.blockedReceiver", { lng: lang }),
+            content: await translatedMessage(interaction, "errors.blockedReceiver"),
             flags: MessageFlags.Ephemeral
         });
     }
@@ -60,7 +49,7 @@ export default async function(interaction, pool) {
             if (timePassed < cooldownTime) {
                 const remainingTime = Math.ceil((cooldownTime - timePassed) / 60000);
                 return interaction.reply({
-                    content: i18n.t("errors.reviewCooldown", { lng: lang, time: remainingTime }),
+                    content: await translatedMessage(interaction, "errors.reviewCooldown", {time: remainingTime}),
                     flags: MessageFlags.Ephemeral
                 });
             }
@@ -72,10 +61,10 @@ export default async function(interaction, pool) {
 
     if (userId.toString() === reviewerId.toString() && !selfVotingEnabled) {
         return interaction.reply({
-            content: i18n.t("errors.selfReview", { lng: lang }),
+            content: await translatedMessage(interaction, "errors.selfReview"),
             flags: MessageFlags.Ephemeral
         });
     }
 
-    await showReviewModal(interaction, pool, action, userId);
+    await showReviewModal(interaction, action, userId);
 }

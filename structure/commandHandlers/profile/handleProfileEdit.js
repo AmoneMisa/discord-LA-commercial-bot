@@ -7,10 +7,9 @@ import {toCamelCase} from "../../utils.js";
  * Performs validations for specific fields and updates the profile in the database.
  *
  * @param {Object} interaction - The interaction object representing the user's request.
- * @param {Object} pool - The database connection pool for executing queries.
  * @return {Promise<void>} A promise that resolves when the profile update has been successfully processed.
  */
-export default async function handleProfileEdit(interaction, pool) {
+export default async function handleProfileEdit(interaction) {
     await interaction.deferReply({flags: MessageFlags.Ephemeral});
 
     const userId = interaction.user.id;
@@ -27,7 +26,7 @@ export default async function handleProfileEdit(interaction, pool) {
 
     if (field === 'main_nickname') {
         value = value.toLowerCase();
-        await saveProfileToDB(pool, {userId, [toCamelCase(field)]: value});
+        await saveProfileToDB({userId, [toCamelCase(field)]: value});
     } else {
         await pool.query(`
         UPDATE profiles 

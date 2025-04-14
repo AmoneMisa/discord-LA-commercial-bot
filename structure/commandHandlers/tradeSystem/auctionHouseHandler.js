@@ -17,10 +17,9 @@ const priceMap = {
  * and providing pagination and contact options via interactive buttons.
  *
  * @param {Object} interaction - The interaction object containing data about the user and invoked options.
- * @param {Object} pool - The database connection pool used for querying the inventory data.
  * @return {Promise<void>} - A promise that resolves once the interaction reply is sent.
  */
-export default async function auctionHouseHandler(interaction, pool) {
+export default async function auctionHouseHandler(interaction) {
     const userId = interaction.user.id;
     const page = interaction.options.getInteger('page') || 1;
     const offset = (page - 1) * 10;

@@ -2,8 +2,7 @@ import {MessageFlags} from "discord.js";
 import updateRatings from "../../updateRatings.js";
 import sendReviewNotification from "./sendReviewNotification.js";
 import errorsHandler from "../../../errorsHandler.js";
-import i18n from "../../../locales/i18n.js";
-import {getUserLanguage} from "../../dbUtils.js";
+import {translatedMessage} from "../../utils.js";
 
 /**
  * Handles the interaction for submitting a user review.
@@ -18,28 +17,25 @@ import {getUserLanguage} from "../../dbUtils.js";
  * @async
  * @function
  * @param {Object} interaction - The interaction object containing data about the review submission.
- * @param {Object} pool - The database connection pool used to execute queries.
- * @param {Object} client - The client instance used for sending notifications.
  */
-export default async function (interaction, pool, client) {
+export default async function (interaction) {
     const [_, action, userId] = interaction.customId.split('_');
     const reviewerId = interaction.user.id;
     const reviewText = interaction.fields.getTextInputValue('review_text');
     const isPositive = action === 'upvote';
 
-    const lang = await getUserLanguage(interaction.user.id, pool);
     try {
         await pool.query(
             `INSERT INTO reviews (target_user, reviewer_id, is_positive, review_text, timestamp)
-                 VALUES ($1, $2, $3, $4, NOW())`,
+             VALUES ($1, $2, $3, $4, NOW())`,
             [userId, reviewerId, isPositive, reviewText]
         );
 
         const userStats = await pool.query(
             `SELECT COUNT(CASE WHEN is_positive THEN 1 END)     AS positive_reviews,
-                        COUNT(CASE WHEN NOT is_positive THEN 1 END) AS negative_reviews
-                 FROM reviews
-                 WHERE target_user = $1`,
+                    COUNT(CASE WHEN NOT is_positive THEN 1 END) AS negative_reviews
+             FROM reviews
+             WHERE target_user = $1`,
             [userId]
         );
 
@@ -48,24 +44,24 @@ export default async function (interaction, pool, client) {
 
         await pool.query(
             `UPDATE users
-                 SET positive_reviews = $1,
-                     negative_reviews = $2,
-                     rating = $3
-                 WHERE user_id = $4`,
+             SET positive_reviews = $1,
+                 negative_reviews = $2,
+                 rating           = $3
+             WHERE user_id = $4`,
             [positive_reviews, negative_reviews, rating, userId]
         );
 
         await interaction.reply({
-            content: i18n.t("info.reviewSaved", { lng: lang }),
+            content: await translatedMessage(interaction, "info.reviewSaved"),
             flags: MessageFlags.Ephemeral
         });
 
-        await updateRatings(pool);
-        await sendReviewNotification(interaction, pool, userId, reviewerId, isPositive, reviewText, client);
+        await updateRatings();
+        await sendReviewNotification(interaction, userId, reviewerId, isPositive, reviewText);
     } catch (error) {
         errorsHandler.error(`'❌ Ошибка при сохранении отзыва: ${error}`);
         await interaction.reply({
-            content: i18n.t("errors.reviewSaveError", { lng: lang }),
+            content: await translatedMessage(interaction, "errors.reviewSaveError"),
             flags: MessageFlags.Ephemeral
         });
     }

@@ -9,15 +9,13 @@ import {getRaidName} from "../../dbUtils.js";
  * @async
  * @function notifySellerMessageSend
  * @param {Object} interaction - The interaction object representing the user's action.
- * @param {Object} pool - The database connection pool used to retrieve the raid name.
- * @param {Object} client - The client object used to fetch user and channel information and send messages.
  * @return {Promise<void>} Resolves successfully if the notification was sent or updated without errors; otherwise, logs the error and sends a failure reply.
  */
-export default async function notifySellerMessageSend(interaction, pool, client) {
+export default async function notifySellerMessageSend(interaction) {
     try {
         const [, , sellerId, raidId] = interaction.customId.split('_');
         const seller = await client.users.fetch(sellerId);
-        const raidName = await getRaidName(pool, raidId);
+        const raidName = await getRaidName(raidId);
 
         if (seller) {
             const row = new ActionRowBuilder()

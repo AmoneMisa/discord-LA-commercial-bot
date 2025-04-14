@@ -139,7 +139,7 @@ function getClassName(page) {
  * @return {Promise<void>} Resolves when all operations (inserts and updates) are completed successfully,
  *                         otherwise logs an error to the console in case of failure.
  */
-export async function saveProfileToDB(pool, {
+export async function saveProfileToDB({
     userId,
     name,
     mainNickname,

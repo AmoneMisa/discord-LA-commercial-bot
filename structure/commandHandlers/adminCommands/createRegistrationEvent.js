@@ -1,6 +1,5 @@
-import {ButtonBuilder, ButtonStyle, ActionRowBuilder, MessageFlags} from "discord.js";
-import i18n from "../../../locales/i18n.js";
-import {getUserLanguage} from "../../dbUtils.js";
+import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from "discord.js";
+import {translatedMessage} from "../../utils.js";
 
 export default async function (interaction, pool) {
     const messageId = interaction.options.getString("message_id");
@@ -16,20 +15,21 @@ export default async function (interaction, pool) {
     const eventId = insertEvent.rows[0].id;
 
     // Добавляем кнопку под сообщением
-    const lang = await getUserLanguage(interaction.user.id, pool);
     const row = new ActionRowBuilder().addComponents(
         new ButtonBuilder()
             .setCustomId(`register_event_${eventId}`)
-            .setLabel(i18n.t("buttons.registerEvent", { lng: lang }))
+            .setLabel(await translatedMessage(interaction, "buttons.registerEvent"))
             .setStyle(ButtonStyle.Primary),
         new ButtonBuilder()
             .setCustomId(`unregister_event_${eventId}`)
-            .setLabel(i18n.t("buttons.unregisterEvent", { lng: lang }))
+            .setLabel(await translatedMessage(interaction, "buttons.unregisterEvent"))
             .setStyle(ButtonStyle.Danger)
     );
 
     const targetMessage = await interaction.channel.messages.fetch(messageId);
-    await targetMessage.edit({ components: [row] });
-
-    await interaction.reply({ content: i18n.t("info.eventCreated", { lng: lang }), flags: MessageFlags.Ephemeral });
+    await targetMessage.edit({components: [row]});
+    await interaction.reply({
+        content: await translatedMessage(interaction, "info.eventCreated"),
+        flags: MessageFlags.Ephemeral
+    });
 }

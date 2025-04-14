@@ -7,10 +7,9 @@ import {givePointsForActivity} from "../../dbUtils.js";
  * It also awards points to the message author for activity.
  *
  * @param {import('discord.js').Message} message - The Discord message object where the response will be sent.
- * @param {import('pg').Pool} pool - The PostgreSQL connection pool used for querying and updating data.
  * @return {Promise<void>} Resolves when the response message is sent and points are awarded.
  */
-export default async function sendRaidResponse(message, pool) {
+export default async function sendRaidResponse(message) {
     // отправка сообщения с кнопками
     if (message.author.bot) {
         return;
@@ -56,5 +55,5 @@ export default async function sendRaidResponse(message, pool) {
         flags: MessageFlags.SuppressNotifications
     });
 
-    await givePointsForActivity(pool, message.author.id, 5);
+    await givePointsForActivity(message.author.id, 5);
 }

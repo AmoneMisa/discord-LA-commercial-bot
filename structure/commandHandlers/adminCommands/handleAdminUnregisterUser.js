@@ -1,6 +1,5 @@
 import {MessageFlags} from "discord.js";
-import i18n from "../../../locales/i18n.js";
-import {getUserLanguage} from "../../dbUtils.js";
+import {translatedMessage} from "../../utils.js";
 
 export default async function (interaction, pool) {
     const eventId = interaction.options.getInteger("event_id");
@@ -11,10 +10,15 @@ export default async function (interaction, pool) {
         [eventId, userId]
     );
 
-    const lang = await getUserLanguage(interaction.user.id, pool);
     if (deleteResult.rowCount === 0) {
-        return interaction.reply({ content: i18n.t("errors.userNotRegistered", { lng: lang }), flags: MessageFlags.Ephemeral });
+        return interaction.reply({
+            content: await translatedMessage(interaction, "errors.userNotRegistered"),
+            flags: MessageFlags.Ephemeral
+        });
     }
 
-    return interaction.reply({ content: i18n.t("info.userRegistrationDeleted", { userId, lng: lang }), flags: MessageFlags.Ephemeral });
+    return interaction.reply({
+        content: await translatedMessage(interaction, "info.userRegistrationDeleted", {userId}),
+        flags: MessageFlags.Ephemeral
+    });
 }

@@ -11,8 +11,6 @@ import {getRaidName} from "../../dbUtils.js";
  * @async
  * @function
  * @param {Object} interaction - The Discord interaction object provided by the user for the command input.
- * @param {Object} pool - The database connection pool used for querying the database.
- * @param {Object} client - The Discord bot client instance used for user-related operations.
  * @returns {Promise<void>} - Resolves when the process completes successfully or an error has been handled.
  *
  * @throws Will log an error to the console if the raid cannot be found in the database.
@@ -33,7 +31,7 @@ import {getRaidName} from "../../dbUtils.js";
  * - `getRaidName(pool, raidId)` must be a valid utility function that retrieves the raid name based on the raid ID.
  * - Permissions should allow the bot to send direct messages on behalf of the bot to users.
  */
-export default async function(interaction, pool, client) {
+export default async function(interaction) {
     const raidName = interaction.options.getString('raid');
     const raidId = await pool.query(`SELECT raid_id FROM raids WHERE raid_name = $1`, [raidName]);
 
@@ -59,7 +57,7 @@ export default async function(interaction, pool, client) {
                         .setStyle(ButtonStyle.Primary)
                 );
 
-            const raidName = await getRaidName(pool, raidId);
+            const raidName = await getRaidName(raidId);
 
             await user.send({
                 content: `🔔 Игрок **<@${interaction.user.id}>** набирает группу на **${raidName}**!)`,

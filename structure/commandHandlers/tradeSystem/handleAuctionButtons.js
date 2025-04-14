@@ -5,11 +5,9 @@ import auctionHouseHandler from "./auctionHouseHandler.js";
  * Handles interactions with auction buttons by processing user requests and sending notifications to lot owners.
  *
  * @param {Object} interaction - The interaction object representing the user's action.
- * @param {Object} pool - The database connection pool for executing queries.
- * @param {Object} client - The bot client instance for fetching and interacting with users.
  * @return {Promise<Object>} A promise that resolves to the interaction reply or the result of a paginated action.
  */
-export async function handleAuctionButtons(interaction, pool, client) {
+export async function handleAuctionButtons(interaction) {
     const customId = interaction.customId;
     const lotId = customId.split("_")[1];
 
@@ -47,6 +45,6 @@ export async function handleAuctionButtons(interaction, pool, client) {
         const page = parseInt(customId.split("_")[2]);
         const newPage = customId.includes("prev") ? page - 1 : page + 1;
 
-        return auctionHouseHandler(interaction, pool, newPage);
+        return auctionHouseHandler(interaction, newPage);
     }
 }

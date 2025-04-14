@@ -20,7 +20,7 @@ import {PermissionsBitField} from "discord.js";
  * Error Handling:
  * Logs an error message to the console in case of any exceptions during execution.
  */
-export default async function (pool, guild) {
+export default async function (guild) {
     try {
         console.log("🔄 Проверка и обновление ролей в Discord...");
         const dbRoles = await pool.query('SELECT role_name, role_id FROM roles');

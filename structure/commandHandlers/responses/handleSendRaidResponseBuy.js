@@ -9,12 +9,9 @@ import {givePointsForActivity} from "../../dbUtils.js";
  * they cannot send a request to themselves and triggers a modal response for the buying process.
  *
  * @param {Object} interaction - The interaction object representing the user's action.
- * @param {Object} pool - The database connection pool for managing database operations.
- * @param {Object} client - The bot client object for performing bot-related operations.
- *
  * @returns {Promise<void>} Resolves when the action completes, or replies to the interaction in case of an error.
  */
-export default async function (interaction, pool, client) {
+export default async function (interaction) {
     // Кнопка "Хочу купить"
     const [, , , sellerId] = interaction.customId.split('_');
 
@@ -26,5 +23,5 @@ export default async function (interaction, pool, client) {
     }
 
     await createModalBuyResponse(interaction);
-    await givePointsForActivity(pool, interaction.user.id, 2);
+    await givePointsForActivity(interaction.user.id, 2);
 }

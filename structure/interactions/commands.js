@@ -37,102 +37,100 @@ dotenv.config();
  *
  * @async
  * @param {Object} interaction - The interaction object representing the incoming Discord command interaction.
- * @param {Object} pool - The database connection pool object used for database operations.
- * @param {Object} client - The Discord client instance (optional, used in specific commands).
  */
-export default async function (interaction, pool, client) {
+export default async function (interaction) {
     if (interaction.commandName.startsWith("adm_") && interaction.options.getSubcommand() !== 'remove_bots') {
-        await handleAdminSettingsCommand(interaction, pool, interaction.guild);
+        await handleAdminSettingsCommand(interaction);
     }
 
     if (interaction.commandName === 'language') {
-        await userChangeLanguage(interaction, pool);
+        await userChangeLanguage(interaction);
     }
 
     if (process.env.RANKS_MODULE) {
         if (interaction.commandName === 'info') {
-            await handleInfoCommand(interaction, pool, false, false);
+            await handleInfoCommand(interaction, false, false);
         }
 
         if (interaction.commandName === 'last_positive_reviews') {
-            await lastPositiveReviewsCommand(interaction, pool, false, false);
+            await lastPositiveReviewsCommand(interaction,false, false);
         }
 
         if (interaction.commandName === 'last_negative_reviews') {
-            await lastNegativeReviewsCommand(interaction, pool, false, false);
+            await lastNegativeReviewsCommand(interaction,false, false);
         }
 
         if (interaction.commandName === 'last_reviews') {
-            await lastReviewsCommand(interaction, pool, false, false);
+            await lastReviewsCommand(interaction, false, false);
         }
 
         if (interaction.commandName === 'worst_sellers') {
-            await worstSellers(interaction, pool);
+            await worstSellers(interaction);
         }
 
         if (interaction.commandName === 'review_notifications_toggle') {
-            await reviewNotificationsToggle(interaction, pool);
+            await reviewNotificationsToggle(interaction);
         }
 
         if (interaction.commandName === "Получить инфо или оставить отзыв") {
-            await handleInfoCommand(interaction, pool, true, interaction.isMessageContextMenuCommand());
+            await handleInfoCommand(interaction, true, interaction.isMessageContextMenuCommand());
         }
     }
 
     if (process.env.BET_MODULE) {
         if (interaction.commandName === 'create_bet') {
-            await createBetHandler(interaction, pool, false, false);
+            await createBetHandler(interaction, false, false);
         }
 
         if (interaction.commandName === 'update_bet') {
-            await updateBet(interaction, pool, false, false);
+            await updateBet(interaction, false, false);
         }
 
         if (interaction.commandName === 'Поставить ставку') {
-            await createBetHandler(interaction, pool, true, interaction.isMessageContextMenuCommand());
+            await createBetHandler(interaction, true, interaction.isMessageContextMenuCommand());
         }
 
         if (interaction.commandName === 'Изменить ставку') {
-            await updateBetModal(interaction, pool);
+            await updateBetModal(interaction);
         }
     }
 
     if (process.env.SUBSCRIPTION_MODULE) {
         if (interaction.commandName === 'subscribe') {
             if (interaction.options.getSubcommand() === 'to_buy') {
-                await subscribeToBuy(interaction, pool);
+                await subscribeToBuy(interaction);
             }
 
             if (interaction.options.getSubcommand() === 'list') {
-                await subscribeList(interaction, pool);
+                await subscribeList(interaction);
             }
 
             if (interaction.options.getSubcommand() === 'unsubscribe') {
-                await unSubscribeToBuy(interaction, pool);
+                await unSubscribeToBuy(interaction);
             }
 
             if (interaction.options.getSubcommand() === 'send_notification') {
-                await manualSendNotificationsToBuyers(interaction, pool, client);
+                await manualSendNotificationsToBuyers(interaction);
             }
         }
 
         if (interaction.commandName === "Подписаться на продавца") {
-            await subscribeToBuy(interaction, pool, true, interaction.isMessageContextMenuCommand());
+            await subscribeToBuy(interaction,true, interaction.isMessageContextMenuCommand());
         }
     }
 
     if (process.env.TRADE_MODULE) {
         if (interaction.commandName === 'auction_house') {
-            await auctionHouseHandler(interaction, pool);
+            await auctionHouseHandler(interaction);
         }
 
         if (interaction.commandName === 'inventory') {
             if (interaction.options.getSubcommand() === 'create') {
-                await createLotHandler(interaction, pool, client);
+                await createLotHandler(interaction);
             }
 
             if (interaction.options.getSubcommand() === 'list') {
-                await removeLotHandler(interaction, pool);
+                await removeLotHandler(interaction);
             }
         }
     }
@@ -140,20 +138,20 @@ export default async function (interaction, pool, client) {
     if (process.env.PROFILES_MODULE) {
         if (interaction.commandName === 'profile') {
             if (interaction.options.getSubcommand() === 'view') {
-                await handleProfileView(interaction, pool, false, false);
+                await handleProfileView(interaction, false, false);
             }
 
             if (interaction.options.getSubcommand() === 'edit') {
-                await handleProfileEdit(interaction, pool);
+                await handleProfileEdit(interaction);
             }
 
             if (interaction.options.getSubcommand() === 'fill') {
-                await handleProfileFill(interaction, pool);
+                await handleProfileFill(interaction);
             }
         }
 
         if (interaction.commandName === "Просмотреть профиль игрока") {
-            await handleProfileView(interaction, pool, true, interaction.isMessageContextMenuCommand());
+            await handleProfileView(interaction, true, interaction.isMessageContextMenuCommand());
         }
     }
 
@@ -189,13 +187,13 @@ export default async function (interaction, pool, client) {
 
     if (process.env.ACHIEVEMENTS_MODULE) {
         if (interaction.commandName === 'achievement_info') {
-            await getAchievementInfo(interaction, pool);
+            await getAchievementInfo(interaction);
         }
     }
 
     if (process.env.CODEX_MODULE) {
         if (interaction.commandName === 'get_codex') {
-            await handleGetCodex(interaction, pool);
+            await handleGetCodex(interaction);
         }
     }
 }

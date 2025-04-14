@@ -7,10 +7,9 @@ import {sendPaginatedList} from "../../utils.js";
  * Otherwise, sends a paginated list of subscriptions.
  *
  * @param {Object} interaction - The interaction object representing the user's action.
- * @param {Object} pool - The database connection pool used for querying subscriptions and users.
  * @return {Promise<void>} A promise that resolves after the reply or paginated list is sent.
  */
-export default async function subscribeList(interaction, pool) {
+export default async function subscribeList(interaction) {
     const buyerId = interaction.user.id;
     const subscriptions = await pool.query(`
         SELECT
@@ -31,5 +30,5 @@ export default async function subscribeList(interaction, pool) {
         });
     }
 
-    await sendPaginatedList(interaction, subscriptions.rows, pool);
+    await sendPaginatedList(interaction, subscriptions.rows, 1);
 }

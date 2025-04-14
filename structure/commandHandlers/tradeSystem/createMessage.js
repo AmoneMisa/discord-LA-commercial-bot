@@ -6,11 +6,9 @@ import {getItemsList} from "../../dbUtils.js";
  * Creates and handles a trade message interaction for a user specifying trade parameters.
  *
  * @param {Object} interaction - The interaction object representing a user's interaction with the bot.
- * @param {Object} pool - The database connection pool for executing queries.
- * @param {Object} client - The client instance for handling advanced bot operations, if required.
  * @return {Promise<void>} A promise that resolves to `void` when the operation finishes.
  */
-export async function createTradeMessage(interaction, pool, client) {
+export async function createTradeMessage(interaction) {
     const itemId = interaction.options.getString('item'); // ID предмета
     const tradeType = interaction.options.getString('type'); // Тип сделки
     let activeTrades = new Map(); // userId => { tradeType, item, effects, price, ... }
@@ -26,7 +24,7 @@ export async function createTradeMessage(interaction, pool, client) {
     if (tradeType !== "WTS" && tradeType !== "WTB" && tradeType !== "WTT") {
         return await interaction.reply({content: '❌ Неизвестный тип сделки.', flags: MessageFlags.Ephemeral});
     } else {
-        components = await createFields(item, pool, tradeType, null, 1);
+        components = await createFields(item, tradeType, null, 1);
     }
 
     let response = await interaction.reply({
@@ -45,7 +43,7 @@ export async function createTradeMessage(interaction, pool, client) {
                 time: 60_000
             });
 
-            let result = await tradeStringSelectMenuHandler(pool, client, activeTrades, tradeType, item, confirmation);
+            let result = await tradeStringSelectMenuHandler(activeTrades, tradeType, item, confirmation);
 
             if (result) {
                 break;
@@ -57,12 +55,12 @@ export async function createTradeMessage(interaction, pool, client) {
     }
 }
 
-export async function createFields(item, pool, tradeType, trade, step) {
+export async function createFields(item, tradeType, trade, step) {
     let components = [];
 
     if (step === 1) {
         if (['Ожерелье', 'Серьга', 'Кольцо'].includes(item.name)) {
-            let effectOptions = await getEffectOptions(pool, 'accessory_effects', item.name);
+            let effectOptions = await getEffectOptions('accessory_effects', item.name);
             effectOptions = [...new Set(effectOptions), {label: "Ничего", value: "ничего"}];
             components.push(new ActionRowBuilder().addComponents(
                 new StringSelectMenuBuilder()
@@ -156,7 +154,7 @@ export async function createFields(item, pool, tradeType, trade, step) {
                     new StringSelectMenuBuilder()
                         .setCustomId('trade_select_2_effect_amount_1')
                         .setPlaceholder(trade.trade_select_1_effect_1)
-                        .setOptions(await getEffectOptionValues(pool, trade.trade_select_1_effect_1))
+                        .setOptions(await getEffectOptionValues(trade.trade_select_1_effect_1))
                 ));
             }
 
@@ -165,7 +163,7 @@ export async function createFields(item, pool, tradeType, trade, step) {
                     new StringSelectMenuBuilder()
                         .setCustomId('trade_select_2_effect_amount_2')
                         .setPlaceholder(trade.trade_select_1_effect_2)
-                        .setOptions(await getEffectOptionValues(pool, trade.trade_select_1_effect_2))
+                        .setOptions(await getEffectOptionValues(trade.trade_select_1_effect_2))
                 ));
             }
 
@@ -174,12 +172,12 @@ export async function createFields(item, pool, tradeType, trade, step) {
                     new StringSelectMenuBuilder()
                         .setCustomId('trade_select_2_effect_amount_3')
                         .setPlaceholder(trade.trade_select_1_effect_3)
-                        .setOptions(await getEffectOptionValues(pool, trade.trade_select_1_effect_3))
+                        .setOptions(await getEffectOptionValues(trade.trade_select_1_effect_3))
                 ));
             }
         }
     } else if (step === 3) {
-        const itemsList = await getItemsList(pool);
+        const itemsList = await getItemsList();
         components.push(new ActionRowBuilder().addComponents(
             new StringSelectMenuBuilder()
                 .setCustomId('trade_select_3_item')
@@ -206,7 +204,7 @@ export async function createFields(item, pool, tradeType, trade, step) {
         const requestItem = itemData.rows[0];
 
         if (['Ожерелье', 'Серьга', 'Кольцо'].includes(requestItem.name)) {
-            let effectOptions = await getEffectOptions(pool, 'accessory_effects', requestItem.name);
+            let effectOptions = await getEffectOptions('accessory_effects', requestItem.name);
             effectOptions = [...new Set(effectOptions), {label: "Ничего", value: "ничего"}];
             components.push(new ActionRowBuilder().addComponents(
                 new StringSelectMenuBuilder()
@@ -258,7 +256,7 @@ export async function createFields(item, pool, tradeType, trade, step) {
                     new StringSelectMenuBuilder()
                         .setCustomId('trade_select_5_effect_amount_1')
                         .setPlaceholder(trade.trade_select_4_effect_1)
-                        .setOptions(await getEffectOptionValues(pool, trade.trade_select_4_effect_1))
+                        .setOptions(await getEffectOptionValues(trade.trade_select_4_effect_1))
                 ));
             }
 
@@ -267,7 +265,7 @@ export async function createFields(item, pool, tradeType, trade, step) {
                     new StringSelectMenuBuilder()
                         .setCustomId('trade_select_5_effect_amount_2')
                         .setPlaceholder(trade.trade_select_4_effect_2)
-                        .setOptions(await getEffectOptionValues(pool, trade.trade_select_4_effect_2))
+                        .setOptions(await getEffectOptionValues(trade.trade_select_4_effect_2))
                 ));
             }
 
@@ -276,7 +274,7 @@ export async function createFields(item, pool, tradeType, trade, step) {
                     new StringSelectMenuBuilder()
                         .setCustomId('trade_select_5_effect_amount_3')
                         .setPlaceholder(trade.trade_select_4_effect_3)
-                        .setOptions(await getEffectOptionValues(pool, trade.trade_select_4_effect_3))
+                        .setOptions(await getEffectOptionValues(trade.trade_select_4_effect_3))
                 ));
             }
         }
@@ -285,7 +283,7 @@ export async function createFields(item, pool, tradeType, trade, step) {
     return components;
 }
 
-async function getEffectOptionValues(pool, effectName) {
+async function getEffectOptionValues(effectName) {
     let rows = (await pool.query(`SELECT low_bonus, mid_bonus, high_bonus
                                   FROM accessory_effects
                                   WHERE effect_name = $1`, [effectName])).rows;
@@ -296,7 +294,7 @@ async function getEffectOptionValues(pool, effectName) {
     return Array.from(Object.values(rows[0])).map(_value => ({label: _value, value: _value}));
 }
 
-async function getEffectOptions(pool, table, category) {
+async function getEffectOptions(table, category) {
     const result = await pool.query(`SELECT category, effect_name, low_bonus, mid_bonus, high_bonus
                                      FROM ${table}`);
     return result.rows

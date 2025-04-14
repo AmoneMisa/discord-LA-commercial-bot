@@ -13,13 +13,12 @@ import autocompleteAchievements from "../commandHandlers/achievements/autocomple
  * @async
  * @function
  * @param {Object} interaction - The interaction object representing the user command from Discord.
- * @param {Object} pool - The database connection pool used to fetch item or achievement data.
  * @returns {Promise<void>} A promise that resolves when interaction responses are successfully processed.
  */
-export default async function (interaction, pool) {
+export default async function (interaction) {
     if (interaction.commandName.includes('inventory')) {
         const focusedOption = interaction.options.getFocused(true);
-        const items = await getItemsList(pool); // Получаем предметы из базы
+        const items = await getItemsList(); // Получаем предметы из базы
 
         /**
          * An array containing a filtered subset of items.
@@ -39,6 +38,6 @@ export default async function (interaction, pool) {
             filtered.map(item => ({name: item.label, value: item.value.toString()}))
         );
     } else if (/^(adm_achievement_|achievement_)/.test(interaction.commandName)) {
-        await autocompleteAchievements(interaction, pool);
+        await autocompleteAchievements(interaction);
     }
 }

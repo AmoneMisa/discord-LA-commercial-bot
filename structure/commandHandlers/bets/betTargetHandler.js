@@ -1,6 +1,5 @@
-import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags, StringSelectMenuBuilder} from "discord.js";
-import {getActiveEvent} from "../../utils.js";
-import i18n from "../../../locales/i18n.js";
+import {ActionRowBuilder, ButtonStyle, MessageFlags, StringSelectMenuBuilder} from "discord.js";
+import {getActiveEvent, translatedMessage} from "../../utils.js";
 import {getUserLanguage} from "../../dbUtils.js";
 
 const serversMap = {
@@ -8,19 +7,19 @@ const serversMap = {
     "alderan": ['alderan', 'Альдеран'],
 }
 
-export default async function (interaction, pool) {
+export default async function (interaction) {
     const [, , nickname, betAmount] = interaction.customId.split("_");
     const target = interaction.values[0];
-    const event = await getActiveEvent(pool);
+    const event = await getActiveEvent();
 
-    const lang = await getUserLanguage(interaction.user.id, pool);
     if (!event) {
         return await interaction.reply({
-            content: i18n.t("errors.noBetEventExist", {lng: lang}),
+            content: await translatedMessage(interaction, "errors.noBetEventExist"),
             flags: MessageFlags.Ephemeral
         });
     }
 
+    const lang = await getUserLanguage(interaction.user.id);
     const availableServers = Object.entries(serversMap).map(([serverKey, serverName]) => ({
         label: lang === 'ru' ? serverName[1] : serverName[0],
         value: serverKey
@@ -28,13 +27,13 @@ export default async function (interaction, pool) {
 
     const serverSelect = new StringSelectMenuBuilder()
         .setCustomId(`bet_server_${nickname}_${betAmount}_${target}`)
-        .setPlaceholder(i18n.t("buttons.chooseBetServer", {lng: lang}))
+        .setPlaceholder(await translatedMessage(interaction, "buttons.chooseBetServer"))
         .addOptions(availableServers);
 
     const row = new ActionRowBuilder().addComponents(serverSelect);
 
     await interaction.update({
-        content: i18n.t("info.selectServer", {lng: lang}),
+        content: await translatedMessage(interaction, "info.selectServer"),
         components: [row],
         flags: MessageFlags.Ephemeral
     });
