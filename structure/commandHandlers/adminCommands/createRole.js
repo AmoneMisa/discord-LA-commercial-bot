@@ -9,7 +9,7 @@ import {translatedMessage} from "../../utils.js";
  * @param {Object} guild - The guild object where the role will be created.
  * @return {Promise<void>} A promise that resolves when the role is created and stored in the database and a reply is sent.
  */
-export default async function createRole(interaction, pool, guild) {
+export default async function createRole(interaction, guild) {
     const name = interaction.options.getString('name');
     const requiredRating = interaction.options.getInteger('required_rating');
     const minReviews = interaction.options.getInteger('min_reviews');

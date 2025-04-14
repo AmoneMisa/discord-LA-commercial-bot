@@ -2,10 +2,10 @@ import {ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, MessageFlags
 import {updateUsersOdds} from "../../dbUtils.js";
 import {translatedMessage} from "../../utils.js";
 
-export default async function (interaction, pool) {
+export default async function (interaction) {
     const targetWinner = interaction.options.getString("winner");
     const eventId = interaction.options.getString("event_id");
-    await updateUsersOdds(pool, eventId);
+    await updateUsersOdds(eventId);
 
     const result = await pool.query(`
         WITH winners AS (SELECT b.user_id,

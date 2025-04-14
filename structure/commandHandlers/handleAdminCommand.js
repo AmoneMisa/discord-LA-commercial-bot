@@ -84,7 +84,7 @@ export default async function (interaction) {
 
     const handlerName = adminCommandMap[interaction.commandName + '_' + subcommand];
     if (typeof subcommandsHandlers[handlerName] === "function") {
-        await subcommandsHandlers[handlerName](interaction, pool, interaction.guild);
+        await subcommandsHandlers[handlerName](interaction, interaction.guild);
     } else {
         await interaction.reply({content: await translatedMessage(interaction, "errors.unknownCommand"), flags: MessageFlags.Ephemeral});
     }

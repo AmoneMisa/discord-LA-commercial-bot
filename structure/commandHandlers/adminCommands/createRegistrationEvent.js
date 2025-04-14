@@ -1,7 +1,7 @@
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from "discord.js";
 import {translatedMessage} from "../../utils.js";
 
-export default async function (interaction, pool) {
+export default async function (interaction) {
     const messageId = interaction.options.getString("message_id");
     const startTime = interaction.options.getString("start_time");
     const endTime = interaction.options.getString("end_time");

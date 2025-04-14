@@ -9,7 +9,7 @@ import {translatedMessage} from "../../utils.js";
  * @param {Object} guild - The guild object representing the server where the role exists.
  * @return {Promise<void>} A promise that resolves when the role is deleted and the user is informed.
  */
-export default async function deleteRole(interaction, pool, guild) {
+export default async function deleteRole(interaction, guild) {
     const name = interaction.options.getString('name');
 
     const roleData = await pool.query('SELECT * FROM roles WHERE role_name = $1', [name]);
