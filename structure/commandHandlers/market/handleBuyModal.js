@@ -1,4 +1,4 @@
-import {ActionRowBuilder, ButtonBuilder, ButtonStyle} from "discord.js";
+import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from "discord.js";
 import {translatedMessage} from "../../utils.js";
 
 export default async function(interaction) {
@@ -7,12 +7,12 @@ export default async function(interaction) {
     const comment = interaction.fields.getTextInputValue("buy_comment") || "_нет_";
 
     if (isNaN(goldAmount) || goldAmount <= 0) {
-        return interaction.reply({ content: await translatedMessage(interaction,"errors.setCorrectGoldAmount"), ephemeral: true });
+        return interaction.reply({ content: await translatedMessage(interaction,"errors.setCorrectGoldAmount"), flags: MessageFlags.Ephemeral });
     }
 
     const lotData = await pool.query("SELECT * FROM marketplace_lots WHERE id = $1", [lotId]);
     if (lotData.rowCount === 0) {
-        return interaction.reply({ content: await translatedMessage(interaction,"errors.lotNotFound"), ephemeral: true });
+        return interaction.reply({ content: await translatedMessage(interaction,"errors.lotNotFound"), flags: MessageFlags.Ephemeral });
     }
 
     const lot = lotData.rows[0];
@@ -34,5 +34,5 @@ export default async function(interaction) {
         ]
     });
 
-    await interaction.reply({ content: await translatedMessage(interaction,"market.requestSent"), ephemeral: true });
+    await interaction.reply({ content: await translatedMessage(interaction,"market.requestSent"), flags: MessageFlags.Ephemeral });
 }
