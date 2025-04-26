@@ -9,7 +9,7 @@ import {translatedMessage} from "../../utils.js";
  * @param {Object} pool - The database connection pool to query raid information.
  * @return {Promise<void>} Resolves when the interaction response has been handled.
  */
-export default async function editRaids(interaction, pool) {
+export default async function editRaids(interaction) {
     const raids = await pool.query('SELECT id, raid_name FROM raids ORDER BY id LIMIT 20');
 
     if (raids.rows.length === 0) {

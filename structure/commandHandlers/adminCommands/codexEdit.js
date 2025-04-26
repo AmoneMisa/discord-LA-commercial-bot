@@ -8,7 +8,7 @@ import {translatedMessage} from "../../utils.js";
  * @param {Object} pool - The database connection pool used to execute queries.
  * @return {Promise<void>} A promise that resolves once the entry update is processed. Sends a reply to the interaction about the operation's result.
  */
-export default async function editCodexEntry(interaction, pool) {
+export default async function editCodexEntry(interaction) {
     const category = interaction.options.getString("category");
     const title = interaction.options.getString("title");
     const newContent = interaction.options.getString("content");

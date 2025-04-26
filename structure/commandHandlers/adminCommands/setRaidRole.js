@@ -8,7 +8,7 @@ import {translatedMessage} from "../../utils.js";
  * @param {Object} pool - The database connection pool used for executing queries.
  * @return {Promise<Object>} A promise that resolves with the interaction reply containing the success or error message.
  */
-export default async function setRaidRole(interaction, pool) {
+export default async function setRaidRole(interaction) {
     const raidName = interaction.options.getString('raid');
     const role = interaction.options.getRole('role');
 

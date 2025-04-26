@@ -8,7 +8,7 @@ import {translatedMessage} from "../../utils.js";
  * @param {Object} pool - The database connection pool for executing queries to store the bus category.
  * @return {Promise<void>} A promise that resolves when the operation is complete.
  */
-export default async function setBusCategory(interaction, pool) {
+export default async function setBusCategory(interaction) {
     await interaction.deferReply({flags: MessageFlags.Ephemeral});
     const category = interaction.options.getChannel('category');
 

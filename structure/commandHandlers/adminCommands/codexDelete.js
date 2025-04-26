@@ -7,7 +7,7 @@ import {translatedMessage} from "../../utils.js";
  * @param {Object} interaction - The interaction object containing details about the user's action.
  * @param {Object} pool - The database connection pool used to execute the query.
  */
-export default async function (interaction, pool) {
+export default async function (interaction) {
     const category = interaction.options.getString("category");
     const title = interaction.options.getString("title");
 

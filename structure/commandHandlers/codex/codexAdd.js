@@ -10,7 +10,7 @@ import {translatedMessage} from "../../utils.js";
  * @param {object} pool - The database connection pool for executing queries.
  * @returns {Promise<void>} - Sends a reply to the interaction indicating success or error.
  */
-export default async function (interaction, pool) {
+export default async function (interaction) {
     const category = interaction.options.getString("category");
     const title = interaction.options.getString("title");
     const language = interaction.options.getString("language");

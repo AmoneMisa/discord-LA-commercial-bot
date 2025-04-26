@@ -9,7 +9,7 @@ import {translatedMessage} from "../../utils.js";
  * @param {Object} pool - The database connection pool used to execute queries.
  * @return {Promise<void>} A promise that resolves when the achievement is successfully created or an error is sent.
  */
-export default async function createAchievement(interaction, pool) {
+export default async function createAchievement(interaction) {
     const name = interaction.options.getString('name');
     const description = interaction.options.getString('description');
     const icon = interaction.options.getAttachment('icon');
