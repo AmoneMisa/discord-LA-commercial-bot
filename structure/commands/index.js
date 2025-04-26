@@ -16,6 +16,7 @@ import adminMarketCommands from "./adminMarketCommands.js";
 import dotenv from 'dotenv';
 import userRandomCommands from "./userRandomCommands.js";
 import userMarketCommands from "./userMarketCommands.js";
+import userListsCommands from "./userListsCommands.js";
 dotenv.config();
 /***
  ('ranks', 'Система рейтинга', true),
@@ -71,6 +72,10 @@ export default function getCommands() {
 
         if (process.env.MARKET_MODULE) {
             commandsArray = [...commandsArray, ...adminMarketCommands, ...userMarketCommands];
+        }
+
+        if (process.env.WHITE_BLACK_LIST_MODULE) {
+            commandsArray = [...commandsArray, ...userListsCommands];
         }
 
     return commandsArray;

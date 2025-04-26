@@ -30,6 +30,9 @@ import updateBetModal from "../commandHandlers/bets/updateBetModal.js";
 import userChangeLanguage from "../commandHandlers/common/userChangeLanguage.js";
 import dotenv from "dotenv";
 import listLots from "../commandHandlers/market/listLots.js";
+import addToList from "../commandHandlers/lists/addToList.js";
+import {removeFromList} from "../commandHandlers/lists/removeFromList.js";
+import checkListStatus from "../commandHandlers/lists/checkListStatus.js";
 
 dotenv.config();
 /**
@@ -201,6 +204,20 @@ export default async function (interaction) {
     if (process.env.MARKET_MODULE) {
         if (interaction.commandName === 'market') {
             await listLots(interaction);
+        }
+    }
+
+    if (process.env.WHITE_BLACK_LIST_MODULE) {
+        if (interaction.commandName === 'list_add') {
+            await addToList(interaction);
+        }
+
+        if (interaction.commandName === 'list_remove') {
+            await removeFromList(interaction);
+        }
+
+        if (interaction.commandName === 'list_check') {
+            await checkListStatus(interaction);
         }
     }
 }
