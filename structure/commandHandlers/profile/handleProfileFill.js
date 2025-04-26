@@ -18,6 +18,7 @@ export default async function handleProfileFill(interaction) {
     const role = interaction.options.getString('role');
     let primeStart = interaction.options.getString('prime_start') || null;
     let primeEnd = interaction.options.getString('prime_end') || null;
+    const salesExperience = interaction.options.getString('sales_experience') || null;
 
     let result = await pool.query(`SELECT COUNT(*)
                                    FROM profiles
@@ -52,7 +53,8 @@ export default async function handleProfileFill(interaction) {
             role,
             primeStart,
             primeEnd,
-            server
+            server,
+            salesExperience
         });
 
         await interaction.editReply({content: '✅ Анкета успешно заполнена!', flags: MessageFlags.Ephemeral});

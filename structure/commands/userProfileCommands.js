@@ -32,7 +32,11 @@ export default [
                     option.setName('prime_end')
                         .setDescription('Прайм до (формат 00:00)')
                         .setRequired(false))
-        ).addSubcommand(subcommand =>
+                .addStringOption(option =>
+                    option.setName('sales_experience')
+                        .setDescription('Опыт в продажах')
+                        .setRequired(false)
+                )).addSubcommand(subcommand =>
         subcommand.setName('edit')
             .setDescription('Редактировать анкету')
             .addStringOption(option =>
