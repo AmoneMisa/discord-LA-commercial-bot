@@ -2,6 +2,7 @@
   "buttons": {
     "accept": "✅ Accept",
     "back": "⬅️ Back",
+    "buyLot": "🛒 Buy {{goldAmount}}",
     "chooseBetServer": "Select server",
     "chooseBetTarget": "Choose who to bet on",
     "createBetAmountField": "Enter bet amount (from 200)",
@@ -29,6 +30,7 @@
     "achievementAlreadyExists": "❌ An achievement with this name already exists.",
     "achievementIconSaveFailed": "❌ Error saving the icon.",
     "achievementNotFound": "❌ Achievement **{{achievement}}** not found! Make sure it exists.",
+    "alreadyInList": "🚫 The player is already in the {{type}} list!",
     "attachmentMustBePng": "❌ Please attach a PNG image.",
     "betAlreadyAccepted": "⚠️ This bet has already been accepted.",
     "betAlreadyExist": "The bet has already been placed!",
@@ -40,6 +42,7 @@
     "blockedReceiver": "🚫 This user cannot receive reviews.",
     "blockedReviewer": "🚫 You are not allowed to leave reviews.",
     "buttonsTimeout": "The time for using the buttons has expired. Please re-run the command.",
+    "cannotSelfAssign": "🚫 You cannot assign yourself.",
     "categoryNotFound": "❌ Category not found!",
     "channelDoesntChoose": "❌ Error: You did not specify a channel!",
     "channelMustBeTextType": "❌ Please specify a valid text channel!",
@@ -57,6 +60,7 @@
     "incorrectId": "❌ Error: Invalid review ID or page.",
     "incorrectMember": "❌ Error: User not found or specified incorrectly.",
     "incorrectServerName": "⚠ Error: The entered server must be 'Kratos' or 'Alderan'.",
+    "lotNotFound": "❌ Lot not found or has been deleted.",
     "messageNotFound": "⚠ In channel: {{channelId}}, message not found: {{messageId}}",
     "mustSelectCategory": "🚫 You must select a **category**, not a regular channel!",
     "noBetEventExist": "❌ The event does not exist or has already ended.",
@@ -65,6 +69,7 @@
     "noMentions": "❌ No mentioned users in the message!",
     "noWinners": "❌ No winners found in this event.",
     "notAdmin": "🚫 You do not have administrator rights to execute this command.",
+    "notInList": "🚫 Player **{{username}}** not found in your list.",
     "raidNotFound": "🚫 Raid '{{raidName}}' not found!",
     "raidNotLinked": "🚫 An error occurred while trying to subscribe to this raid. Please contact an administrator.",
     "reviewCooldown": "⏳ You have already left a review for this user recently. Try again in **{{time}} minutes**.",
@@ -75,6 +80,7 @@
     "selfReview": "❌ You cannot leave a review for yourself.",
     "selfSubscription": "🚫 You cannot use this command on yourself.",
     "sendMessageError": "Error sending message to channel: {{error}}, Channel ID: {{channelId}}",
+    "setCorrectGoldAmount": "❌ Please specify a valid gold amount.",
     "subscriptionBlocked": "🚫 You are not allowed to subscribe to sellers.",
     "subscriptionTempBlocked": "🚫 The user is blocked from subscriptions for {{hours}} hours.",
     "unexpectedError": "❌ An error occurred while processing the command!",
@@ -83,6 +89,7 @@
     "userBetsSame": "❌ You cannot place a bet equal to the previous one!",
     "userCanOnlyUpBet": "❌ You can only increase your bet!",
     "userDontHaveActiveBets": "❌ You have no active bets on this event.",
+    "userDontHaveProfile": "🚫 The user does not have a profile!",
     "userDontHaveReviews": "❌ **{{username}}** has no reviews yet.",
     "userIsBot": "🚫 You cannot use this command on a bot!",
     "userNotRegistered": "⚠️ The user has not been registered.",
@@ -98,6 +105,7 @@
     "achievementNotIssued": "Not issued",
     "achievementTitle": "Achievement: {{achievement}}",
     "achievementUpdated": "✅ Achievement **{{name}}** updated!",
+    "addedToList": "✅ Player **{{username}}** added to the {{type}} list as {{role}}.",
     "allowed": "allowed",
     "betAccepted": "✅ **Bet accepted!** \n\n eventId #{{ eventId }} | <@{{userId}}> - {{nickname}} | {{amount}} {{server}} | {{target}}",
     "betAcceptedUser": "✅ **Your bet on {{target}} for {{amount}} has been accepted!**",
@@ -124,17 +132,21 @@
     "entryUpdatedInCodex": "✅ Codex entry updated!",
     "eventCreated": "✅ Event created! Button added.",
     "forbidden": "forbidden",
+    "inList": "📋 **{{username}}** is in the {{type}} list as {{role}}.",
     "languageUpdated": "Language changed",
+    "movedToList": "🔄 Player moved to the {{type}} list as {{role}}.",
     "negativeReviewsCountInfo": "**{{index}}.** <@{{userId}}> - **{{negativeReviews}}** negative reviews out of {{totalReviews}}\n",
     "nickname": "Nickname",
     "noBets": "🎲 **{{eventName}}**\n📅 **Bets are open from {{startTime}} to {{endTime}}**\n\n❌ **No bets yet.**",
     "noBotsInDB": "✅ No bots found in the database.",
     "noRaids": "⚠ No raids have been created yet. Please create the first raid.",
     "noSellersWithRating": "❌ No sellers with a rating yet.",
+    "notInList": "ℹ️ **{{username}}** is not in your list.",
     "pageFooter": "Page {{page}} of {{totalPages}}",
     "raidList": "📋 Available raid list:",
     "rankInfoMessage": ":point_right: **{{username}} - {{userRole}}**\n:chart_with_upwards_trend: Rating: {{rating}}\n:white_check_mark: Positive reviews: {{positiveReviews}}\n:x: Negative reviews: {{negativeReviews}}\nLast positive review: {{lastPositiveReview}}\nLast negative review: {{lastNegativeReview}}",
     "receivedReview": "**You received a {{type}} review from {{reviewer}}!**",
+    "removedFromList": "✅ Player **{{username}}** removed from the list.",
     "resetStats": "🔄 All statistics have been reset.",
     "reviewNegative": "negative",
     "reviewNotificationsDisabled": "🔕 **Review notifications disabled!**",
@@ -170,5 +182,63 @@
     "userResetStats": "🔄 **{{username}}**'s statistics have been reset.",
     "votingCooldown": "✅ Voting cooldown is **{{status}}**.",
     "winnings": "Winnings"
+  },"lists": {
+  "whitelist": "white",
+  "blacklist": "black"
+},
+  "roles": {
+    "driver": "driver",
+    "buyer": "buyer"
+  },
+  "profile": {
+    "full": "📜 **Profile of {{username}}**\n\n:peacock: **Name:** {{name}}\n🏅 **Role:** {{role}}\n⏳ **Prime time:** {{primeStart}} - {{primeEnd}}\n⚔ **Raid experience:** {{raidExperience}}\n💰 **Sales experience:** {{salesExperience}}\n\n✅ **In whitelist (driver):** {{whitelistDrivers}}\n✅ **In whitelist (buyer):** {{whitelistBuyers}}\n❌ **In blacklist (driver):** {{blacklistDrivers}}\n❌ **In blacklist (buyer):** {{blacklistBuyers}}\n📣 **Subscribers:** {{subscribers}}",
+    "notSpecified": "Not specified"
+  },
+  "market": {
+    "noLots": "❌ No lots available.",
+    "pageFooter": "Page {{page}} of {{totalPages}}",
+    "currencyPer1k": "1000 gold",
+    "delivery": {
+      "auction": "Auction",
+      "mail": "Mail",
+      "both": "Auction and Mail"
+    },
+    "lotDeleted": "✅ Lot successfully deleted!",
+    "lotInfo": "**{{server}}**\nAvailable: {{goldAmount}}\nCost: {{currency}} - {{price}}₽\n({{delivery}})",
+    "lotCreated": "Lot created",
+    "lotCreateFailed": "An error occurred while creating the lot",
+    "title": "📦 Marketplace",
+    "embedDescription": "List of available lots for sale.",
+    "lotFrom": "Lot from {{seller}}",
+    "goldAmount": "Gold amount",
+    "pricePerThousand": "Price per 1000: {{value}}",
+    "minOrder": "Minimum order",
+    "server": "Server",
+    "method": "Delivery method",
+    "orderDone": "✅ Deal successfully completed.",
+    "orderRejected": "❌ Deal rejected.",
+    "orderDoneBuyer": "✅ Your gold purchase request has been fulfilled!",
+    "orderRejectBuyer": "❌ The seller rejected your purchase request.",
+    "status": {
+      "done": "✅ Completed",
+      "reject": "❌ Rejected"
+    },
+    "methods": {
+      "auction": "Auction",
+      "mail": "Mail",
+      "both": "Auction and Mail"
+    },
+    "sellerMessage": "💸 You received a **purchase request** from <@{{userId}}> for **{{goldAmount}} gold** ({{totalPrice}} RUB)\n\n💬 Comment: {{comment}}",
+    "requestSent": "✅ Request sent to the seller!",
+    "filter_select_placeholder": "Select a filter...",
+    "filters": {
+      "kratos": "Server: Kratos",
+      "alderan": "Server: Alderan",
+      "both": "Server: Kratos and Alderan",
+      "auction": "Deal type: Auction",
+      "mail": "Deal type: Mail",
+      "reset": "Reset filters"
+    },
+    "lotListItem": "**{{goldAmount}} gold** for **1000 / {{price}}₽** ({{server}}, {{delivery}})"
   }
 }

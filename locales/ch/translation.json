@@ -2,6 +2,7 @@
   "buttons": {
     "accept": "✅ 接受",
     "back": "⬅️ 返回",
+    "buyLot": "🛒 购买 {{goldAmount}}",
     "chooseBetServer": "选择您的服务器",
     "chooseBetTarget": "选择投注目标",
     "createBetAmountField": "输入投注金额（最低200）",
@@ -29,6 +30,7 @@
     "achievementAlreadyExists": "❌ 此名称的成就已存在。",
     "achievementIconSaveFailed": "❌ 保存图标时出错。",
     "achievementNotFound": "❌ 成就 **{{achievement}}** 未找到！请确保它存在。",
+    "alreadyInList": "🚫 玩家已在 {{type}} 列表中！",
     "attachmentMustBePng": "❌ 请附上 PNG 图片。",
     "betAlreadyAccepted": "⚠️ 此投注已被接受。",
     "betAlreadyExist": "投注已创建！",
@@ -40,6 +42,7 @@
     "blockedReceiver": "🚫 此用户无法接收评论。",
     "blockedReviewer": "🚫 您无法提交评论。",
     "buttonsTimeout": "按钮使用时间已过期。请重新执行命令。",
+    "cannotSelfAssign": "🚫 无法将自己分配给自己。",
     "categoryNotFound": "❌ 未找到类别！",
     "channelDoesntChoose": "❌ 错误：您未指定频道！",
     "channelMustBeTextType": "❌ 请输入有效的文本频道！",
@@ -57,6 +60,7 @@
     "incorrectId": "❌ 错误：无效的评论ID或页面。",
     "incorrectMember": "❌ 错误：未找到用户或输入错误。",
     "incorrectServerName": "⚠ 错误：服务器名称必须是“克拉托斯”或“阿尔德兰”。",
+    "lotNotFound": "❌ 未找到或已删除该拍卖品。",
     "messageNotFound": "⚠ 频道：{{channelId}} 未找到消息：{{messageId}}",
     "mustSelectCategory": "🚫 您必须选择**类别**，而不是普通频道！",
     "noBetEventExist": "❌ 事件不存在或已结束。",
@@ -65,6 +69,7 @@
     "noMentions": "❌ 消息中没有提及任何用户！",
     "noWinners": "❌ 此事件中没有获胜者。",
     "notAdmin": "🚫 您没有管理员权限来执行此命令。",
+    "notInList": "🚫 玩家 **{{username}}** 不在您的列表中。",
     "raidNotFound": "🚫 突袭 '{{raidName}}' 未找到！",
     "raidNotLinked": "🚫 订阅此突袭时发生错误。请联系管理员。",
     "reviewCooldown": "⏳ 您最近已提交过评论。请 **{{time}} 分钟** 后再试。",
@@ -75,6 +80,7 @@
     "selfReview": "❌ 您无法为自己提交评论。",
     "selfSubscription": "🚫 您不能对自己使用此命令。",
     "sendMessageError": "发送消息至频道出错：{{error}}，频道ID：{{channelId}}",
+    "setCorrectGoldAmount": "❌ 请输入正确的金币数量。",
     "subscriptionBlocked": "🚫 您被禁止订阅卖家。",
     "subscriptionTempBlocked": "🚫 用户被禁止订阅 {{hours}} 小时。",
     "unexpectedError": "❌ 处理命令时发生错误！",
@@ -83,6 +89,7 @@
     "userBetsSame": "❌ 您不能下注与之前相同的金额！",
     "userCanOnlyUpBet": "❌ 您只能增加投注金额！",
     "userDontHaveActiveBets": "❌ 您没有此事件的有效投注。",
+    "userDontHaveProfile": "🚫 用户没有个人资料！",
     "userDontHaveReviews": "❌ **{{username}}** 目前没有评价。",
     "userIsBot": "🚫 您无法对机器人使用此命令！",
     "userNotRegistered": "⚠️ 用户尚未注册。",
@@ -98,6 +105,7 @@
     "achievementNotIssued": "未颁发",
     "achievementTitle": "成就: {{achievement}}",
     "achievementUpdated": "✅ 成就 **{{name}}** 已更新！",
+    "addedToList": "✅ 玩家 **{{username}}** 已添加到 {{type}} 列表中，身份为 {{role}}。",
     "allowed": "允许",
     "betAccepted": "✅ **投注已接受！**\n\n eventId #{{ eventId }} | <@{{userId}}> - {{nickname}} | {{amount}} {{server}} | {{target}}",
     "betAcceptedUser": "✅ **您的投注 **{{amount}}** 在 **{{target}}** 处已接受！**",
@@ -124,17 +132,21 @@
     "entryUpdatedInCodex": "✅ 典籍记录已更新！",
     "eventCreated": "✅ 事件已创建！按钮已添加。",
     "forbidden": "禁止",
+    "inList": "📋 **{{username}}** 在 {{type}} 列表中，身份为 {{role}}。",
     "languageUpdated": "语言已更改",
+    "movedToList": "🔄 玩家已移动到 {{type}} 列表中，身份为 {{role}}。",
     "negativeReviewsCountInfo": "**{{index}}.** <@{{userId}}> - **{{negativeReviews}}** 个负面评价，共 {{totalReviews}} 个评价\n",
     "nickname": "昵称",
     "noBets": "🎲 **{{eventName}}**\n📅 **投注开放时间：{{startTime}} - {{endTime}}**\n\n❌ **尚无投注。**",
     "noBotsInDB": "✅ 数据库中没有机器人。",
     "noRaids": "⚠ 尚未创建任何突袭。请创建第一个突袭。",
     "noSellersWithRating": "❌ 目前没有评分的卖家。",
+    "notInList": "ℹ️ **{{username}}** 不在您的列表中。",
     "pageFooter": "第 {{page}} 页，共 {{totalPages}} 页",
     "raidList": "📋 可用的突袭列表：",
     "rankInfoMessage": ":point_right: **{{username}} - {{userRole}}**\n:chart_with_upwards_trend: 评分: {{rating}}\n:white_check_mark: 正面评价: {{positiveReviews}}\n:x: 负面评价: {{negativeReviews}}\n最近的正面评价: {{lastPositiveReview}}\n最近的负面评价: {{lastNegativeReview}}",
     "receivedReview": "**您收到来自 {{reviewer}} 的 {{type}} 评价！**",
+    "removedFromList": "✅ 玩家 **{{username}}** 已从列表中移除。",
     "resetStats": "🔄 所有统计数据已重置。",
     "reviewNegative": "负面",
     "reviewNotificationsDisabled": "🔕 **评价通知已关闭！**",
@@ -170,5 +182,64 @@
     "userResetStats": "🔄 **{{username}}** 的统计数据已重置。",
     "votingCooldown": "✅ 投票冷却 **{{status}}**。",
     "winnings": "奖金"
+  },
+  "lists": {
+    "whitelist": "白名单",
+    "blacklist": "黑名单"
+  },
+  "roles": {
+    "driver": "司机",
+    "buyer": "买家"
+  },
+  "profile": {
+    "full": "📜 **{{username}} 的个人资料**\n\n:peacock: **姓名:** {{name}}\n🏅 **角色:** {{role}}\n⏳ **活跃时间:** {{primeStart}} - {{primeEnd}}\n⚔ **团队经验:** {{raidExperience}}\n💰 **销售经验:** {{salesExperience}}\n\n✅ **在白名单 (司机):** {{whitelistDrivers}}\n✅ **在白名单 (买家):** {{whitelistBuyers}}\n❌ **在黑名单 (司机):** {{blacklistDrivers}}\n❌ **在黑名单 (买家):** {{blacklistBuyers}}\n📣 **订阅者:** {{subscribers}}",
+    "notSpecified": "未指定"
+  },
+  "market": {
+    "noLots": "❌ 暂无拍卖品。",
+    "pageFooter": "第 {{page}} 页，共 {{totalPages}} 页",
+    "currencyPer1k": "1000 金币",
+    "delivery": {
+      "auction": "拍卖行",
+      "mail": "邮件",
+      "both": "拍卖行和邮件"
+    },
+    "lotDeleted": "✅ 拍卖品成功删除！",
+    "lotInfo": "**{{server}}**\n库存：{{goldAmount}}\n价格：{{currency}} - {{price}}₽\n({{delivery}})",
+    "lotCreated": "拍卖品已创建",
+    "lotCreateFailed": "创建拍卖品时出错",
+    "title": "📦 市场",
+    "embedDescription": "可供出售的拍卖品列表。",
+    "lotFrom": "来自 {{seller}} 的拍卖品",
+    "goldAmount": "金币数量",
+    "pricePerThousand": "每1000金币价格: {{value}}",
+    "minOrder": "最低订单量",
+    "server": "服务器",
+    "method": "交付方式",
+    "orderDone": "✅ 交易成功完成。",
+    "orderRejected": "❌ 交易被拒绝。",
+    "orderDoneBuyer": "✅ 您的金币购买请求已完成！",
+    "orderRejectBuyer": "❌ 卖家拒绝了您的购买请求。",
+    "status": {
+      "done": "✅ 已完成",
+      "reject": "❌ 已拒绝"
+    },
+    "methods": {
+      "auction": "拍卖行",
+      "mail": "邮件",
+      "both": "拍卖行和邮件"
+    },
+    "sellerMessage": "💸 您收到来自 <@{{userId}}> 的**购买请求**，数量为 **{{goldAmount}} 金币**（{{totalPrice}} 卢布）\n\n💬 评论: {{comment}}",
+    "requestSent": "✅ 请求已发送给卖家！",
+    "filter_select_placeholder": "请选择筛选条件...",
+    "filters": {
+      "kratos": "服务器: 克拉托斯",
+      "alderan": "服务器: 阿尔德兰",
+      "both": "服务器: 克拉托斯和阿尔德兰",
+      "auction": "交易类型: 拍卖行",
+      "mail": "交易类型: 邮件",
+      "reset": "重置筛选"
+    },
+    "lotListItem": "**{{goldAmount}} 金币** 价格 **1000 / {{price}}₽** ({{server}}, {{delivery}})"
   }
 }
