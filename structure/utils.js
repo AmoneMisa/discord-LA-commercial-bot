@@ -363,3 +363,9 @@ export async function getMarketLot(lotId) {
 
     return result.rows[0];
 }
+
+export function isValidTimeFormat(time) {
+    if (!time) return false;
+    const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
+    return timeRegex.test(time);
+}

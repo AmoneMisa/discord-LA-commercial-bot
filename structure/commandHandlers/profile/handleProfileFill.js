@@ -1,5 +1,6 @@
 import {MessageFlags} from "discord.js";
 import {saveProfileToDB} from "../../../scrapping/parser.js";
+import {isValidTimeFormat, translatedMessage} from "../../utils.js";
 
 /**
  * Handles the process of filling out a user profile based on the provided interaction data.
@@ -12,11 +13,11 @@ export default async function handleProfileFill(interaction) {
 
     const userId = interaction.user.id;
     const name = interaction.options.getString('name') || null;
-    const server = interaction.options.getString('server') || "кратос";
+    const server = interaction.options.getString('server') || "kratos";
     const mainNickname = interaction.options.getString('main_nickname').toLowerCase();
     const role = interaction.options.getString('role');
-    const primeStart = interaction.options.getString('prime_start') || null;
-    const primeEnd = interaction.options.getString('prime_end') || null;
+    let primeStart = interaction.options.getString('prime_start') || null;
+    let primeEnd = interaction.options.getString('prime_end') || null;
 
     let result = await pool.query(`SELECT COUNT(*)
                                    FROM profiles
@@ -29,17 +30,30 @@ export default async function handleProfileFill(interaction) {
         });
     }
 
+    if (!mainNickname) {
+        await interaction.editReply({content: translatedMessage(interaction, "errors.entryAdditionFailed")}, {
+            flags: MessageFlags.Ephemeral})
+        return;
+    }
+
+    if (primeStart && !isValidTimeFormat(primeStart)) {
+        primeStart = null;
+    }
+
+    if (primeEnd && !isValidTimeFormat(primeEnd)) {
+        primeEnd = null;
+    }
+
     try {
-        if (mainNickname) {
-            await saveProfileToDB({
-                userId,
-                name,
-                mainNickname,
-                role,
-                primeStart,
-                primeEnd,
-                server});
-        }
+        await saveProfileToDB({
+            userId,
+            name,
+            mainNickname,
+            role,
+            primeStart,
+            primeEnd,
+            server
+        });
 
         await interaction.editReply({content: '✅ Анкета успешно заполнена!', flags: MessageFlags.Ephemeral});
     } catch (err) {
