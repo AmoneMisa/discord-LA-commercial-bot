@@ -192,7 +192,7 @@
     "buyer": "买家"
   },
   "profile": {
-    "full": "📜 **{{username}} 的个人资料**\n\n:peacock: **姓名:** {{name}}\n🏅 **角色:** {{role}}\n⏳ **活跃时间:** {{primeStart}} - {{primeEnd}}\n⚔ **团队经验:** {{raidExperience}}\n💰 **销售经验:** {{salesExperience}}\n\n✅ **在白名单 (司机):** {{whitelistDrivers}}\n✅ **在白名单 (买家):** {{whitelistBuyers}}\n❌ **在黑名单 (司机):** {{blacklistDrivers}}\n❌ **在黑名单 (买家):** {{blacklistBuyers}}\n📣 **订阅者:** {{subscribers}}",
+    "full": "📜 **{{username}} 的个人资料**\n\n:peacock: **姓名:** {{name}}\n🏅 **角色:** {{role}}\n⏳ **活跃时间:** {{primeStart}} - {{primeEnd}}\n💰 **销售经验:** {{salesExperience}}\n\n✅ **在白名单 (司机):** {{whitelistDrivers}}\n✅ **在白名单 (买家):** {{whitelistBuyers}}\n❌ **在黑名单 (司机):** {{blacklistDrivers}}\n❌ **在黑名单 (买家):** {{blacklistBuyers}}\n📣 **订阅者:** {{subscribers}}",
     "notSpecified": "未指定"
   },
   "market": {

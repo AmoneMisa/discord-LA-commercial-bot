@@ -191,7 +191,7 @@
     "buyer": "buyer"
   },
   "profile": {
-    "full": "📜 **Profile of {{username}}**\n\n:peacock: **Name:** {{name}}\n🏅 **Role:** {{role}}\n⏳ **Prime time:** {{primeStart}} - {{primeEnd}}\n⚔ **Raid experience:** {{raidExperience}}\n💰 **Sales experience:** {{salesExperience}}\n\n✅ **In whitelist (driver):** {{whitelistDrivers}}\n✅ **In whitelist (buyer):** {{whitelistBuyers}}\n❌ **In blacklist (driver):** {{blacklistDrivers}}\n❌ **In blacklist (buyer):** {{blacklistBuyers}}\n📣 **Subscribers:** {{subscribers}}",
+    "full": "📜 **Profile of {{username}}**\n\n:peacock: **Name:** {{name}}\n🏅 **Role:** {{role}}\n⏳ **Prime time:** {{primeStart}} - {{primeEnd}}\n💰 **Sales experience:** {{salesExperience}}\n\n✅ **In whitelist (driver):** {{whitelistDrivers}}\n✅ **In whitelist (buyer):** {{whitelistBuyers}}\n❌ **In blacklist (driver):** {{blacklistDrivers}}\n❌ **In blacklist (buyer):** {{blacklistBuyers}}\n📣 **Subscribers:** {{subscribers}}",
     "notSpecified": "Not specified"
   },
   "market": {

@@ -72,15 +72,18 @@ export default async function handleProfileView(interaction, isContextMenu = fal
         options["subscribers"] = subscriptions.rows[0].count;
     }
 
+    const notSpecifiedMessage = await translatedMessage(interaction, "profile.notSpecified");
+
     if (characters.rows.length) {
         const data = profile.rows[0];
         await sendCharacterList(interaction,
             await translatedMessage(interaction, "profile.full", {
                 username: interaction.options.getUser('user').username,
-                name: data.name || await translatedMessage(interaction, "profile.notSpecified"),
-                role: data.role || await translatedMessage(interaction, "profile.notSpecified"),
-                primeStart: data.prime_start || await translatedMessage(interaction, "profile.notSpecified"),
-                primeEnd: data.prime_end || await translatedMessage(interaction, "profile.notSpecified"),
+                name: data.name || notSpecifiedMessage,
+                role: data.role || notSpecifiedMessage,
+                salesExperience: data.sales_experience || notSpecifiedMessage,
+                primeStart: data.prime_start || notSpecifiedMessage,
+                primeEnd: data.prime_end || notSpecifiedMessage,
                 ...options
             }),
             characters.rows,
