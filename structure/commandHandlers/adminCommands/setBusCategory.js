@@ -5,7 +5,6 @@ import {translatedMessage} from "../../utils.js";
  * Sets a bus category in the system, ensuring it is a valid category channel.
  *
  * @param {Object} interaction - The interaction object from Discord, used to handle user commands and replies.
- * @param {Object} pool - The database connection pool for executing queries to store the bus category.
  * @return {Promise<void>} A promise that resolves when the operation is complete.
  */
 export default async function setBusCategory(interaction) {
