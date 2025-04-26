@@ -146,12 +146,13 @@ export async function saveProfileToDB({
     role,
     primeStart,
     primeEnd,
-    raidExperience,
     salesExperience,
     server
 }) {
     const profileData = await parseLostArkProfile(mainNickname);
-    if (!profileData) return;
+    if (!profileData) {
+        return;
+    }
 
     try {
         let mainCharResult = await pool.query(`SELECT COUNT(*)
@@ -165,21 +166,33 @@ export async function saveProfileToDB({
                                   role             = COALESCE($3, role),
                                   prime_start      = COALESCE($4, prime_start),
                                   prime_end        = COALESCE($5, prime_end),
-                                  raid_experience  = COALESCE($6, raid_experience),
                                   sales_experience = COALESCE($7, sales_experience),
                                   server           = COALESCE($8, 'server')
                               WHERE user_id = $9`,
-                [name, mainNickname, role, primeStart, primeEnd, raidExperience, salesExperience, server, userId]);
+                [name, mainNickname, role, primeStart, primeEnd,  salesExperience, server, userId]);
         } else {
             await pool.query(`
-                INSERT INTO profiles (user_id, name, main_nickname, role, prime_start, prime_end, raid_experience,
-                                      sales_experience, server)
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-            `, [userId, name, mainNickname, role, primeStart, primeEnd, raidExperience, salesExperience, server]);
+                INSERT INTO profiles (user_id, name, main_nickname, role, prime_start, prime_end, sales_experience, server)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            `, [userId, name, mainNickname, role, primeStart, primeEnd, salesExperience, server]);
         }
 
         const profileId = (await pool.query('SELECT id FROM profiles WHERE main_nickname = $1', [mainNickname])).rows[0].id;
 
+        const dbCharacters = await pool.query(
+            `SELECT id, char_name FROM characters WHERE profile_id = $1`,
+            [profileId]
+        );
+        const inputCharacterNames = profileData.highLevelChars.map(c => c.name);
+
+        for (const dbChar of dbCharacters.rows) {
+            if (!inputCharacterNames.includes(dbChar.char_name)) {
+                await pool.query(
+                    `DELETE FROM characters WHERE id = $1`,
+                    [dbChar.id]
+                );
+            }
+        }
         // Вставляем персонажей
         for (const char of profileData.highLevelChars) {
             let result = await pool.query(`SELECT *
