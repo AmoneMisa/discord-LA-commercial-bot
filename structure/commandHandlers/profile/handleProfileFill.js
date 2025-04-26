@@ -9,7 +9,7 @@ import {isValidTimeFormat, translatedMessage} from "../../utils.js";
  * @returns {Promise<void>} Resolves when the process is complete, either by saving the profile or responding to the user.
  */
 export default async function handleProfileFill(interaction) {
-    await interaction.deferReply({flags: MessageFlags.Ephemeral});
+    await interaction.deferReply();
 
     const userId = interaction.user.id;
     const name = interaction.options.getString('name') || null;
@@ -57,7 +57,7 @@ export default async function handleProfileFill(interaction) {
             salesExperience
         });
 
-        await interaction.deferReply({content: '✅ Анкета успешно заполнена!', flags: MessageFlags.Ephemeral});
+        await interaction.editReply({content: '✅ Анкета успешно заполнена!', flags: MessageFlags.Ephemeral});
     } catch (err) {
         if (err.code === '23505') { // Код ошибки уникальности в PostgreSQL
             await interaction.editReply({

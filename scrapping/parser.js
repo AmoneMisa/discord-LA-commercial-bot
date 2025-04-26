@@ -166,9 +166,9 @@ export async function saveProfileToDB({
                                   role             = COALESCE($3, role),
                                   prime_start      = COALESCE($4, prime_start),
                                   prime_end        = COALESCE($5, prime_end),
-                                  sales_experience = COALESCE($7, sales_experience),
-                                  server           = COALESCE($8, 'server')
-                              WHERE user_id = $9`,
+                                  sales_experience = COALESCE($6, sales_experience),
+                                  server           = COALESCE($7, 'server')
+                              WHERE user_id = $8`,
                 [name, mainNickname, role, primeStart, primeEnd,  salesExperience, server, userId]);
         } else {
             await pool.query(`
