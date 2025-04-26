@@ -8,12 +8,11 @@ import {getMember, translatedMessage} from "../../utils.js";
  * and prevents duplicates. Triggered by a Discord interaction.
  *
  * @param {Object} interaction - The Discord interaction object representing the user's action.
- * @param {boolean} [isContextMenu=false] - Indicates if the method is triggered via a context menu interaction.
- * @param {boolean} [isMessageContentMenuCommand=false] - Indicates if the method is triggered via a message content menu command.
+ * @param {String} selectedRaid
  * @return {Promise<Object>} Resolves with the interaction reply, indicating the subscription status.
  *                           Returns an error message in case of issues or restrictions.
  */
-export default async function subscribeToBuy(interaction, isContextMenu = false, isMessageContentMenuCommand = false) {
+export default async function subscribeToBuy(interaction, selectedRaid) {
     const categoryResult = await pool.query('SELECT value FROM settings WHERE key = $1', ['bus_category']);
 
     if (categoryResult.rows.length === 0) {
@@ -21,7 +20,7 @@ export default async function subscribeToBuy(interaction, isContextMenu = false,
         return interaction.reply("Администратор не выбрал категорию для отслеживания рейдов. Пожалуйста, свяжитесь с ним.");
     }
 
-    let seller = getMember(interaction, isContextMenu, isMessageContentMenuCommand, 'user');
+    let seller = getMember(interaction, false, false, 'user');
 
     if (seller.bot) {
         return await interaction.reply({
@@ -38,7 +37,6 @@ export default async function subscribeToBuy(interaction, isContextMenu = false,
     }
 
     const buyerId = interaction.user.id;
-    const raid = interaction.options.getString('raid');
 
     const blockedBuyer = await pool.query('SELECT * FROM blocked_reviewers WHERE user_id = $1', [buyerId]);
     if (blockedBuyer.rowCount > 0) {
@@ -48,7 +46,7 @@ export default async function subscribeToBuy(interaction, isContextMenu = false,
         });
     }
 
-    const raidData = await pool.query('SELECT id FROM raids WHERE LOWER(raid_name) = LOWER($1)', [raid]);
+    const raidData = await pool.query('SELECT id FROM raids WHERE LOWER(raid_name) = LOWER($1)', [selectedRaid]);
 
     if (!raidData) {
         console.error("raidData not found:", raidData);
@@ -58,7 +56,7 @@ export default async function subscribeToBuy(interaction, isContextMenu = false,
     const result = await pool.query('SELECT id FROM available_raids WHERE raid_id = $1', [raidData.rows[0].id]);
 
     if (result.rows.length === 0) {
-        console.error("Выбранный рейд не имеет связи с ролью. Пожалуйста, установите роль.", raid);
+        console.error("Выбранный рейд не имеет связи с ролью. Пожалуйста, установите роль.", selectedRaid);
         return await interaction.reply({
             content: await translatedMessage(interaction, "errors.raidNotLinked"),
             flags: MessageFlags.Ephemeral
@@ -82,7 +80,7 @@ export default async function subscribeToBuy(interaction, isContextMenu = false,
     }
 
     return interaction.reply({
-        content: await translatedMessage(interaction, "info.subscriptionSuccess", {sellerId: seller.id, raid}),
+        content: await translatedMessage(interaction, "info.subscriptionSuccess", {sellerId: seller.id, selectedRaid}),
         flags: MessageFlags.Ephemeral
     });
 }

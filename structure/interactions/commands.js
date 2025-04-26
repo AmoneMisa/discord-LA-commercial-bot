@@ -33,6 +33,7 @@ import listLots from "../commandHandlers/market/listLots.js";
 import addToList from "../commandHandlers/lists/addToList.js";
 import {removeFromList} from "../commandHandlers/lists/removeFromList.js";
 import checkListStatus from "../commandHandlers/lists/checkListStatus.js";
+import showRaidSelect from "../commandHandlers/subscribe/showRaidSelect.js";
 
 dotenv.config();
 /**
@@ -102,7 +103,7 @@ export default async function (interaction) {
     if (process.env.SUBSCRIPTION_MODULE) {
         if (interaction.commandName === 'subscribe') {
             if (interaction.options.getSubcommand() === 'to_buy') {
-                await subscribeToBuy(interaction);
+                await showRaidSelect(interaction);
             }
 
             if (interaction.options.getSubcommand() === 'list') {
@@ -116,10 +117,6 @@ export default async function (interaction) {
             if (interaction.options.getSubcommand() === 'send_notification') {
                 await manualSendNotificationsToBuyers(interaction);
             }
-        }
-
-        if (interaction.commandName === "Подписаться на продавца") {
-            await subscribeToBuy(interaction,true, interaction.isMessageContextMenuCommand());
         }
     }
 

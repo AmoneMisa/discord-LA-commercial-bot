@@ -181,7 +181,9 @@
     "userDontHaveReviews": "❌ 用户 <@{{memberId}}> 目前没有评论。",
     "userResetStats": "🔄 **{{username}}** 的统计数据已重置。",
     "votingCooldown": "✅ 投票冷却 **{{status}}**。",
-    "winnings": "奖金"
+    "winnings": "奖金",
+    "raidsSelectPlaceholder": "可订阅的突袭列表",
+    "selectRaid": "请选择要订阅的突袭"
   },
   "lists": {
     "whitelist": "白名单",

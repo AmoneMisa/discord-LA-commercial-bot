@@ -12,17 +12,7 @@ export default [
                     option.setName('user')
                         .setDescription('Выберите продавца')
                         .setRequired(true)
-                ).addStringOption(option =>
-                option.setName('raid')
-                    .setDescription('Выберите рейд')
-                    .setRequired(true)
-                    .addChoices({name: 'Бехемос', value: 'Бехемос'},
-                        {name: 'Ехидна', value: 'Ехидна'},
-                        {name: 'Эгир', value: 'Эгир'},
-                        {name: 'Аврельсуд', value: 'Аврельсуд'},
-                        {name: 'Камен 2.0', value: 'Камен 2.0'}
-                    )
-            )
+                )
         ).addSubcommand(subcommand =>
         subcommand.setName('list')
             .setDescription('Просмотр списка ваших фаворитов'))

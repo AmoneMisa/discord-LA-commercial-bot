@@ -181,7 +181,9 @@
     "userDontHaveReviews": "❌ The user <@{{memberId}}> has no reviews yet.",
     "userResetStats": "🔄 **{{username}}**'s statistics have been reset.",
     "votingCooldown": "✅ Voting cooldown is **{{status}}**.",
-    "winnings": "Winnings"
+    "winnings": "Winnings",
+    "raidsSelectPlaceholder": "Available raids for subscription",
+    "selectRaid": "Select a raid to subscribe"
   },"lists": {
   "whitelist": "white",
   "blacklist": "black"
