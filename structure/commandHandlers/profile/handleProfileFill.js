@@ -57,7 +57,7 @@ export default async function handleProfileFill(interaction) {
             salesExperience
         });
 
-        await interaction.editReply({content: '✅ Анкета успешно заполнена!', flags: MessageFlags.Ephemeral});
+        await interaction.deferReply({content: '✅ Анкета успешно заполнена!', flags: MessageFlags.Ephemeral});
     } catch (err) {
         if (err.code === '23505') { // Код ошибки уникальности в PostgreSQL
             await interaction.editReply({
