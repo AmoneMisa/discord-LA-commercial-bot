@@ -15,6 +15,8 @@ import handleSendRaidResponseBuy from "../commandHandlers/responses/handleSendRa
 import handleBetActionButton from "../commandHandlers/bets/handleBetActionButton.js";
 import handleBetPagination from "../commandHandlers/bets/handleBetPagination.js";
 import handleOrderActions from "../commandHandlers/market/handleOrderActions.js";
+import handleDeleteLot from "../commandHandlers/market/handleDeleteLot.js";
+import handleBuyButton from "../commandHandlers/market/handleBuyButton.js";
 
 /**
  * Handles various types of button interactions in a Discord bot and delegates
@@ -120,5 +122,13 @@ export default async function (interaction) {
 
     if (interaction.customId.startsWith("accept_order_") || interaction.customId.startsWith("reject_order_")) {
         await handleOrderActions(interaction);
+    }
+
+    if (interaction.customId.startsWith("market_admin.delete")) {
+        await handleDeleteLot(interaction);
+    }
+
+    if (interaction.customId.startsWith("buy_lot.")) {
+        await handleBuyButton(interaction);
     }
 }

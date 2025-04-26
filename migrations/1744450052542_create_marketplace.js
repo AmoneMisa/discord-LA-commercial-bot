@@ -89,5 +89,4 @@ export const down = (pgm) => {
     pgm.dropTable('currency_rates');
     pgm.dropTable('marketplace_requests');
     pgm.dropTable('marketplace_lots');
-    pgm.dropTable('marketplace_sellers');
 };

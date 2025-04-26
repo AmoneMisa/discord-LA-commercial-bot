@@ -29,6 +29,7 @@ import updateBet from "../commandHandlers/bets/updateBet.js";
 import updateBetModal from "../commandHandlers/bets/updateBetModal.js";
 import userChangeLanguage from "../commandHandlers/common/userChangeLanguage.js";
 import dotenv from "dotenv";
+import listLots from "../commandHandlers/market/listLots.js";
 
 dotenv.config();
 /**
@@ -194,6 +195,12 @@ export default async function (interaction) {
     if (process.env.CODEX_MODULE) {
         if (interaction.commandName === 'get_codex') {
             await handleGetCodex(interaction);
+        }
+    }
+
+    if (process.env.MARKET_MODULE) {
+        if (interaction.commandName === 'market') {
+            await listLots(interaction);
         }
     }
 }

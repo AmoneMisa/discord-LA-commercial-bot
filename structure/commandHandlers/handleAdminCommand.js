@@ -62,6 +62,10 @@ const adminCommandMap = {
     "adm_event_unregister": "unregisterEvent",
     "adm_event_set_channel": "setEventChannel",
 
+    //Маркет
+    "adm_market_create": "createLot",
+    "adm_market_my": "ownLotsList",
+
     // Включение и выключение модулей
     "adm_modules_toggle": "toggleModule"
 };

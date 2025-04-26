@@ -1,6 +1,9 @@
-import { ModalBuilder, TextInputBuilder, ActionRowBuilder, TextInputStyle } from "discord.js";
+import {ModalBuilder, TextInputBuilder, ActionRowBuilder, TextInputStyle} from "discord.js";
+import {getMarketLot} from "../../utils.js";
 
 export default async function (interaction, lotId) {
+    const lot = await getMarketLot(lotId);
+    console.log("lot", lot)
     const modal = new ModalBuilder()
         .setCustomId(`buy_lot_modal_${lotId}`)
         .setTitle("🛒 Покупка лота");
@@ -9,6 +12,7 @@ export default async function (interaction, lotId) {
         .setCustomId("buy_amount")
         .setLabel("Введите количество золота")
         .setStyle(TextInputStyle.Short)
+        .setValue(lot.min_order)
         .setRequired(true);
 
     const commentInput = new TextInputBuilder()

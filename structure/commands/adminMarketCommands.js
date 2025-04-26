@@ -1,7 +1,8 @@
 import {SlashCommandBuilder} from "discord.js";
 
-export default new SlashCommandBuilder()
-    .setName("market_admin")
+export default [
+    new SlashCommandBuilder()
+    .setName("adm_market")
     .setDescription("⚙️ Управление лотами")
     .addSubcommand(sub =>
         sub.setName("create")
@@ -36,7 +37,7 @@ export default new SlashCommandBuilder()
                     .setDescription("Сервер продажи")
                     .setRequired(true)
                     .addChoices(
-                        { name: "Кратос", value: "kratoss" },
+                        { name: "Кратос", value: "kratos" },
                         { name: "Альдеран", value: "alderan" },
                         { name: "Оба сервера", value: "both" }
                     )
@@ -46,12 +47,4 @@ export default new SlashCommandBuilder()
         sub.setName("my")
             .setDescription("📜 Посмотреть свои активные лоты")
     )
-    .addSubcommand(sub =>
-        sub.setName("delete")
-            .setDescription("🗑️ Удалить свой лот")
-            .addStringOption(opt =>
-                opt.setName("lot_id")
-                    .setDescription("ID лота для удаления")
-                    .setRequired(true)
-            )
-    )
+]

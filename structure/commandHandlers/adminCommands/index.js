@@ -38,6 +38,8 @@ import createRegistrationEvent from "./createRegistrationEvent.js";
 import setBetNotificationChannel from "./setBetNotificationChannel.js";
 import setBetPrivateChannel from "./setBetPrivateChannel.js";
 import sendBetResults from "./sendBetResults.js";
+import createLot from "../market/createLot.js";
+import ownLotsList from "../market/ownLotsList.js";
 
 export default {
     setCooldown,
@@ -79,5 +81,7 @@ export default {
     createRegistrationEvent,
     setBetNotificationChannel,
     setBetPrivateChannel,
-    sendBetResults
+    sendBetResults,
+    createLot,
+    ownLotsList
 }

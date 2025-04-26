@@ -338,9 +338,28 @@ export function parseFormattedNumber(str) {
     return parseInt(cleanedStr, 10);
 }
 
-
 export async function translatedMessage(interaction, messageCode, options = {}) {
     const userId = interaction.user.id;
     const lang = await getUserLanguage(userId);
     return i18n.t(messageCode, {lng: lang, ...options});
+}
+
+export async function createLot(lotData, userId) {
+    const { goldAmount, pricePerThousand, method, minOrder, server } = lotData;
+    const createdAt = new Date();
+
+    await pool.query(`
+        INSERT INTO marketplace_lots (seller_id, gold_amount, price_per_thousand, delivery_method, min_order, server, created_at)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
+    `, [userId, goldAmount, pricePerThousand, method, minOrder, server, createdAt]);
+
+    return true;
+}
+
+export async function getMarketLot(lotId) {
+    let result = await pool.query(`
+    SELECT * FROM marketplace_lots WHERE id = $1
+    `, [lotId]);
+
+    return result.rows[0];
 }
