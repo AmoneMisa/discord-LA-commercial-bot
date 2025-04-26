@@ -32,29 +32,6 @@ export default [
                     option.setName('prime_end')
                         .setDescription('Прайм до (формат 00:00)')
                         .setRequired(false))
-                .addStringOption(option =>
-                    option.setName('raid_experience')
-                        .setDescription('Опыт в рейдах')
-                        .setRequired(false)
-                        .setChoices({name: 'Бехемос', value: 'Бехемос'},
-                            {name: 'Ехидна', value: 'Ехидна'},
-                            {name: 'Эгир (нормал)', value: 'Эгир (нормал)'},
-                            {name: 'Эгир (хард)', value: 'Эгир (хард)'},
-                            {name: 'Аврельсуд (нормал)', value: 'Аврельсуд (нормал)'},
-                            {name: 'Аврельсуд (хард)', value: 'Аврельсуд (хард)'},
-                            {name: 'Камен 2.0 (нормал)', value: 'Камен (нормал)'},
-                            {name: 'Камен 2.0 (хард)', value: 'Камен (хард)'}))
-                .addStringOption(option =>
-                    option.setName('sales_experience')
-                        .setDescription('Опыт в продажах')
-                        .setRequired(false).setChoices({name: 'Бехемос', value: 'Бехемос'},
-                        {name: 'Ехидна', value: 'Ехидна'},
-                        {name: 'Эгир (нормал)', value: 'Эгир (нормал)'},
-                        {name: 'Эгир (хард)', value: 'Эгир (хард)'},
-                        {name: 'Аврельсуд (нормал)', value: 'Аврельсуд (нормал)'},
-                        {name: 'Аврельсуд (хард)', value: 'Аврельсуд (хард)'},
-                        {name: 'Камен 2.0 (нормал)', value: 'Камен (нормал)'},
-                        {name: 'Камен 2.0 (хард)', value: 'Камен (хард)'}))
         ).addSubcommand(subcommand =>
         subcommand.setName('edit')
             .setDescription('Редактировать анкету')
@@ -67,9 +44,7 @@ export default [
                         {name: 'Ник в оружейной (регистрозависимо)', value: 'main_nickname'},
                         {name: 'Роль (нейтрал, продавец, покупатель)', value: 'role'},
                         {name: 'Прайм с (формат 00:00)', value: 'prime_start'},
-                        {name: 'Прайм до (формат 00:00)', value: 'prime_end'},
-                        {name: 'Опыт в рейдах', value: 'raid_experience'},
-                        {name: 'Опыт в продажах', value: 'sales_experience'}
+                        {name: 'Прайм до (формат 00:00)', value: 'prime_end'}
                     ))
             .addStringOption(option =>
                 option.setName('value')

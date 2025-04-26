@@ -17,8 +17,6 @@ export default async function handleProfileFill(interaction) {
     const role = interaction.options.getString('role');
     const primeStart = interaction.options.getString('prime_start') || null;
     const primeEnd = interaction.options.getString('prime_end') || null;
-    const raidExperience = interaction.options.getString('raid_experience')?.split(',') || [];
-    const salesExperience = interaction.options.getString('sales_experience') || null;
 
     let result = await pool.query(`SELECT COUNT(*)
                                    FROM profiles
@@ -40,8 +38,6 @@ export default async function handleProfileFill(interaction) {
                 role,
                 primeStart,
                 primeEnd,
-                raidExperience,
-                salesExperience,
                 server});
         }
 
