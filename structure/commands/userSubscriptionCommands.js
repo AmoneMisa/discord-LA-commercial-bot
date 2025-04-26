@@ -16,12 +16,11 @@ export default [
                 option.setName('raid')
                     .setDescription('Выберите рейд')
                     .setRequired(true)
-                    .addChoices(
-                        {name: 'Камен 1.0', value: 'Камен 1.0'},
-                        {name: 'Бехемос', value: 'Бехемос'},
+                    .addChoices({name: 'Бехемос', value: 'Бехемос'},
                         {name: 'Ехидна', value: 'Ехидна'},
                         {name: 'Эгир', value: 'Эгир'},
-                        {name: 'Аврельсуд', value: 'Аврельсуд'}
+                        {name: 'Аврельсуд', value: 'Аврельсуд'},
+                        {name: 'Камен 2.0', value: 'Камен 2.0'}
                     )
             )
         ).addSubcommand(subcommand =>
