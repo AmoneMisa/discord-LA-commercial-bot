@@ -5,7 +5,6 @@ import {translatedMessage} from "../../utils.js";
  * Associates a specific role with a raid, storing the relationship in the database if it does not already exist.
  *
  * @param {Object} interaction - The interaction object containing user context and options.
- * @param {Object} pool - The database connection pool used for executing queries.
  * @return {Promise<Object>} A promise that resolves with the interaction reply containing the success or error message.
  */
 export default async function setRaidRole(interaction) {

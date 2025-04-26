@@ -49,6 +49,12 @@ export default async function subscribeToBuy(interaction, isContextMenu = false,
     }
 
     const raidData = await pool.query('SELECT id FROM raids WHERE LOWER(raid_name) = LOWER($1)', [raid]);
+
+    if (!raidData) {
+        console.error("raidData not found:", raidData);
+        return ;
+    }
+
     const result = await pool.query('SELECT id FROM available_raids WHERE raid_id = $1', [raidData.rows[0].id]);
 
     if (result.rows.length === 0) {
