@@ -1,17 +1,14 @@
-import { MessageFlags, ButtonBuilder, ButtonStyle, ActionRowBuilder } from 'discord.js';
-import { formatDate } from '../../utils.js';
+import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from 'discord.js';
+import {formatDate, translatedMessage} from '../../utils.js';
 import updateRatings from "../../updateRatings.js";
-import i18n from "../../../locales/i18n.js";
-import {getUserLanguage} from "../../dbUtils.js";
 
 /**
  * Fetches and displays the latest reviews for a specified user from the database.
  *
  * @param {Object} interaction - The interaction object, representing the current command or event.
- * @param {Object} pool - The database connection pool used to query the reviews.
  * @return {Promise<void>} Resolves when the interaction response has been sent, or errors if an issue occurs during execution.
  */
-export default async function viewReviews(interaction, pool) {
+export default async function viewReviews(interaction) {
     const member = interaction.options.getUser('user');
 
     const reviews = await pool.query(
@@ -20,17 +17,13 @@ export default async function viewReviews(interaction, pool) {
     );
 
     if (reviews.rows.length === 0) {
-        return interaction.reply({ content: i18n.t("errors.userDontHaveReviews", {
-                username: member.username,
-                lng: await getUserLanguage(interaction.user.id, pool)
-            }), flags: MessageFlags.Ephemeral });
+        return interaction.reply({
+            content: await translatedMessage(interaction, "errors.userDontHaveReviews", {username: member.username}),
+            flags: MessageFlags.Ephemeral
+        });
     }
 
-    let message = i18n.t("info.reviewsAboutUser", {
-        memberId: member.id,
-        page: 1,
-        lng: await getUserLanguage(interaction.user.id, pool)
-    });
+    let message = await translatedMessage(interaction, "info.reviewsAboutUser", {username: member.username});
     let buttons = new ActionRowBuilder();
 
     for (const review of reviews.rows) {
@@ -40,15 +33,12 @@ export default async function viewReviews(interaction, pool) {
         buttons.addComponents(
             new ButtonBuilder()
                 .setCustomId(`delete_review_${review.id}_${member.id}_1`)
-                .setLabel(i18n.t("buttons.delete", {
-                    index: index + 1,
-                    lng: await getUserLanguage(interaction.user.id, pool)
-                }))
+                .setLabel(await translatedMessage(interaction, "buttons.delete", {index: index + 1}))
                 .setStyle(ButtonStyle.Danger)
         );
     }
 
-    await updateRatings(pool);
-    
-    await interaction.reply({ content: message, components: [buttons], flags: MessageFlags.Ephemeral });
+    await updateRatings();
+
+    await interaction.reply({content: message, components: [buttons], flags: MessageFlags.Ephemeral});
 }

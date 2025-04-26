@@ -1,6 +1,5 @@
-import { MessageFlags } from 'discord.js';
-import i18n from "../../../locales/i18n.js";
-import {getUserLanguage} from "../../dbUtils.js";
+import {MessageFlags} from 'discord.js';
+import {translatedMessage} from "../../utils.js";
 
 /**
  * Deletes a role from the server and removes its entry from the database.
@@ -10,16 +9,16 @@ import {getUserLanguage} from "../../dbUtils.js";
  * @param {Object} guild - The guild object representing the server where the role exists.
  * @return {Promise<void>} A promise that resolves when the role is deleted and the user is informed.
  */
-export default async function deleteRole(interaction, pool, guild) {
+export default async function deleteRole(interaction, guild) {
     const name = interaction.options.getString('name');
 
     const roleData = await pool.query('SELECT * FROM roles WHERE role_name = $1', [name]);
 
     if (roleData.rows.length === 0) {
-        return interaction.reply({ content: i18n.t("errors.roleNotFound", {
-                lng: await getUserLanguage(interaction.user.id, pool),
-                name
-            }), flags: MessageFlags.Ephemeral });
+        return interaction.reply({
+            content: await translatedMessage(interaction, "errors.roleNotFound", {name}),
+            flags: MessageFlags.Ephemeral
+        });
     }
 
     const role = guild.roles.cache.get(roleData.rows[0].role_id);
@@ -27,8 +26,8 @@ export default async function deleteRole(interaction, pool, guild) {
 
     await pool.query('DELETE FROM roles WHERE role_name = $1', [name]);
 
-    await interaction.reply({ content: i18n.t("info.roleDeleted", {
-            lng: await getUserLanguage(interaction.user.id, pool),
-            name
-        }), flags: MessageFlags.Ephemeral });
+    await interaction.reply({
+        content: await translatedMessage(interaction, "info.roleDeleted", {name}),
+        flags: MessageFlags.Ephemeral
+    });
 }

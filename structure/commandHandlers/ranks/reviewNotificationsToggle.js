@@ -1,6 +1,5 @@
 import {MessageFlags} from "discord.js";
-import i18n from "../../../locales/i18n.js";
-import {getUserLanguage} from "../../dbUtils.js";
+import {translatedMessage} from "../../utils.js";
 
 /**
  * Handles the interaction to enable or disable review notifications for the user.
@@ -9,10 +8,9 @@ import {getUserLanguage} from "../../dbUtils.js";
  * with a confirmation message indicating whether the notifications were enabled or disabled.
  *
  * @param {Object} interaction - The interaction object containing user input and context.
- * @param {Object} pool - The database connection pool for executing queries.
  * @returns {Promise<Object>} A promise that resolves with a reply to the interaction.
  */
-export default async function (interaction, pool) {
+export default async function (interaction) {
     const enabled = interaction.options.getBoolean("enabled");
 
     await pool.query(
@@ -22,8 +20,8 @@ export default async function (interaction, pool) {
 
     return interaction.reply({
         content: enabled
-            ? i18n.t("info.reviewNotificationsEnabled", { lng: await getUserLanguage(interaction.user.id, pool)})
-            : i18n.t("info.reviewNotificationsDisabled", { lng: await getUserLanguage(interaction.user.id, pool)}),
+            ? await translatedMessage(interaction, "info.reviewNotificationsEnabled")
+            : await translatedMessage(interaction, "info.reviewNotificationsDisabled"),
         flags: MessageFlags.Ephemeral
     });
 }

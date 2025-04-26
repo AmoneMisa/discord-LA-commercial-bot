@@ -1,12 +1,10 @@
-import {EmbedBuilder} from "discord.js";
-
 /**
  * Retrieves the leaderboard channel ID from the settings table.
  *
  * @param {Object} pool - The database connection pool used to execute the query.
  * @return {Promise<string|null>} The leaderboard channel ID if found, or null if not present.
  */
-export async function getLeaderboardChannelId(pool) {
+export async function getLeaderboardChannelId() {
     const result = await pool.query(`SELECT value
                                      FROM settings
                                      WHERE key = 'leaderboard_channel_id'`);
@@ -20,7 +18,7 @@ export async function getLeaderboardChannelId(pool) {
  * @param {string} channelId - The ID of the channel to be set as the leaderboard channel.
  * @return {Promise<void>} A promise that resolves when the leaderboard channel ID has been successfully updated in the database.
  */
-export async function setLeaderboardChannelId(pool, channelId) {
+export async function setLeaderboardChannelId( channelId) {
     await pool.query(`UPDATE settings
                       SET value = $1
                       WHERE key = 'leaderboard_channel_id'`, [channelId]);
@@ -29,11 +27,10 @@ export async function setLeaderboardChannelId(pool, channelId) {
 /**
  * Retrieves the message ID for the leaderboard from the database.
  *
- * @param {object} pool - The database connection pool used to query the database.
  * @return {Promise<string|null>} A promise that resolves to the leaderboard message ID as a string,
  * or null if the message ID is not found.
  */
-export async function getLeaderboardMessageId(pool) {
+export async function getLeaderboardMessageId() {
     const result = await pool.query(`SELECT value
                                      FROM settings
                                      WHERE key = 'leaderboard_message_id'`);
@@ -47,7 +44,7 @@ export async function getLeaderboardMessageId(pool) {
  * @param {string} messageId - The new leaderboard message ID to be stored in the database.
  * @return {Promise<void>} A promise that resolves when the update operation is complete.
  */
-export async function setLeaderboardMessageId(pool, messageId) {
+export async function setLeaderboardMessageId( messageId) {
     await pool.query(`UPDATE settings
                       SET value = $1
                       WHERE key = 'leaderboard_message_id'`, [messageId]);
@@ -59,7 +56,7 @@ export async function setLeaderboardMessageId(pool, messageId) {
  * @param {Object} pool - The database connection pool to execute the query.
  * @return {Promise<Array>} A promise that resolves to an array of top sellers, including their user_id, rating, positive_reviews, and negative_reviews.
  */
-export async function getTopSellers(pool) {
+export async function getTopSellers() {
     const topUsers = await pool.query(
         `SELECT user_id, rating, positive_reviews, negative_reviews
          FROM users
@@ -80,7 +77,7 @@ export async function getTopSellers(pool) {
  * @param {number} id - The ID used to find the associated raid name.
  * @return {Promise<string>} A promise that resolves to the raid name as a string.
  */
-export async function getRaidName(pool, id) {
+export async function getRaidName( id) {
     let result = await pool.query(`SELECT raid_id
                                    FROM available_raids
                                    WHERE id = $1`, [id]);
@@ -95,11 +92,11 @@ export async function getRaidName(pool, id) {
  *
  * @param {Object} pool - The database connection pool to perform the query.
  * @param {number} buyerId - The ID of the buyer associated with the subscription.
- * @param {number} sellerId - The ID of the seller associated with the subscription.
+ * @param {} sellerId - The ID of the seller associated with the subscription.
  * @param {number} raidId - The ID of the raid associated with the subscription.
  * @return {Promise<Array>} A promise that resolves to an array of rows containing the subscription details.
  */
-export async function getSubscriptions(pool, buyerId, sellerId, raidId) {
+export async function getSubscriptions( buyerId, sellerId, raidId) {
     let result = await pool.query(`SELECT buyer_id, seller_id, raid_id
                                    FROM subscriptions
                                    WHERE buyer_id = $1
@@ -128,7 +125,7 @@ export async function getSubscriptions(pool, buyerId, sellerId, raidId) {
  * @param {number} characteristics[].effectValue - The value of the characteristic or effect.
  * @return {Promise<void>} A promise that resolves when the lot is created or rejects with an error.
  */
-export async function createNewWTSLot(pool, userId, {
+export async function createNewWTSLot( userId, {
     type,
     itemOffer,
     price,
@@ -147,7 +144,7 @@ export async function createNewWTSLot(pool, userId, {
 
         for (const characteristic of characteristics) {
             const {effectName, effectValue} = characteristic;
-            await setInventoryCharacteristics(pool, inventoryId, effectName, effectValue);
+            await setInventoryCharacteristics( inventoryId, effectName, effectValue);
         }
     } catch (e) {
         console.error("Ошибка при добавлении лота для пользователя:", userId, e);
@@ -173,7 +170,7 @@ export async function createNewWTSLot(pool, userId, {
  * @param {any} characteristics[].effectValue - Value of the characteristic effect.
  * @return {Promise<void>} - Returns a Promise that resolves with no value if successful, or logs an error if the operation fails.
  */
-export async function createNewWTBLot(pool, userId, {
+export async function createNewWTBLot( userId, {
     type,
     itemRequest,
     price,
@@ -192,7 +189,7 @@ export async function createNewWTBLot(pool, userId, {
 
         for (const characteristic of characteristics) {
             const {effectName, effectValue} = characteristic;
-            await setInventoryCharacteristics(pool, inventoryId, effectName, effectValue);
+            await setInventoryCharacteristics( inventoryId, effectName, effectValue);
         }
     } catch
         (e) {
@@ -220,7 +217,7 @@ export async function createNewWTBLot(pool, userId, {
  *
  * @return {Promise<void>} A promise that resolves once the new WTT lot has been created and characteristics (if any) have been set.
  */
-export async function createNewWTTLot(pool, userId, {
+export async function createNewWTTLot( userId, {
     type,
     itemRequest,
     itemOffer,
@@ -242,7 +239,7 @@ export async function createNewWTTLot(pool, userId, {
 
         for (const characteristic of characteristics) {
             const {effectName, effectValue} = characteristic;
-            await setInventoryCharacteristics(pool, inventoryId, effectName, effectValue);
+            await setInventoryCharacteristics( inventoryId, effectName, effectValue);
         }
     } catch (e) {
         console.error("Ошибка при добавлении лота для пользователя:", userId, e);
@@ -255,7 +252,7 @@ export async function createNewWTTLot(pool, userId, {
  * @param {Object} pool - The database connection pool object used to execute the query.
  * @return {Promise<void>} Resolves when the expired lots have been successfully removed.
  */
-export async function removeLotByExpiresTime(pool) {
+export async function removeLotByExpiresTime() {
     await pool.query(`DELETE
                       FROM inventory
                       WHERE expires_at <= NOW();`);
@@ -273,18 +270,16 @@ export async function removeLotByExpiresTime(pool) {
  * @param {string} server - The server associated with the trade transaction.
  * @return {Promise<void>} A promise that resolves when the trade record is successfully added to the database.
  */
-export async function addTradeRecord(pool, buyerId, sellerId, itemOffered, price, tradeType, server) {
+export async function addTradeRecord( buyerId, sellerId, itemOffered, price, tradeType, server) {
     await pool.query(`INSERT INTO trade_deals (buyer_id, seller_id, item_offered, price, trade_type, server)
                       VALUES ($1, $2, $3, $4, $5, $6);`, buyerId, sellerId, itemOffered, price, tradeType, server);
 }
 
 /**
  * Fetches a list of unique items from the database and formats them for use.
- *
- * @param {Object} pool - Database connection pool used to execute queries.
  * @return {Promise<Array<{value: string, label: string}>>} A promise that resolves to an array of objects, each containing a `value` and `label` property representing the ID and name of an item, respectively.
  */
-export async function getItemsList(pool) {
+export async function getItemsList() {
     let result = await pool.query(`SELECT *
                                    FROM items`);
     let items = [];
@@ -303,11 +298,10 @@ export async function getItemsList(pool) {
 /**
  * Retrieves the name of an item based on its ID from the database.
  *
- * @param {object} pool - The database connection pool instance to execute the query.
  * @param {number} id - The unique identifier of the item.
  * @return {Promise<string>} A promise that resolves to the name of the item.
  */
-export async function getItemName(pool, id) {
+export async function getItemName( id) {
     let result = await pool.query(`SELECT *
                                    FROM items
                                    WHERE id = $1`, [id]);
@@ -317,11 +311,10 @@ export async function getItemName(pool, id) {
 /**
  * Adds a user to the database if they do not already exist and are not a bot.
  *
- * @param {Object} pool - The database connection pool to perform queries.
  * @param {Object} user - The user object containing details about the user. Must include `id`, `bot`, `username`, and `discriminator` properties.
  * @return {Promise<void>} A Promise that resolves when the operation is complete or if the user already exists or is a bot.
  */
-export async function addUserIfNotExists(pool, user) {
+export async function addUserIfNotExists( user) {
     if (!user || user.bot) {
         return;
     } // Игнорируем ботов
@@ -341,11 +334,10 @@ export async function addUserIfNotExists(pool, user) {
 /**
  * Retrieves the count of active lots for a specified user from the inventory database.
  *
- * @param {Object} pool - The database connection pool used to perform the query.
  * @param {number} userId - The unique identifier of the user whose active lots are to be counted.
  * @return {Promise<number>} A promise that resolves to the count of active lots for the given user.
  */
-export async function getActiveLotsCount(pool, userId) {
+export async function getActiveLotsCount(userId) {
     return await pool.query(`SELECT COUNT(*)
                              FROM inventory
                              WHERE user_id = $1`, [userId]);
@@ -355,13 +347,12 @@ export async function getActiveLotsCount(pool, userId) {
  * Sets the inventory characteristics by inserting a new record into the inventory_characteristics table
  * if the specified effect exists in the accessory_effects table with a matching effect value.
  *
- * @param {Object} pool - The database connection pool used to execute the query.
  * @param {number} inventoryId - The ID of the inventory item to associate with the effect.
  * @param {string} effectName - The name of the effect to be added.
  * @param {string|number} effectValue - The value of the effect that must match the low_bonus, mid_bonus, or high_bonus.
  * @return {Promise<Object>} A promise that resolves to the result of the database query.
  */
-export async function setInventoryCharacteristics(pool, inventoryId, effectName, effectValue) {
+export async function setInventoryCharacteristics( inventoryId, effectName, effectValue) {
     return await pool.query(`
         INSERT INTO inventory_characteristics (inventory_id, effect_name, effect_value)
         SELECT $1, $2, $3
@@ -375,11 +366,10 @@ export async function setInventoryCharacteristics(pool, inventoryId, effectName,
 /**
  * Retrieves matching records between buyer (WTB - Want To Buy) and seller (WTS - Want To Sell) from the inventory pool.
  *
- * @param {Object} pool - The database connection pool used to execute the query.
  * @return {Promise<Object[]>} A promise resolving to a list of matching records between buyers and sellers,
  * including details such as user IDs, items, levels, rarity, price, negotiation status, and server.
  */
-export async function getWTBtoWTSMatching(pool) {
+export async function getWTBtoWTSMatching() {
     return await pool.query(`SELECT buyer.user_id        AS buyer_id,
                                     seller.user_id       AS seller_id,
                                     buyer.item_request   AS buyer_item,
@@ -411,12 +401,11 @@ export async function getWTBtoWTSMatching(pool) {
  * from the inventory database based on specific criteria such as item, level, rarity,
  * price, negotiability, and server.
  *
- * @param {Object} pool - The database connection pool used to execute the query.
  * @return {Promise<Object[]>} A promise that resolves to an array of trade matches, where each match
  * consists of details about the seller and buyer, including user IDs, item details, levels, rarity, price,
  * negotiability, and server.
  */
-export async function getWTTMatching(pool) {
+export async function getWTTMatching() {
     return await pool.query(`SELECT seller.user_id AS seller_id, buyer.user_id AS buyer_id,
                                     seller.item_offer AS seller_item, buyer.item_request AS buyer_item,
                                     seller.offer_level AS seller_level, buyer.request_level AS buyer_level,
@@ -438,13 +427,12 @@ export async function getWTTMatching(pool) {
 /**
  * Retrieves the user profile along with associated character information from the database.
  *
- * @param {Object} pool - The database connection pool used to query the database.
  * @param {number} userId - The unique identifier of the user whose profile is being retrieved.
  * @return {Promise<Object|null>} A promise that resolves to an object representing the user's profile
  *                                including the associated characters data, or null if the user profile
  *                                is not found.
  */
-export async function getUserProfile(pool, userId) {
+export async function getUserProfile( userId) {
     const profile = await pool.query(
         `SELECT p.*,
                 COALESCE(
@@ -473,11 +461,10 @@ export async function getUserProfile(pool, userId) {
 /**
  * Retrieves the list of achievements for a specific user from the database.
  *
- * @param {Object} pool - The database connection pool instance.
- * @param {string|number} userId - The ID of the user whose achievements are to be retrieved.
+ * @param {} userId - The ID of the user whose achievements are to be retrieved.
  * @return {Promise<Array>} A promise that resolves to an array of user achievements. Each achievement contains properties such as id, name, description, icon, and assigned_at. Returns an empty array if an error occurs.
  */
-export async function getUserAchievements(pool, userId) {
+export async function getUserAchievements(userId) {
     try {
         const result = await pool.query(`
             SELECT a.id, a.name, a.description, a.icon, ua.assigned_at
@@ -500,10 +487,9 @@ export async function getUserAchievements(pool, userId) {
  *
  * @param {string} userId - The unique identifier of the user attempting to join the faction.
  * @param {string} factionId - The unique identifier of the faction the user wants to join.
- * @param {object} pool - The database connection pool used to execute queries.
  * @return {Promise<boolean>} A promise that resolves to a boolean indicating whether the user is allowed to join the faction.
  */
-export async function canJoinFaction(userId, factionId, pool) {
+export async function canJoinFaction(userId, factionId) {
     const { rows: totalUsers } = await pool.query(`SELECT COUNT(*) FROM users_factions`);
     const { rows: factionUsers } = await pool.query(`SELECT COUNT(*) FROM users_factions WHERE faction_id = $1`, [factionId]);
 
@@ -519,11 +505,10 @@ export async function canJoinFaction(userId, factionId, pool) {
  *
  * @param {string} userId - The unique identifier of the user attempting to join a faction.
  * @param {string} factionId - The unique identifier of the faction the user wants to join.
- * @param {object} pool - The database connection pool used to execute the database query.
  * @return {Promise<object>} Returns an object containing the success status and a message indicating the result of the action.
  */
-export async function joinFaction(userId, factionId, pool) {
-    if (!(await canJoinFaction(userId, factionId, pool))) {
+export async function joinFaction(userId, factionId) {
+    if (!(await canJoinFaction(userId, factionId))) {
         return { success: false, message: "Эта фракция переполнена, выберите другую." };
     }
 
@@ -544,10 +529,9 @@ export async function joinFaction(userId, factionId, pool) {
  *
  * @param {string} userId - The unique ID of the user to add activity points to.
  * @param {number} points - The number of activity points to add to the user's account.
- * @param {Object} pool - The database connection pool used to execute the query.
  * @return {Promise<void>} A promise that resolves when the points have been successfully added or updated.
  */
-export async function addActivityPoints(userId, points, pool) {
+export async function addActivityPoints(userId, points) {
     await pool.query(`
         INSERT INTO activity_points (user_id, points, last_reset)
         VALUES ($1, $2, NOW())
@@ -560,10 +544,9 @@ export async function addActivityPoints(userId, points, pool) {
  * Retrieves the faction leaderboard, which consists of the top users in each faction
  * according to their activity points, ordered by faction name and points in descending order.
  *
- * @param {object} pool - The database connection pool to execute the query.
  * @return {Promise<Array>} A promise that resolves to an array of leaderboard records. Each record includes the faction name, user ID, and activity points.
  */
-export async function getFactionLeaderboard(pool) {
+export async function getFactionLeaderboard() {
     const { rows } = await pool.query(`
         SELECT f.name AS faction, u.user_id, ap.points
         FROM users_factions uf
@@ -581,21 +564,19 @@ export async function getFactionLeaderboard(pool) {
  * Resets the activity points for all users by setting the `points` to 0
  * and updating the `last_reset` timestamp to the current time.
  *
- * @param {Object} pool - The database connection pool used to execute the query.
  * @return {Promise<void>} A promise that resolves when the activity points
  * have been successfully reset.
  */
-export async function resetActivityPoints(pool) {
+export async function resetActivityPoints() {
     await pool.query(`UPDATE activity_points SET points = 0, last_reset = NOW()`);
 }
 
 /**
  * Resets the activity points to 0 and updates the last reset timestamp in the database.
  *
- * @param {object} pool - Database connection pool used to execute queries.
  * @return {Promise<void>} - A promise that resolves when the operation is completed.
  */
-export async function cleanOldData(pool) {
+export async function cleanOldData() {
     try {
         await pool.query(`
             UPDATE activity_points
@@ -610,12 +591,11 @@ export async function cleanOldData(pool) {
 /**
  * Awards activity points to a user. Adds points if the user exists in the faction.
  *
- * @param {Object} pool - The database connection pool.
- * @param {number} userId - The ID of the user to whom points are awarded.
+ * @param {} userId - The ID of the user to whom points are awarded.
  * @param {number} points - The number of points to be awarded to the user.
  * @return {Promise<void>} A promise that resolves when the operation is complete.
  */
-export async function givePointsForActivity(pool, userId, points) {
+export async function givePointsForActivity( userId, points) {
     try {
         const isExist = await pool.query(`SELECT * FROM users_factions WHERE user_id = $1`, [userId]);
 
@@ -640,12 +620,9 @@ export async function givePointsForActivity(pool, userId, points) {
 /**
  * Updates the faction leaderboard by fetching the top players from the database
  * and displaying the leaderboard in a designated Discord channel.
- *
- * @param {Pool} pool - Database connection pool used to execute queries.
- * @param {Client} client - Discord client used to interact with Discord API and fetch the channel.
  * @return {Promise<void>} Resolves when the leaderboard is successfully updated or if an error occurs.
  */
-export async function updateFactionLeaderboard(pool, client) {
+export async function updateFactionLeaderboard() {
     try {
         // Получаем ID канала для вывода статистики
         const channelRes = await pool.query(`
@@ -698,11 +675,7 @@ export async function updateFactionLeaderboard(pool, client) {
     }
 }
 
-export async function getModulesSettings(pool) {
-    return pool.query(`SELECT name, description FROM modules_settings WHERE active = true`);
-}
-
-export async function getTotalBank(pool, eventId) {
+export async function getTotalBank( eventId) {
     const result = await pool.query(`SELECT * FROM bets WHERE event_id = $1`, [eventId]);
     let totalBank = 0;
 
@@ -710,7 +683,7 @@ export async function getTotalBank(pool, eventId) {
     return totalBank;
 }
 
-export async function getTotalBankByUser(pool, eventId, target) {
+export async function getTotalBankByUser( eventId, target) {
     const result = await pool.query(`SELECT * FROM bets WHERE event_id = $1 AND target = $2`, [eventId, target]);
     let totalBank = 0;
 
@@ -718,14 +691,14 @@ export async function getTotalBankByUser(pool, eventId, target) {
     return totalBank;
 }
 
-export async function getCurrentUserOdd(pool, eventId, userId, target) {
-    const totalBank = await getTotalBank(pool, eventId);
-    const totalTargetBets = await getTotalBankByUser(pool, eventId, target);
+export async function getCurrentUserOdd( eventId, userId, target) {
+    const totalBank = await getTotalBank( eventId);
+    const totalTargetBets = await getTotalBankByUser( eventId, target);
 
     return totalTargetBets === 0 ? 1 : Math.max(totalBank / totalTargetBets, 1.0);
 }
 
-export async function updateUsersOdds(pool, eventId) {
+export async function updateUsersOdds( eventId) {
     await pool.query(`
         WITH total_bank AS (
             SELECT SUM(amount) AS total FROM bets WHERE event_id = $1
@@ -744,7 +717,7 @@ export async function updateUsersOdds(pool, eventId) {
     `, [eventId]);
 }
 
-export async function getUserLanguage(userId, pool) {
+export async function getUserLanguage(userId) {
     const result = await pool.query("SELECT language FROM users WHERE user_id = $1", [userId]);
     return result.rowCount > 0 ? result.rows[0].language : "ru";
 }

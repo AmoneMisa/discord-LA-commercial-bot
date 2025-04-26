@@ -8,8 +8,6 @@ import {
     TextInputStyle
 } from 'discord.js';
 import dotenv from 'dotenv';
-dotenv.config();
-
 import pkg from 'pg';
 import registerCommands from "./structure/registerCommands.js";
 import updateRatings from "./structure/updateRatings.js";
@@ -20,11 +18,16 @@ import {schedulersList} from "./structure/cron/scheduleUpdates.js";
 import buttons from "./structure/interactions/buttons.js";
 import modals from "./structure/interactions/modals.js";
 import commands from "./structure/interactions/commands.js";
-import {addUserIfNotExists, getUserLanguage} from "./structure/dbUtils.js";
+import {addUserIfNotExists, givePointsForActivity} from "./structure/dbUtils.js";
 import createRoles from "./structure/createRoles.js";
 import errorsHandler from "./errorsHandler.js";
 import messageComponent from "./structure/interactions/messageComponent.js";
-import i18n from "./locales/i18n.js";
+import handleMessageSubscription from "./structure/commandHandlers/subscribe/handleMessageSubscription.js";
+import sendRaidResponse from "./structure/commandHandlers/responses/sendRaidResponse.js";
+import autocomplete from "./structure/interactions/autocomplete.js";
+import {translatedMessage} from "./structure/utils.js";
+
+dotenv.config();
 
 const {Pool} = pkg;
 /**
@@ -36,8 +39,7 @@ const {Pool} = pkg;
  *
  * @type {Pool}
  */
-const pool = new Pool({connectionString: process.env.DATABASE_URL});
-
+global.pool = new Pool({connectionString: process.env.DATABASE_URL});
 
 /**
  * Represents an instance of a Discord client.
@@ -51,7 +53,7 @@ const pool = new Pool({connectionString: process.env.DATABASE_URL});
  *
  * This instance serves as the core for handling and interacting with Discord's gateway and REST API.
  */
-const client = new Client({intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages]});
+global.client = new Client({intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages]});
 
 client.once('ready', async () => {
     try {
@@ -76,15 +78,15 @@ client.once('ready', async () => {
             return;
         }
 
-        await registerCommands(pool);
-        schedulersList(pool, client, guild);
+        await registerCommands();
+        schedulersList(guild);
 
-        await updateRatings(pool);
-        await setRolesByRanks(pool, guild);
-        await updateLeaderboard(client, pool);
-        await createRoles(pool, guild);
+        await updateRatings();
+        await setRolesByRanks(guild);
+        await updateLeaderboard();
+        await createRoles(guild);
     } catch (e) {
-        console.error('ready:',e);
+        console.error('ready:', e);
         errorsHandler.error(e);
     }
 })
@@ -115,34 +117,69 @@ client.on('interactionCreate', /**
 async interaction => {
     try {
         const targetUser = interaction?.options?.getUser('member');
-        await addUserIfNotExists(pool, interaction.user);
+        await addUserIfNotExists(interaction.user);
 
         if (interaction.isCommand() && interaction.commandName === 'adm_settings' && interaction.options.getSubcommand() === 'remove_bots') {
-            await removeBots(interaction, pool);
+            await removeBots(interaction);
         }
 
         if (targetUser && targetUser.bot) {
             return await interaction.reply({
-                content: i18n.t("errors.userIsBot", { lng: await getUserLanguage(interaction.user.id, pool)}),
+                content: await translatedMessage(interaction, "errors.userIsBot"),
                 flags: MessageFlags.Ephemeral
             });
         }
 
         if (interaction.isCommand()) {
-            await commands(interaction, pool, client);
+            await commands(interaction);
         } else if (interaction.isButton()) {
-            await buttons(interaction, pool, client);
+            await buttons(interaction);
         } else if (interaction.isModalSubmit()) {
-            await modals(interaction, pool, client);
+            await modals(interaction);
+        } else if (interaction.isAutocomplete()) {
+            await autocomplete(interaction);
         } else if (interaction.isMessageComponent()) {
-            await messageComponent(interaction, pool, client);
+            await messageComponent(interaction);
             // console.log(interaction);
         } else {
             throw new Error(`Unknown type of interaction: ${interaction.type}`);
         }
     } catch (e) {
-        console.error('interactionCreate:',e);
+        console.error('interactionCreate:', e);
         errorsHandler.error(e);
+    }
+});
+
+client.on(Events.MessageCreate, /**
+ * Handles the incoming message event, performing several operations such as awarding points for activity,
+ * managing message-based subscriptions, and sending raid response if applicable.
+ *
+ * @param {Object} message - The message object from the client, representing the user's message.
+ * @throws Logs an error to the console if any of the internal operations fail.
+ *
+ * @async
+ */
+async message => {
+    try {
+        if (message.author.bot) {
+            return
+        }
+
+        if (process.env.FACTIONS_MODULE) {
+            await givePointsForActivity(message.author.id, 1);
+        }
+
+        if (process.env.SUBSCRIPTION_MODULE) {
+            await handleMessageSubscription(message);
+        }
+
+        if (process.env.FAST_RESPONSE) {
+            await sendRaidResponse(message);
+        }
+
+    } catch (e) {
+        console.error('messageCreate:', e);
+        errorsHandler.error(e.message);
     }
 });
 

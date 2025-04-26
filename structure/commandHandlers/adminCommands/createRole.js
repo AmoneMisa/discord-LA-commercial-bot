@@ -1,6 +1,5 @@
 import { MessageFlags } from 'discord.js';
-import i18n from "../../../locales/i18n.js";
-import {getUserLanguage} from "../../dbUtils.js";
+import {translatedMessage} from "../../utils.js";
 
 /**
  * Creates a new role in the specified guild and stores its details in the database.
@@ -10,7 +9,7 @@ import {getUserLanguage} from "../../dbUtils.js";
  * @param {Object} guild - The guild object where the role will be created.
  * @return {Promise<void>} A promise that resolves when the role is created and stored in the database and a reply is sent.
  */
-export default async function createRole(interaction, pool, guild) {
+export default async function createRole(interaction, guild) {
     const name = interaction.options.getString('name');
     const requiredRating = interaction.options.getInteger('required_rating');
     const minReviews = interaction.options.getInteger('min_reviews');
@@ -20,7 +19,7 @@ export default async function createRole(interaction, pool, guild) {
     let existingRole = await pool.query('SELECT * FROM roles WHERE role_name = $1', [name]);
 
     if (existingRole.rows.length > 0) {
-        return await interaction.reply({ content: i18n.t("errors.roleAlreadyExists", { lng: await getUserLanguage(interaction.user.id, pool), name }), flags: MessageFlags.Ephemeral });
+        return await interaction.reply({ content: await translatedMessage(interaction, "errors.roleAlreadyExists", {name}), flags: MessageFlags.Ephemeral });
     }
 
     let createdRole = await guild.roles.create({
@@ -35,5 +34,5 @@ export default async function createRole(interaction, pool, guild) {
         [name, createdRole.id, requiredRating, minReviews, minPositive, minNegative]
     );
 
-    await interaction.reply({ content: i18n.t("info.roleCreated", { lng: await getUserLanguage(interaction.user.id, pool), name }), flags: MessageFlags.Ephemeral });
+    await interaction.reply({ content:  await translatedMessage(interaction, "info.roleCreated", {name}), flags: MessageFlags.Ephemeral });
 }

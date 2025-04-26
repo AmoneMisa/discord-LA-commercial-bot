@@ -2,19 +2,22 @@ import setRolesByRanks from "../setRolesByRanks.js";
 import updateRatings from "../updateRatings.js";
 import updateLeaderboard from "../commandHandlers/updateLeaderboard.js";
 import cron from 'node-cron';
+import {saveProfileToDB} from "../../scrapping/parser.js";
+import checkMatching from "../commandHandlers/tradeSystem/checkMatching.js";
+import removeExpiredLots from "../commandHandlers/tradeSystem/removeExpiredLots.js";
+import {cleanOldData, resetActivityPoints} from "../dbUtils.js";
 
 /**
  * Schedules rank updates based on the provided frequency or the default stored in the database.
  *
  * @param {string} frequency - The frequency of rank updates (e.g., '1d', '3d', '1w', '2w', '1m', '3m').
  *                             If not provided, it queries the default value from the database.
- * @param {Object} pool - The database connection pool used to retrieve the default frequency if not provided.
  * @param {Object} guild - The Discord guild object, required for rank update operations.
  *
  * @return {Promise<void>} A promise that resolves when the scheduling has been set up or exits early if
  *                         the frequency is invalid.
  */
-export async function scheduleRankUpdates(frequency, pool, guild) {
+export async function scheduleRankUpdates(frequency, guild) {
     if (!frequency) {
         frequency = await pool.query('SELECT value FROM settings WHERE key = \'rank_update_frequency\'');
     }
@@ -47,7 +50,7 @@ export async function scheduleRankUpdates(frequency, pool, guild) {
     }
 
     cron.schedule(scheduleTime, async () => {
-       await setRolesByRanks(pool, guild);
+       await setRolesByRanks(guild);
     });
 }
 
@@ -55,16 +58,38 @@ export async function scheduleRankUpdates(frequency, pool, guild) {
  * Configures and schedules various tasks for maintaining profiles, updating leaderboards,
  * resetting activity points, and cleaning old data in the application.
  *
- * @param {Pool} pool - The database connection pool used to execute queries for profiles, ratings, and leaderboard updates.
- * @param {Client} client - The Discord bot client used for interacting with Discord channels.
  * @param {Guild} guild - The Discord guild object for performing operations tied to a specific server.
  * @return {void} Does not return a value. The function sets up scheduled tasks that run automatically.
  */
-export function schedulersList(pool, client, guild) {
+export function schedulersList(guild) {
     cron.schedule('0 0 * * *', async () => {
-        await updateRatings(pool);
-        await updateLeaderboard(client, pool);
+        console.log('🔄 Обновление данных профилей из оружейной...');
+        const players = await pool.query('SELECT main_nickname FROM profiles');
+        for (const player of players.rows) {
+            await saveProfileToDB(player.nickname);
+        }
+        console.log('🔄 Обновление данных профилей из оружейной завершено!');
+
+        await updateRatings();
+        await updateLeaderboard();
     });
 
-    scheduleRankUpdates(null, pool, guild);
+    scheduleRankUpdates(null, guild);
+
+    cron.schedule('* * * * *', async () => {
+        await removeExpiredLots();
+        await checkMatching();
+    });
+
+    cron.schedule('0 0 * * 1', async () => {
+        console.log("🔄 Сбрасываем очки активности...");
+        await resetActivityPoints();
+        console.log("✅ Очки сброшены!");
+    });
+
+    cron.schedule('0 3 1 * *', async () => {
+        console.log("🗑️ Очищаем старые записи...");
+        await cleanOldData();
+        console.log("✅ Очистка завершена!");
+    });
 }

@@ -3,10 +3,9 @@
  * The calculation takes into account the positivity ratio of reviews and applies
  * a weighted coefficient for the number of reviews.
  *
- * @param {Object} pool - The database connection pool used to execute the query.
  * @return {Promise<void>} A promise that resolves when the ratings update query is executed.
  */
-export default async function updateRatings(pool) {
+export default async function updateRatings() {
     const weight = 7; // Весовой коэффициент, контролирующий влияние количества отзывов
 
     await pool.query(`

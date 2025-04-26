@@ -1,8 +1,6 @@
 import {ButtonStyle, MessageFlags} from "discord.js";
 import subcommandsHandlers from './adminCommands/index.js';
-import setBetPrivateChannel from "./adminCommands/setBetPrivateChannel.js";
-import i18n from "../../locales/i18n.js";
-import {getUserLanguage} from "../dbUtils.js";
+import {translatedMessage} from "../utils.js";
 
 const adminCommandMap = {
     // Достижения
@@ -64,6 +62,10 @@ const adminCommandMap = {
     "adm_event_unregister": "unregisterEvent",
     "adm_event_set_channel": "setEventChannel",
 
+    //Маркет
+    "adm_market_create": "createLot",
+    "adm_market_my": "ownLotsList",
+
     // Включение и выключение модулей
     "adm_modules_toggle": "toggleModule"
 };
@@ -72,23 +74,22 @@ const adminCommandMap = {
  * Handles an interaction by executing the appropriate subcommand or returning an error if the subcommand is invalid or the user lacks necessary permissions.
  *
  * @param {Object} interaction - The interaction object containing user inputs and metadata.
- * @param {Object} pool - The database connection pool for executing database queries.
- * @param {Object} guild - The guild object representing the server where the interaction occurred.
  * @returns {Promise<void>} Resolves after processing the interaction and sending a reply.
  */
-export default async function (interaction, pool, guild) {
+export default async function (interaction) {
     const subcommand = interaction.options.getSubcommand();
+
     if (!interaction.member.permissions.has('Administrator')) {
         return await interaction.reply({
-            content: i18n.t("errors.notAdmin", { lng: await getUserLanguage(interaction.user.id, pool)}),
+            content: await translatedMessage(interaction, "errors.notAdmin"),
             flags: MessageFlags.Ephemeral
         });
     }
 
     const handlerName = adminCommandMap[interaction.commandName + '_' + subcommand];
     if (typeof subcommandsHandlers[handlerName] === "function") {
-        await subcommandsHandlers[handlerName](interaction, pool, guild);
+        await subcommandsHandlers[handlerName](interaction, interaction.guild);
     } else {
-        await interaction.reply({content: i18n.t("errors.unknownCommand", { lng: await getUserLanguage(interaction.user.id, pool)}), flags: MessageFlags.Ephemeral});
+        await interaction.reply({content: await translatedMessage(interaction, "errors.unknownCommand"), flags: MessageFlags.Ephemeral});
     }
 }

@@ -5,7 +5,6 @@ import getCommands from "./commands/index.js";
 /**
  * Registers and updates application commands (slash commands and context menu commands) for the Discord bot.
  *
- * @param {Object} pool - A database connection pool or a similar resource manager, not explicitly used in the current implementation.
  * @return {Promise<void>} A promise that resolves when the commands are successfully registered or updated, or rejects with an error if the process fails.
  */
 export default async function registerCommands() {
@@ -13,7 +12,7 @@ export default async function registerCommands() {
 
     console.log('Обновление (регистрация) команд...');
     await rest.put(Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID), {
-        body: [...await getCommands(), ...contextMenuCommands].map(cmd => {
+        body: [...getCommands(), ...contextMenuCommands].map(cmd => {
             try {
                 return cmd.toJSON();
             } catch (e) {

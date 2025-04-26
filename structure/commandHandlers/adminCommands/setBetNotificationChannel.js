@@ -1,6 +1,5 @@
 import {MessageFlags} from "discord.js";
-import i18n from "../../../locales/i18n.js";
-import {getUserLanguage} from "../../dbUtils.js";
+import {translatedMessage} from "../../utils.js";
 
 /**
  * Updates or inserts a record in the `bet_settings` table with the specified guild and channel IDs,
@@ -11,16 +10,20 @@ import {getUserLanguage} from "../../dbUtils.js";
  * @function
  * @param {Object} interaction - Represents the Discord interaction object containing information
  *                               about the command execution context.
- * @param {Object} pool - An instance of the database connection pool used for executing queries.
  * @throws {Error} Throws an error if the database query fails.
  */
-export default async function (interaction, pool) {
+export default async function (interaction) {
     const channelId = interaction.options.getChannel("channel").id;
 
     await pool.query(
-        `UPDATE settings SET value = $1 WHERE key = 'bet_leaderboard_channel_id';`,
+        `UPDATE settings
+         SET value = $1
+         WHERE key = 'bet_leaderboard_channel_id';`,
         [channelId]
     );
 
-    await interaction.reply({ content: i18n.t("info.betNotificationChannelSet", { channelId, lng: await getUserLanguage(interaction.user.id, pool) }), flags: MessageFlags.Ephemeral });
+    await interaction.reply({
+        content: await translatedMessage(interaction, "info.betNotificationChannelSet"),
+        flags: MessageFlags.Ephemeral
+    });
 }

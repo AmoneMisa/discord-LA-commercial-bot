@@ -1,6 +1,5 @@
-import { MessageFlags } from 'discord.js';
-import i18n from "../../../locales/i18n.js";
-import {getUserLanguage} from "../../dbUtils.js";
+import {MessageFlags} from 'discord.js';
+import {translatedMessage} from "../../utils.js";
 
 /**
  * Toggles the self-voting setting in the database and notifies the user of the change.
@@ -14,11 +13,12 @@ export default async function toggleSelfVoting(interaction, pool) {
 
     await pool.query('UPDATE settings SET value = $1 WHERE key = \'allow_self_voting\'', [enabled]);
 
+    const status = enabled
+        ? await translatedMessage(interaction, "info.allowed")
+        : await translatedMessage(interaction, "info.forbidden");
+
     await interaction.reply({
-        content: i18n.t("info.selfVotingStatus", {
-            lng: await getUserLanguage(interaction.user.id, pool),
-            status: enabled ? i18n.t("info.allowed", { lng: await getUserLanguage(interaction.user.id, pool) }) : i18n.t("info.forbidden", { lng: await getUserLanguage(interaction.user.id, pool) })
-        }),
+        content: await translatedMessage(interaction, "info.selfVotingStatus", {status}),
         flags: MessageFlags.Ephemeral
     });
 }

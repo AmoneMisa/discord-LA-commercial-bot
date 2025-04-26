@@ -1,6 +1,11 @@
 import sendReview from "../commandHandlers/ranks/sendReview.js";
 import betContinueHandler from "../commandHandlers/bets/betContinueHandler.js";
 import updateBet from "../commandHandlers/bets/updateBet.js";
+import handleCreateRaidModal from "../commandHandlers/subscribe/handleCreateRaidModal.js";
+import notifySellerMessageSend from "../commandHandlers/subscribe/notifySellerMessageSend.js";
+import handleSellerAnswerToBuyerModal from "../commandHandlers/subscribe/handleSellerAnswerToBuyerModal.js";
+import notifySellerResponse from "../commandHandlers/responses/notifySellerResponse.js";
+import handleBuyModal from "../commandHandlers/market/handleBuyModal.js";
 
 /**
  * Handles various interactions triggered by user input in a Discord modal.
@@ -22,16 +27,36 @@ import updateBet from "../commandHandlers/bets/updateBet.js";
  * - Calls `handleCreateRaidModal` if the interaction's `customId` matches `create_raid_modal`.
  * - Calls `handleSellerAnswerToBuyerModal` if the interaction's `customId` starts with `raid_buy_answer_`.
  */
-export default async function (interaction, pool, client) {
+export default async function (interaction) {
     if (interaction.fields.fields.get('review_text') && interaction.fields.getTextInputValue('review_text')) {
-        await sendReview(interaction, pool, client);
+        await sendReview(interaction);
+    }
+
+    if (interaction.fields.fields.get('buyer_nickname') && interaction.fields.getTextInputValue('buyer_nickname')) {
+        await notifySellerMessageSend(interaction);
+    }
+
+    if (interaction.fields.fields.get('raid_buyer_nickname') && interaction.fields.getTextInputValue('raid_buyer_nickname')) {
+        await notifySellerResponse(interaction);
+    }
+
+    if (interaction.customId === 'create_raid_modal') {
+        await handleCreateRaidModal(interaction);
+    }
+
+    if (interaction.customId.startsWith('raid_buy_answer_')) {
+        await handleSellerAnswerToBuyerModal(interaction);
     }
 
     if (interaction.customId.startsWith('bet_modal')) {
-        await betContinueHandler(interaction, pool);
+        await betContinueHandler(interaction);
     }
 
     if (interaction.customId.startsWith('bet_update_modal')) {
-        await updateBet(interaction, pool);
+        await updateBet(interaction);
+    }
+
+    if (interaction.customId.startsWith('buy_lot_modal_')) {
+        await handleBuyModal(interaction);
     }
 }

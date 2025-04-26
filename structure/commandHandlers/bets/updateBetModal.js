@@ -1,15 +1,11 @@
 import {ActionRowBuilder, ButtonStyle, MessageFlags, ModalBuilder, TextInputBuilder, TextInputStyle} from "discord.js";
-import i18n from "../../../locales/i18n.js";
-import {getUserLanguage} from "../../dbUtils.js";
-import {getActiveEvent} from "../../utils.js";
+import {getActiveEvent, translatedMessage} from "../../utils.js";
 
-export default async function (interaction, pool) {
-    const lang = await getUserLanguage(interaction.user.id, pool);
-
-    const event = await getActiveEvent(pool);
+export default async function (interaction) {
+    const event = await getActiveEvent();
     if (!event) {
         return await interaction.reply({
-            content: i18n.t("errors.noBetEventExist", { lng: lang}),
+            content: await translatedMessage(interaction, "errors.noBetEventExist"),
             flags: MessageFlags.Ephemeral
         });
     }
@@ -19,7 +15,7 @@ export default async function (interaction, pool) {
                                     AND user_id = $2`, [event.id, interaction.user.id]);
     if (!bet.rows.length) {
         await interaction.reply({
-            content: i18n.t("errors.betDontExist", { lng: lang}),
+            content: await translatedMessage(interaction, "errors.betDontExist"),
             flags: MessageFlags.Ephemeral
         });
         return;
@@ -27,13 +23,13 @@ export default async function (interaction, pool) {
 
     const modal = new ModalBuilder()
         .setCustomId(`bet_update_modal_${interaction.user.id}`)
-        .setTitle(i18n.t("buttons.updateBetTitle", { lng: lang}));
+        .setTitle(await translatedMessage(interaction, "buttons.updateBetTitle"));
 
     const input = new TextInputBuilder()
         .setCustomId('amount')
-        .setLabel(i18n.t("buttons.updateBetAmountField", { lng: lang}))
+        .setLabel(   await translatedMessage(interaction, "buttons.updateBetAmountField"))
         .setStyle(TextInputStyle.Paragraph)
-        .setPlaceholder(i18n.t("buttons.updateBetAmountField", { lng: lang}))
+        .setPlaceholder(   await translatedMessage(interaction, "buttons.updateBetAmountField"))
         .setRequired(true);
 
     const actionRow = new ActionRowBuilder().addComponents(input);
