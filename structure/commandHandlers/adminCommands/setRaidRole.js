@@ -15,7 +15,7 @@ export default async function setRaidRole(interaction) {
 
     if (raid.rowCount === 0) {
         return interaction.reply({
-            content: await translatedMessage(interaction, "errors.raidNotFound", {{raidName}}),
+            content: await translatedMessage(interaction, "errors.raidNotFound", {raidName}),
             flags: MessageFlags.Ephemeral
         });
     }

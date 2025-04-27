@@ -19,7 +19,7 @@ export default async function (interaction) {
 
         await client.channels.fetch(interaction.message.channelId);
         await interaction.message.edit({
-            content: await translatedMessage(interaction, 'raids.message_sent_to_user'),
+            content: await translatedMessage(interaction, 'raids.sellerAcceptSuccess'),
             components: [],
             flags: MessageFlags.Ephemeral
         });
@@ -28,9 +28,9 @@ export default async function (interaction) {
         await interaction.deleteReply();
 
         await client.users.send(buyer, {
-            content: await translatedMessage(interaction, 'raids.seller_approved_purchase', {
-                seller: `<@${interaction.user.id}>`,
-                raid: raidName,
+            content: await translatedMessage(interaction, 'raids.sellerApproved', {
+                sellerId: `<@${interaction.user.id}>`,
+                raidName,
                 lobby: interaction.fields.getTextInputValue('lobby')
             }),
             flags: MessageFlags.Ephemeral
