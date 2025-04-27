@@ -51,7 +51,7 @@ export default async function(interaction, raidName) {
             const row = new ActionRowBuilder()
                 .addComponents(
                     new ButtonBuilder()
-                        .setCustomId(`raid_buy_${interaction.user.id}_${raidId}`)
+                        .setCustomId(`raid_buy_${interaction.user.id}_${raidId.rows[0].id}`)
                         .setLabel('Хочу купить')
                         .setStyle(ButtonStyle.Primary)
                 );

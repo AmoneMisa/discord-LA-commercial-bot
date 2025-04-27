@@ -34,9 +34,9 @@ export default async function notifySellerMessageSend(interaction) {
 
             seller.send({
                 content: await translatedMessage(interaction, 'raids.purchaseRequest', {
-                    buyer: `<@${interaction.user.id}>`,
-                    buyer_nickname: interaction.fields.getTextInputValue('buyer_nickname'),
-                    raid: raidName
+                    buyerId: `<@${interaction.user.id}>`,
+                    nickname: interaction.fields.getTextInputValue('buyer_nickname'),
+                    raidName: raidName
                 }),
                 components: [row],
                 flags: MessageFlags.Ephemeral
