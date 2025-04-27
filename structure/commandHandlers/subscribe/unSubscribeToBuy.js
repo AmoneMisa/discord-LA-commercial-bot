@@ -1,4 +1,5 @@
 import {MessageFlags} from "discord.js";
+import {translatedMessage} from "../../utils.js";
 
 /**
  * Unsubscribes the user from receiving notifications from a specified seller.
@@ -15,7 +16,7 @@ export default async function unSubscribeToBuy(interaction) {
                       WHERE buyer_id = $1 AND seller_id = $2`, [buyer, seller.id]);
 
     return interaction.reply({
-        content: `❌ Вы отписались от уведомлений от **${seller.username}**`,
+        content: await translatedMessage(interaction, 'raids.unsubscribedFromNotifications', {username: seller.username}),
         flags: MessageFlags.Ephemeral
     });
 }

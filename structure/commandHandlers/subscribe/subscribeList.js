@@ -1,5 +1,5 @@
 import {ButtonStyle, MessageFlags} from 'discord.js';
-import {sendPaginatedList} from "../../utils.js";
+import {sendPaginatedList, translatedMessage} from "../../utils.js";
 
 /**
  * Retrieves a list of up to 5 unique sellers that the user has subscribed to, ordered by their rating in descending order.
@@ -25,7 +25,7 @@ export default async function subscribeList(interaction) {
 
     if (subscriptions.rows.length === 0) {
         return interaction.reply({
-            content: '🚫 У вас пока нет фаворитов!',
+            content: await translatedMessage(interaction, 'raids.noFavorites'),
             flags: MessageFlags.Ephemeral
         });
     }

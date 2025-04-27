@@ -17,7 +17,7 @@ export default async function subscribeToBuy(interaction, selectedRaid) {
 
     if (categoryResult.rows.length === 0) {
         console.error("Не выбрана категория для отслеживания рейдов.");
-        return interaction.reply("Администратор не выбрал категорию для отслеживания рейдов. Пожалуйста, свяжитесь с ним.");
+        return interaction.reply(await translatedMessage(interaction, 'raids.noTrackingCategory'));
     }
 
     let seller = getMember(interaction, false, false, 'user');
