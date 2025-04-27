@@ -733,7 +733,7 @@ export async function updateProfileCharacters() {
                 await saveProfileToDB({
                     userId: profile.user_id,
                     mainNickname: profile.main_nickname,
-                });
+                }, true);
                 console.log(`✅ Профиль обновлен: ${profile.main_nickname}`);
             } catch (err) {
                 console.error(`❌ Ошибка при обновлении профиля ${profile.main_nickname}:`, err);

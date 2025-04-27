@@ -126,7 +126,6 @@ function getClassName(page) {
  * Updates the profile and character data if they already exist, or creates new entries otherwise.
  *
  * @param {Object} pool - Database connection pool to execute queries.
- * @param {Object} profileData - Object containing profile and associated character information.
  * @param {string} profileData.userId - Unique identifier for the user.
  * @param {string} profileData.name - The name of the user.
  * @param {string} profileData.mainNickname - Main nickname associated with the user.
@@ -138,17 +137,18 @@ function getClassName(page) {
  * @param {string} profileData.server - The server associated with the user profile.
  * @return {Promise<void>} Resolves when all operations (inserts and updates) are completed successfully,
  *                         otherwise logs an error to the console in case of failure.
+ * @param {Boolean} isUpdate
  */
 export async function saveProfileToDB({
-    userId,
-    name = null,
-    mainNickname,
-    role = null,
-    primeStart = null,
-    primeEnd = null,
-    salesExperience = null,
-    server = null
-}) {
+                                          userId,
+                                          name = null,
+                                          mainNickname,
+                                          role = null,
+                                          primeStart = null,
+                                          primeEnd = null,
+                                          salesExperience = null,
+                                          server = null
+                                      }, isUpdate = false) {
     const profileData = await parseLostArkProfile(mainNickname);
     if (!profileData) {
         return;
@@ -169,10 +169,11 @@ export async function saveProfileToDB({
                                   sales_experience = COALESCE($6, sales_experience),
                                   server           = COALESCE($7, 'server')
                               WHERE user_id = $8`,
-                [name, mainNickname, role, primeStart, primeEnd,  salesExperience, server, userId]);
+                [name, mainNickname, role, primeStart, primeEnd, salesExperience, server, userId]);
         } else {
             await pool.query(`
-                INSERT INTO profiles (user_id, name, main_nickname, role, prime_start, prime_end, sales_experience, server)
+                INSERT INTO profiles (user_id, name, main_nickname, role, prime_start, prime_end, sales_experience,
+                                      server)
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
             `, [userId, name, mainNickname, role, primeStart, primeEnd, salesExperience, server]);
         }
@@ -180,7 +181,9 @@ export async function saveProfileToDB({
         const profileId = (await pool.query('SELECT id FROM profiles WHERE main_nickname = $1', [mainNickname])).rows[0].id;
 
         const dbCharacters = await pool.query(
-            `SELECT id, char_name FROM characters WHERE profile_id = $1`,
+            `SELECT id, char_name
+             FROM characters
+             WHERE profile_id = $1`,
             [profileId]
         );
         const inputCharacterNames = profileData.highLevelChars.map(c => c.name);
@@ -188,7 +191,9 @@ export async function saveProfileToDB({
         for (const dbChar of dbCharacters.rows) {
             if (!inputCharacterNames.includes(dbChar.char_name)) {
                 await pool.query(
-                    `DELETE FROM characters WHERE id = $1`,
+                    `DELETE
+                     FROM characters
+                     WHERE id = $1`,
                     [dbChar.id]
                 );
             }
@@ -199,12 +204,19 @@ export async function saveProfileToDB({
                                            FROM characters
                                            WHERE char_name = $1`, [char.name]);
 
+
             if (result.rows.length > 0) {
-                await pool.query(`UPDATE characters
-                                  SET class_name = COALESCE($1, class_name),
-                                      char_name  = COALESCE($2, char_name),
-                                      gear_score = COALESCE($3, gear_score)
-                                  WHERE profile_id = $4`, [char.className, char.name, char.gearScore, profileId]);
+                if (isUpdate) {
+                    await pool.query(`UPDATE characters
+                                      SET gear_score = COALESCE($1, gear_score)
+                                      WHERE profile_id = $2 AND char_name = $3`, [char.gearScore, profileId, char.name]);
+                } else {
+                    await pool.query(`UPDATE characters
+                                      SET class_name = COALESCE($1, class_name),
+                                          char_name  = COALESCE($2, char_name),
+                                          gear_score = COALESCE($3, gear_score)
+                                      WHERE profile_id = $4`, [char.className, char.name, char.gearScore, profileId]);
+                }
             } else {
                 await pool.query(
                     `INSERT INTO characters (profile_id, class_name, char_name, gear_score)
