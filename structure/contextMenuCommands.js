@@ -8,12 +8,6 @@ export default [
         .setName("Получить инфо или оставить отзыв")
         .setType(ApplicationCommandType.User),
     new ContextMenuCommandBuilder()
-        .setName("Подписаться на продавца")
-        .setType(ApplicationCommandType.Message),
-    new ContextMenuCommandBuilder()
-        .setName("Подписаться на продавца")
-        .setType(ApplicationCommandType.User),
-    new ContextMenuCommandBuilder()
         .setName("Просмотреть профиль игрока")
         .setType(ApplicationCommandType.Message),
     new ContextMenuCommandBuilder()
