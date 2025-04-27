@@ -43,6 +43,8 @@ export default async function(interaction, raidName) {
         });
     }
 
+    await interaction.editReply({content: await translatedMessage(interaction, "raids.sellerAcceptSuccess")});
+
     const subscribers = await pool.query(`
         SELECT buyer_id FROM subscriptions
         WHERE seller_id = $1
