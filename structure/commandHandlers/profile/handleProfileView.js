@@ -15,7 +15,7 @@ dotenv.config();
  * @return {Promise<void>} Resolves when the interaction has been successfully processed and a response is sent.
  */
 export default async function handleProfileView(interaction, isContextMenu = false, isMessageContentMenuCommand = false) {
-    let member = getMember(interaction, isContextMenu, isMessageContentMenuCommand);
+    let member = getMember(interaction, isContextMenu, isMessageContentMenuCommand, 'user');
 
     if (member.bot) {
         return await interaction.reply({
