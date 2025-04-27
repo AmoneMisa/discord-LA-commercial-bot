@@ -17,6 +17,7 @@ export default async function notifySellerMessageSend(interaction) {
         const [, , sellerId, raidId] = interaction.customId.split('_');
         const seller = await client.users.fetch(sellerId);
         const raidName = await getRaidName(raidId);
+        await interaction.deferUpdate();
 
         if (seller) {
             const row = new ActionRowBuilder()
@@ -59,6 +60,6 @@ export default async function notifySellerMessageSend(interaction) {
         }
     } catch (error) {
         console.error('Ошибка при отправке уведомления продавцу:', error);
-        await interaction.reply({content: translatedMessage(interaction, 'raids.sendRequestError'), flags: MessageFlags.Ephemeral});
+        await interaction.reply({content: await translatedMessage(interaction, 'raids.sendRequestError'), flags: MessageFlags.Ephemeral});
     }
 }
