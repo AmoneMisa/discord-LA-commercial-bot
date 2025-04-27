@@ -2,15 +2,14 @@ import {createCanvas, loadImage, registerFont} from 'canvas';
 import fs from 'fs';
 import path from 'path';
 import {MessageFlags} from "discord.js";
-import {getUserAchievements} from "./dbUtils.js";
 
 // 📌 Пути к папкам
 const ICONS_DIR = path.resolve('static/classIcons'); // Папка с иконками классов
 const OUTPUT_DIR = path.resolve('static/generated'); // Папка для временных изображений
-const FONT_PATH = path.resolve('static/fonts/NotoSans-VariableFont_wdth,wght.ttf');
+const FONTS_DIR = path.resolve('static/fonts'); // Папка для шрифтов
 const ACHIEVEMENTS_DIR = path.resolve('static/achievements'); // Папка с иконками достижений
 
-registerFont(FONT_PATH, { family: 'Noto Sans', weight: '400', style: 'normal' });
+registerFont(path.resolve(FONTS_DIR + '/NotoSans-VariableFont_wdth_wght.ttf'), { family: 'NotoSans', weight: '400', style: 'normal' });
 // 🎨 Функция отрисовки
 /**
  * Draws a list of characters and their details on a canvas, including their class icons, gear scores,
@@ -63,12 +62,12 @@ export async function drawCharacterList(characters = [], achievements = []) {
     }
 
     ctx.fillStyle = colorsInt.color_text;
-    ctx.font = '18px Noto Sans';
+    ctx.font = '18px NotoSans';
     ctx.fillText(`${characters[0].char_name}`,
         headerX, headerY);
 
     ctx.fillStyle = colorsInt.color_secondary;
-    ctx.font = '18px Noto Sans';
+    ctx.font = '18px NotoSans';
     ctx.fillText(characters[0].gear_score,
         WIDTH - PADDING - INNER_PADDING - 70, headerY);
 
@@ -110,7 +109,7 @@ export async function drawCharacterList(characters = [], achievements = []) {
 
         // Текст персонажа
         ctx.fillStyle = colorsInt.color_secondary;
-        ctx.font = `${FONT_SIZE}px Noto Sans`;
+        ctx.font = `${FONT_SIZE}px NotoSans`;
         ctx.fillText(`${char.char_name} - ${char.gear_score}`, x + 50, y + 25);
     }
 
