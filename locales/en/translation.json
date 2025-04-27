@@ -249,7 +249,6 @@
     "raidNotFound": "Raid not found!",
     "raidCreatedSuccess": "✅ Raid \"{raidName}\" created successfully!",
     "raidDeletedSuccess": "🗑 Raid deleted successfully!",
-    "joinRequestExpired": "Response time expired",
     "joinRequestSent": "✅ Your request has been sent to the seller!",
     "sendRequestError": "❌ Error sending request to the seller.",
     "noFavorites": "🚫 You don't have any favorites yet!",

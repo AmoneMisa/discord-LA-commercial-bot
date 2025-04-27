@@ -250,7 +250,6 @@
     "raidNotFound": "未找到团本！",
     "raidCreatedSuccess": "✅ 团本 '{raidName}' 创建成功！",
     "raidDeletedSuccess": "🗑 团本删除成功！",
-    "joinRequestExpired": "响应时间已过期",
     "joinRequestSent": "✅ 您的请求已发送给卖家！",
     "sendRequestError": "❌ 发送请求给卖家时出错。",
     "noFavorites": "🚫 您还没有收藏夹！",

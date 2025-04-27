@@ -29,7 +29,7 @@ export default async function (interaction) {
 
         await client.users.send(buyer, {
             content: await translatedMessage(interaction, 'raids.sellerApproved', {
-                sellerId: `<@${interaction.user.id}>`,
+                sellerId: interaction.user.id,
                 raidName,
                 lobby: interaction.fields.getTextInputValue('lobby')
             }),

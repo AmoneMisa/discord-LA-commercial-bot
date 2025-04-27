@@ -1,4 +1,5 @@
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from "discord.js";
+import {translatedMessage} from "../../utils.js";
 
 /**
  * Handles a raid creation or subscription broadcasting process for a Discord interaction.
@@ -34,16 +35,19 @@ import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from "discor
 export default async function(interaction, raidName) {
     const raidId = await pool.query(`SELECT id FROM raids WHERE LOWER(raid_name) = LOWER($1)`, [raidName]);
 
-    if (!raidId) {
-        console.error("Ошибка при поиске рейда в базе:", raidName, raidId.rows[0].id);
-        return await interaction.reply('Рейд не найден!');
+    if (!raidId || !raidId.rows.length) {
+        console.error("Ошибка при поиске рейда в базе:", raidName);
+        return await interaction.reply({
+            content: await translatedMessage(interaction, 'raids.raidNotFound'),
+            flags: MessageFlags.Ephemeral
+        });
     }
 
     const subscribers = await pool.query(`
-                SELECT buyer_id FROM subscriptions
-                WHERE seller_id = $1
-                  AND raid_id = $2
-            `, [interaction.user.id, raidId.rows[0].id]);
+        SELECT buyer_id FROM subscriptions
+        WHERE seller_id = $1
+          AND raid_id = $2
+    `, [interaction.user.id, raidId.rows[0].id]);
 
     for (const subscriber of subscribers.rows) {
         const user = await client.users.fetch(subscriber.buyer_id);
@@ -52,16 +56,21 @@ export default async function(interaction, raidName) {
                 .addComponents(
                     new ButtonBuilder()
                         .setCustomId(`raid_buy_${interaction.user.id}_${raidId.rows[0].id}`)
-                        .setLabel('Хочу купить')
+                        .setLabel(await translatedMessage(interaction, 'raids.buttonBuyLabel'))
                         .setStyle(ButtonStyle.Primary)
                 );
 
             await user.send({
-                content: `🔔 Игрок **<@${interaction.user.id}>** набирает группу на **${raidName}**!`,
-                components: [row], flags: MessageFlags.Ephemeral
+                content: await translatedMessage(interaction, 'raids.notifySubscribers', { sellerId: interaction.user.id, raidName }),
+                components: [row],
+                flags: MessageFlags.Ephemeral
             }).then((message) => {
-                setTimeout(() => {
-                    message.edit({content: `Время для ответа истекло`, components: [], flags: MessageFlags.Ephemeral});
+                setTimeout(async () => {
+                    await message.edit({
+                        content: await translatedMessage(interaction, 'raids.timeExpired'),
+                        components: [],
+                        flags: MessageFlags.Ephemeral
+                    });
                 }, 1000 * 60 * 5);
             });
         }
