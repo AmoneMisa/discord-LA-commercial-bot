@@ -42,13 +42,12 @@ export async function drawCharacterList(characters = [], achievements = []) {
     for (let [key, color] of Object.entries(colorsInt)) {
         colorsInt[key] = convertIntToHexColor(color);
     }
-    console.log(colorsInt);
     // Фон
-    ctx.fillStyle = colorsInt.color_background;
+    ctx.fillStyle = colorsInt.color_border;
     drawRoundedRect(ctx, 0, 0, WIDTH + 15, HEIGHT + 15, 8);
 
     // Рамка
-    ctx.fillStyle = colorsInt.color_border;
+    ctx.fillStyle = colorsInt.color_background;
     drawRoundedRect(ctx, PADDING, PADDING, WIDTH - 2 * PADDING, HEIGHT - 2 * PADDING, 10);
 
     // Заголовок
