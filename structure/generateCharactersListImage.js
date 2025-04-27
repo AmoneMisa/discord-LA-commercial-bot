@@ -42,11 +42,11 @@ export async function drawCharacterList(characters = [], achievements = []) {
     for (let [key, color] of Object.entries(colorsInt)) {
         colorsInt[key] = convertIntToHexColor(color);
     }
-    // Фон
+    // Рамка
     ctx.fillStyle = colorsInt.color_border;
     drawRoundedRect(ctx, 0, 0, WIDTH + 15, HEIGHT + 15, 8);
 
-    // Рамка
+    // Фон
     ctx.fillStyle = colorsInt.color_background;
     drawRoundedRect(ctx, PADDING, PADDING, WIDTH - 2 * PADDING, HEIGHT - 2 * PADDING, 10);
 
