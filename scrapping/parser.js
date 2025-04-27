@@ -141,13 +141,13 @@ function getClassName(page) {
  */
 export async function saveProfileToDB({
     userId,
-    name,
+    name = null,
     mainNickname,
-    role,
-    primeStart,
-    primeEnd,
-    salesExperience,
-    server
+    role = null,
+    primeStart = null,
+    primeEnd = null,
+    salesExperience = null,
+    server = null
 }) {
     const profileData = await parseLostArkProfile(mainNickname);
     if (!profileData) {

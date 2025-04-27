@@ -18,7 +18,7 @@ import {schedulersList} from "./structure/cron/scheduleUpdates.js";
 import buttons from "./structure/interactions/buttons.js";
 import modals from "./structure/interactions/modals.js";
 import commands from "./structure/interactions/commands.js";
-import {addUserIfNotExists, givePointsForActivity} from "./structure/dbUtils.js";
+import {addUserIfNotExists, givePointsForActivity, updateProfileCharacters} from "./structure/dbUtils.js";
 import createRoles from "./structure/createRoles.js";
 import errorsHandler from "./errorsHandler.js";
 import messageComponent from "./structure/interactions/messageComponent.js";
@@ -81,10 +81,16 @@ client.once('ready', async () => {
         await registerCommands();
         schedulersList(guild);
 
-        await updateRatings();
-        await setRolesByRanks(guild);
-        await updateLeaderboard();
-        await createRoles(guild);
+        if (process.env.RANKS_MODULE) {
+            await updateRatings();
+            await setRolesByRanks(guild);
+            await updateLeaderboard();
+            await createRoles(guild);
+        }
+
+        if (process.env.PROFILES_MODULE) {
+            await updateProfileCharacters();
+        }
     } catch (e) {
         console.error('ready:', e);
         errorsHandler.error(e);

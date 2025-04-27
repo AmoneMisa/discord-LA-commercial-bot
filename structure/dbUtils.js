@@ -1,3 +1,5 @@
+import {saveProfileToDB} from "../scrapping/parser.js";
+
 /**
  * Retrieves the leaderboard channel ID from the settings table.
  *
@@ -720,4 +722,26 @@ export async function updateUsersOdds( eventId) {
 export async function getUserLanguage(userId) {
     const result = await pool.query("SELECT language FROM users WHERE user_id = $1", [userId]);
     return result.rowCount > 0 ? result.rows[0].language : "ru";
+}
+
+export async function updateProfileCharacters() {
+    try {
+        const profiles = await pool.query('SELECT user_id, main_nickname FROM profiles');
+
+        for (const profile of profiles.rows) {
+            try {
+                await saveProfileToDB({
+                    userId: profile.user_id,
+                    mainNickname: profile.main_nickname,
+                });
+                console.log(`✅ Профиль обновлен: ${profile.main_nickname}`);
+            } catch (err) {
+                console.error(`❌ Ошибка при обновлении профиля ${profile.main_nickname}:`, err);
+            }
+        }
+
+        console.log('✅ Все профили обработаны.');
+    } catch (err) {
+        console.error('❌ Ошибка запроса профилей:', err);
+    }
 }
