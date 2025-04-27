@@ -1,4 +1,5 @@
 import { MessageFlags, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } from 'discord.js';
+import {translatedMessage} from "../../utils.js";
 
 /**
  * Handles buy button interactions by presenting a modal for raid purchase.
@@ -12,11 +13,11 @@ export default async function handleBuyButtons(interaction) {
 
     const modal = new ModalBuilder()
         .setCustomId(`raid_buy_${sellerId}_${raidId}`)
-        .setTitle('Покупка рейда');
+        .setTitle(await translatedMessage(interaction, 'raids.modalBuyRaidTitle'));
 
     const inputField = new TextInputBuilder()
         .setCustomId('buyer_nickname')
-        .setLabel('Ваш ник(-и)')
+        .setLabel(await translatedMessage(interaction, 'raids.modalNicknameLabel'))
         .setStyle(TextInputStyle.Short)
         .setRequired(true);
 

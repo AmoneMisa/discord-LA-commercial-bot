@@ -1,5 +1,6 @@
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from "discord.js";
 import {getRaidName} from "../../dbUtils.js";
+import {translatedMessage} from "../../utils.js";
 
 /**
  * Notifies the seller about a raid purchase request by sending a message to the seller with the provided details.
@@ -22,24 +23,27 @@ export default async function notifySellerMessageSend(interaction) {
                 .addComponents(
                     new ButtonBuilder()
                         .setCustomId(`seller_answer_${interaction.user.id}_${raidId}`)
-                        .setLabel('Принять')
+                        .setLabel(await translatedMessage(interaction, 'buttons.accept'))
                         .setStyle(ButtonStyle.Success)
                 ).addComponents(
                     new ButtonBuilder()
                         .setCustomId(`seller_reject_${interaction.user.id}_${raidId}`)
-                        .setLabel('Отклонить')
+                        .setLabel(await translatedMessage(interaction, 'buttons.reject'))
                         .setStyle(ButtonStyle.Danger)
                 );
 
             seller.send({
-                content: `💰 **Запрос на покупку рейда!**
-            **Покупатель:** <@${interaction.user.id}>
-            **Персонаж:** ${interaction.fields.getTextInputValue('buyer_nickname')}
-            **Рейд:** ${raidName}`, components: [row], flags: MessageFlags.Ephemeral
+                content: await translatedMessage(interaction, 'raids.purchaseRequest', {
+                    buyer: `<@${interaction.user.id}>`,
+                    buyer_nickname: interaction.fields.getTextInputValue('buyer_nickname'),
+                    raid: raidName
+                }),
+                components: [row],
+                flags: MessageFlags.Ephemeral
             }).then((message) => {
-                setTimeout(() => {
-                    message.edit({
-                        content: `Время для ответа истекло`,
+                setTimeout(async () => {
+                    await message.edit({
+                        content: await translatedMessage(interaction, 'raids.timeExpired'),
                         components: [],
                         flags: MessageFlags.Ephemeral
                     });
@@ -48,13 +52,13 @@ export default async function notifySellerMessageSend(interaction) {
 
             await client.channels.fetch(interaction.message.channelId);
             await interaction.message.edit({
-                content: '✅ Ваш запрос отправлен продавцу!',
+                content: await translatedMessage(interaction, 'raids.requestSentToSeller'),
                 components: [],
                 flags: MessageFlags.Ephemeral
             });
         }
     } catch (error) {
         console.error('Ошибка при отправке уведомления продавцу:', error);
-        await interaction.reply({content: '❌ Ошибка при отправке запроса продавцу.', flags: MessageFlags.Ephemeral});
+        await interaction.reply({content: translatedMessage(interaction, 'raids.sendRequestError'), flags: MessageFlags.Ephemeral});
     }
 }

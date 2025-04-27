@@ -244,5 +244,33 @@
       "reset": "Reset filters"
     },
     "lotListItem": "**{{goldAmount}} gold** for **1000 / {{price}}₽** ({{server}}, {{delivery}})"
+  },
+  "raids": {
+    "raidNotFound": "Raid not found!",
+    "raidCreatedSuccess": "✅ Raid \"{raidName}\" created successfully!",
+    "raidDeletedSuccess": "🗑 Raid deleted successfully!",
+    "joinRequestExpired": "Response time expired",
+    "joinRequestSent": "✅ Your request has been sent to the seller!",
+    "sendRequestError": "❌ Error sending request to the seller.",
+    "noFavorites": "🚫 You don't have any favorites yet!",
+    "noTrackingCategory": "Administrator hasn't selected a category for raid tracking. Please contact them.",
+    "unsubscribedFromNotifications": "❌ You have unsubscribed from notifications from **{username}**",
+    "notifySubscribers": "🔔 Player **<@{sellerId}>** is forming a raid group for **{raidName}**!",
+    "notifySubscribersWithLink": "🔔 Player **<@{sellerId}>** is forming a raid group for **{raidName}**! [Go to message]({messageUrl})",
+    "sellerAcceptRequest": "💰 **Raid purchase request!**\n**Buyer:** <@{username}>\n**Character:** {buyerNickname}\n**Raid:** {raidName}",
+    "sellerAcceptSuccess": "✅ Message sent to the user!",
+    "sellerDeclineSuccess": "❌ Your decline has been sent to the buyer",
+    "sellerApproved": "Seller: <@{sellerId}> has approved your raid purchase request: {raidName}\nLobby name: **{lobby}**",
+    "sellerDeclined": "Seller: <@{sellerId}> has declined your raid purchase request: {raidName}",
+    "modalCreateRaidTitle": "Create New Raid",
+    "modalCreateRaidPlaceholder": "Enter raid name",
+    "modalBuyRaidTitle": "Raid Purchase",
+    "modalLobbyName": "Lobby Name",
+    "modalNicknameLabel": "Your nickname(s)",
+    "buttonBuyLabel": "I want to buy",
+    "purchaseRequest": "💰 Raid purchase request!\nBuyer: <@{{buyerId}}>\nCharacter: {{nickname}}\nRaid: {{raidName}}",
+    "timeExpired": "⏳ Time to respond has expired",
+    "requestSentToSeller": "✅ Your request has been sent to the seller!",
+    "modalAcceptRequestTitle": "Accept Request"
   }
 }

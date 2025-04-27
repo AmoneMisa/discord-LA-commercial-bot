@@ -1,5 +1,4 @@
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from "discord.js";
-import {getRaidName} from "../../dbUtils.js";
 
 /**
  * Handles a raid creation or subscription broadcasting process for a Discord interaction.
@@ -11,6 +10,7 @@ import {getRaidName} from "../../dbUtils.js";
  * @async
  * @function
  * @param {Object} interaction - The Discord interaction object provided by the user for the command input.
+ * @param {String} raidName
  * @returns {Promise<void>} - Resolves when the process completes successfully or an error has been handled.
  *
  * @throws Will log an error to the console if the raid cannot be found in the database.
@@ -31,9 +31,8 @@ import {getRaidName} from "../../dbUtils.js";
  * - `getRaidName(pool, raidId)` must be a valid utility function that retrieves the raid name based on the raid ID.
  * - Permissions should allow the bot to send direct messages on behalf of the bot to users.
  */
-export default async function(interaction) {
-    const raidName = interaction.options.getString('raid');
-    const raidId = await pool.query(`SELECT raid_id FROM raids WHERE raid_name = $1`, [raidName]);
+export default async function(interaction, raidName) {
+    const raidId = await pool.query(`SELECT id FROM raids WHERE LOWER(raid_name) = LOWER($1)`, [raidName]);
 
     if (!raidId) {
         console.error("Ошибка при поиске рейда в базе:", raidName, raidId.rows[0].id);
@@ -57,10 +56,8 @@ export default async function(interaction) {
                         .setStyle(ButtonStyle.Primary)
                 );
 
-            const raidName = await getRaidName(raidId);
-
             await user.send({
-                content: `🔔 Игрок **<@${interaction.user.id}>** набирает группу на **${raidName}**!)`,
+                content: `🔔 Игрок **<@${interaction.user.id}>** набирает группу на **${raidName}**!`,
                 components: [row], flags: MessageFlags.Ephemeral
             }).then((message) => {
                 setTimeout(() => {

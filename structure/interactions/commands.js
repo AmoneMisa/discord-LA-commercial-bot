@@ -116,7 +116,7 @@ export default async function (interaction) {
             }
 
             if (interaction.options.getSubcommand() === 'send_notification') {
-                await manualSendNotificationsToBuyers(interaction);
+                await showRaidSelect(interaction, true);
             }
         }
     }

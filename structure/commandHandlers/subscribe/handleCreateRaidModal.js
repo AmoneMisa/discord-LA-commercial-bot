@@ -1,5 +1,6 @@
 import {MessageFlags} from "discord.js";
 import editRaids from "../adminCommands/editRaids.js";
+import {translatedMessage} from "../../utils.js";
 
 /**
  * Handles the creation of a new raid based on user input, updates the database with the new raid,
@@ -16,7 +17,7 @@ export default async function(interaction) {
     await pool.query('INSERT INTO raids (raid_name) VALUES ($1)', [raidName]);
 
     await interaction.reply({
-        content: `✅ Рейд **"${raidName}"** успешно создан!`,
+        content: await translatedMessage(interaction, 'raids.raidCreatedSuccess', { raidName }),
         flags: MessageFlags.Ephemeral
     });
 

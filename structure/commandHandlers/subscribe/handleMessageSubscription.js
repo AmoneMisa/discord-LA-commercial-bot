@@ -1,5 +1,6 @@
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from 'discord.js';
 import {getRaidName} from "../../dbUtils.js";
+import {translatedMessage} from "../../utils.js";
 
 /**
  * Handles message subscriptions for a specified guild message, verifying mentioned roles,
@@ -64,23 +65,28 @@ export default async function handleMessageSubscription(message) {
                     .addComponents(
                         new ButtonBuilder()
                             .setCustomId(`raid_buy_${message.author.id}_${raidId.id}`)
-                            .setLabel('Хочу купить')
+                            .setLabel(await translatedMessage(message, 'raids.want_to_buy'))
                             .setStyle(ButtonStyle.Primary)
                     );
 
                 const raidName = await getRaidName(raidId.id);
 
                 await user.send({
-                    content: `🔔 Игрок **<@${message.author.id}>** набирает группу на **${raidName}**! [Перейти к сообщению](${message.url})`,
-                    components: [row], flags: MessageFlags.Ephemeral
-                }).then((message) => {
-                    setTimeout(() => {
-                        message.edit({
-                            content: `Время для ответа истекло`,
+                    content: await translatedMessage(message, 'raids.user_recruiting', {
+                        user: `<@${message.author.id}>`,
+                        raid: raidName,
+                        url: message.url
+                    }),
+                    components: [row],
+                    flags: MessageFlags.Ephemeral
+                }).then((sentMessage) => {
+                    setTimeout(async () => {
+                        await sentMessage.edit({
+                            content: await translatedMessage(message, 'raids.timeExpired'),
                             components: [],
                             flags: MessageFlags.Ephemeral
                         });
-                    }, 1000 * 60 * 5)
+                    }, 1000 * 60 * 5);
                 });
             }
         }

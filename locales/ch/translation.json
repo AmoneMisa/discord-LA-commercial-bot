@@ -245,5 +245,33 @@
       "reset": "重置筛选"
     },
     "lotListItem": "**{{goldAmount}} 金币** 价格 **1000 / {{price}}₽** ({{server}}, {{delivery}})"
+  },
+  "raids": {
+    "raidNotFound": "未找到团本！",
+    "raidCreatedSuccess": "✅ 团本 '{raidName}' 创建成功！",
+    "raidDeletedSuccess": "🗑 团本删除成功！",
+    "joinRequestExpired": "响应时间已过期",
+    "joinRequestSent": "✅ 您的请求已发送给卖家！",
+    "sendRequestError": "❌ 发送请求给卖家时出错。",
+    "noFavorites": "🚫 您还没有收藏夹！",
+    "noTrackingCategory": "管理员尚未选择团本追踪类别。请联系管理员。",
+    "unsubscribedFromNotifications": "❌ 您已取消订阅来自 **{username}** 的通知",
+    "notifySubscribers": "🔔 玩家 **<@{sellerId}>** 正在组建 **{raidName}** 团队！",
+    "notifySubscribersWithLink": "🔔 玩家 **<@{sellerId}>** 正在组建 **{raidName}** 团队！[查看消息]({messageUrl})",
+    "sellerAcceptRequest": "💰 **团本购买请求！**\n**买家:** <@{username}>\n**角色:** {buyerNickname}\n**团本:** {raidName}",
+    "sellerAcceptSuccess": "✅ 消息已发送给用户！",
+    "sellerDeclineSuccess": "❌ 您的拒绝已发送给买家",
+    "sellerApproved": "卖家: <@{sellerId}> 已批准您的团本购买请求: {raidName}\n房间名称: **{lobby}**",
+    "sellerDeclined": "卖家: <@{sellerId}> 已拒绝您的团本购买请求: {raidName}",
+    "modalCreateRaidTitle": "创建新团本",
+    "modalCreateRaidPlaceholder": "请输入团本名称",
+    "modalBuyRaidTitle": "购买团本",
+    "modalLobbyName": "房间名称",
+    "modalNicknameLabel": "您的昵称",
+    "buttonBuyLabel": "想要购买",
+    "purchaseRequest": "💰 团本购买请求！\n买家: <@{{buyerId}}>\n角色: {{nickname}}\n团本: {{raidName}}",
+    "timeExpired": "⏳ 回复时间已过",
+    "requestSentToSeller": "✅ 您的请求已发送给卖家！",
+    "modalAcceptRequestTitle": "接受请求"
   }
 }

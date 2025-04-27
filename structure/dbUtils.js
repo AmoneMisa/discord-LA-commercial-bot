@@ -79,7 +79,7 @@ export async function getTopSellers() {
  * @param {number} id - The ID used to find the associated raid name.
  * @return {Promise<string>} A promise that resolves to the raid name as a string.
  */
-export async function getRaidName( id) {
+export async function getRaidName(id) {
     let result = await pool.query(`SELECT raid_id
                                    FROM available_raids
                                    WHERE id = $1`, [id]);

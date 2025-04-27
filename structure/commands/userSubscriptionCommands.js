@@ -27,10 +27,5 @@ export default [
         ).addSubcommand(subcommand =>
         subcommand.setName('send_notification')
             .setDescription('Уведомление подписчикам о сборе рейда')
-            .addStringOption(option =>
-                option.setName('raid')
-                    .setDescription('Выберите рейд')
-                    .setRequired(true)
-                    .setAutocomplete(true))
     )
 ]

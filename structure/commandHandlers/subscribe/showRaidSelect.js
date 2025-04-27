@@ -1,7 +1,7 @@
 import {ActionRowBuilder, StringSelectMenuBuilder, MessageFlags} from "discord.js";
 import {translatedMessage} from "../../utils.js";
 
-export default async function (interaction) {
+export default async function (interaction, isNotification) {
     const raids = await pool.query('SELECT raid_name FROM raids');
 
     if (raids.rows.length === 0) {
@@ -17,7 +17,7 @@ export default async function (interaction) {
     }));
 
     const selectMenu = new StringSelectMenuBuilder()
-        .setCustomId('select_raid_for_subscription')
+        .setCustomId(isNotification ? 'select_raid_for_notification' : 'select_raid_for_subscription')
         .setPlaceholder(await translatedMessage(interaction, "info.raidsSelectPlaceholder"))
         .addOptions(options);
 

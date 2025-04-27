@@ -1,5 +1,6 @@
 import {ActionRowBuilder, ButtonStyle, MessageFlags, ModalBuilder, TextInputBuilder, TextInputStyle} from "discord.js";
 import {getRaidName} from "../../dbUtils.js";
+import {translatedMessage} from "../../utils.js";
 
 /**
  * Handles interaction events for processing raid purchase requests.
@@ -21,11 +22,11 @@ export default async function (interaction) {
         if (interaction.customId.startsWith('seller_answer_')) {
             const modal = new ModalBuilder()
                 .setCustomId(`raid_buy_answer_${buyerId}_${raidId}`)
-                .setTitle('Принятие запроса');
+                .setTitle(await translatedMessage(interaction, 'raids.modalAcceptRequestTitle'));
 
             const inputField = new TextInputBuilder()
                 .setCustomId('lobby')
-                .setLabel('Название лобби')
+                .setLabel(await translatedMessage(interaction, 'raids.modalLobbyName'))
                 .setStyle(TextInputStyle.Short)
                 .setRequired(true);
 
@@ -34,10 +35,14 @@ export default async function (interaction) {
 
             await interaction.showModal(modal);
         } else {
-            await buyer.send({content: `Продавец: <@${interaction.user.id}> отклонил ваш запрос на покупку рейда: ${raidName}`});
+            await buyer.send({
+                content: await translatedMessage(interaction, 'raids.sellerDeclined', { sellerId: interaction.user.id, raidName }),
+                flags: MessageFlags.Ephemeral
+            });
+
             await client.channels.fetch(interaction.message.channelId);
             await interaction.message.edit({
-                content: '❌ Ваш отказ отправлен покупателю',
+                content: await translatedMessage(interaction, 'raids.sellerDeclineSuccess'),
                 components: [],
                 flags: MessageFlags.Ephemeral
             });
