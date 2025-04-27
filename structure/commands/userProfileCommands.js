@@ -48,7 +48,8 @@ export default [
                         {name: 'Ник в оружейной (регистрозависимо)', value: 'main_nickname'},
                         {name: 'Роль (нейтрал, продавец, покупатель)', value: 'role'},
                         {name: 'Прайм с (формат 00:00)', value: 'prime_start'},
-                        {name: 'Прайм до (формат 00:00)', value: 'prime_end'}
+                        {name: 'Прайм до (формат 00:00)', value: 'prime_end'},
+                        {name: 'Опыт в продажах', value: 'sales_experience'}
                     ))
             .addStringOption(option =>
                 option.setName('value')
