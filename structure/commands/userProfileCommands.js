@@ -62,6 +62,23 @@ export default [
                     .setDescription('Выберите пользователя')
                     .setRequired(true))),
     new SlashCommandBuilder()
+        .setName('profile_set_style')
+        .setDescription('Выбрать цвета для анкеты')
+        .addStringOption(option =>
+        option.setName("background")
+            .setDescription("Цвет фона (строго hex-формат #413241 или 413241)")).addStringOption(option =>
+        option.setName("main_text")
+            .setDescription("Цвет основного текста (строго hex-формат #FFFFFF или FFFFFF)")).addStringOption(option =>
+        option.setName("secondary_text")
+            .setDescription("Цвет второстепенного текста (строго hex-формат #ffe176 или ffe176)"))
+        .addStringOption(option =>
+        option.setName("separator")
+            .setDescription("Цвет линий (строго hex-формат #FFFFFF или FFFFFF)")).addStringOption(option =>
+        option.setName("text_background")
+            .setDescription("Цвет фона текста (строго hex-формат #2f242f или 2f242f)")).addStringOption(option =>
+        option.setName("border")
+            .setDescription("Цвет рамки (строго hex-формат #604b60 или 604b60)")),
+    new SlashCommandBuilder()
         .setName("achievement_info")
         .setDescription("🔍 Получить информацию о достижении.")
         .addStringOption(option =>

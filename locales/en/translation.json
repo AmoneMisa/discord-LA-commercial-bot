@@ -194,7 +194,9 @@
   },
   "profile": {
     "full": "📜 **Profile of {{username}}**\n\n:peacock: **Name:** {{name}}\n🏅 **Role:** {{role}}\n⏳ **Prime time:** {{primeStart}} - {{primeEnd}}\n💰 **Sales experience:** {{salesExperience}}\n\n✅ **In whitelist (driver):** {{whitelistDrivers}}\n✅ **In whitelist (buyer):** {{whitelistBuyers}}\n❌ **In blacklist (driver):** {{blacklistDrivers}}\n❌ **In blacklist (buyer):** {{blacklistBuyers}}\n📣 **Subscribers:** {{subscribers}}",
-    "notSpecified": "Not specified"
+    "notSpecified": "Not specified",
+    "styleUpdated": "✅ Profile style updated successfully!",
+    "styleUpdateError": "❌ Error: please check the color format. Use #000000 or 000000."
   },
   "market": {
     "noLots": "❌ No lots available.",

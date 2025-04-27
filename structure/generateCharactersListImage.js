@@ -37,12 +37,18 @@ export async function drawCharacterList(characters = [], achievements = []) {
     const canvas = createCanvas(WIDTH, HEIGHT);
     const ctx = canvas.getContext('2d');
 
+    const colorsInt = await getProfileSettings(characters[0].char_name);
+
+    for (let [key, color] of Object.entries(colorsInt)) {
+        colorsInt[key] = convertIntToHexColor(color);
+    }
+    console.log(colorsInt);
     // Фон
-    ctx.fillStyle = '#413241';
+    ctx.fillStyle = colorsInt.color_background;
     drawRoundedRect(ctx, 0, 0, WIDTH + 15, HEIGHT + 15, 8);
 
     // Рамка
-    ctx.fillStyle = '#604b60';
+    ctx.fillStyle = colorsInt.color_border;
     drawRoundedRect(ctx, PADDING, PADDING, WIDTH - 2 * PADDING, HEIGHT - 2 * PADDING, 10);
 
     // Заголовок
@@ -57,18 +63,18 @@ export async function drawCharacterList(characters = [], achievements = []) {
         console.error(`❌ Ошибка загрузки иконки класса: ${classIconPath}`, err);
     }
 
-    ctx.fillStyle = '#ffe176';
+    ctx.fillStyle = colorsInt.color_text;
     ctx.font = '18px Noto Sans';
     ctx.fillText(`${characters[0].char_name}`,
         headerX, headerY);
 
-    ctx.fillStyle = '#FFFFFF';
+    ctx.fillStyle = colorsInt.color_secondary;
     ctx.font = '18px Noto Sans';
     ctx.fillText(characters[0].gear_score,
         WIDTH - PADDING - INNER_PADDING - 70, headerY);
 
     // Разделительная линия
-    ctx.strokeStyle = '#FFFFFF';
+    ctx.strokeStyle = colorsInt.color_separator;
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(PADDING + INNER_PADDING, PADDING + 40);
@@ -89,7 +95,7 @@ export async function drawCharacterList(characters = [], achievements = []) {
         const y = PADDING + 60 + row * (BOX_HEIGHT + 10);
 
         // Фон для текста
-        ctx.fillStyle = '#2f242f';
+        ctx.fillStyle = colorsInt.color_text_background;
         drawRoundedRect(ctx, x, y, (WIDTH - 2 * PADDING - INNER_PADDING) / COLS - 10, BOX_HEIGHT, 6);
 
         // Загружаем иконку класса
@@ -104,13 +110,13 @@ export async function drawCharacterList(characters = [], achievements = []) {
         }
 
         // Текст персонажа
-        ctx.fillStyle = '#FFFFFF';
+        ctx.fillStyle = colorsInt.color_secondary;
         ctx.font = `${FONT_SIZE}px Noto Sans`;
         ctx.fillText(`${char.char_name} - ${char.gear_score}`, x + 50, y + 25);
     }
 
     // Разделительная линия
-    ctx.strokeStyle = '#FFFFFF';
+    ctx.strokeStyle = colorsInt.color_separator;
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(PADDING + INNER_PADDING, PADDING + 433);
@@ -209,4 +215,17 @@ function drawRoundedRect(ctx, x, y, width, height, radius) {
     ctx.arc(x + radius, y + radius, radius, Math.PI, Math.PI * 1.5);
     ctx.closePath();
     ctx.fill();
+}
+
+async function getProfileSettings(mainNickname) {
+   const result = await pool.query(`
+    SELECT color_background, color_border, color_text, color_secondary, color_separator, color_text_background FROM profiles
+    WHERE LOWER(main_nickname) = LOWER($1)
+    `, [mainNickname]);
+
+   return result.rows[0];
+}
+
+function convertIntToHexColor(color) {
+    return '#' + color.toString(16).padStart(6, '0');
 }

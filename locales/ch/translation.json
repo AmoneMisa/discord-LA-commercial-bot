@@ -195,7 +195,9 @@
   },
   "profile": {
     "full": "📜 **{{username}} 的个人资料**\n\n:peacock: **姓名:** {{name}}\n🏅 **角色:** {{role}}\n⏳ **活跃时间:** {{primeStart}} - {{primeEnd}}\n💰 **销售经验:** {{salesExperience}}\n\n✅ **在白名单 (司机):** {{whitelistDrivers}}\n✅ **在白名单 (买家):** {{whitelistBuyers}}\n❌ **在黑名单 (司机):** {{blacklistDrivers}}\n❌ **在黑名单 (买家):** {{blacklistBuyers}}\n📣 **订阅者:** {{subscribers}}",
-    "notSpecified": "未指定"
+    "notSpecified": "未指定",
+    "styleUpdated": "✅ 档案样式已成功更新！",
+    "styleUpdateError": "❌ 错误：请检查颜色格式。请使用 #000000 或 000000。"
   },
   "market": {
     "noLots": "❌ 暂无拍卖品。",

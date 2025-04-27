@@ -34,6 +34,7 @@ import addToList from "../commandHandlers/lists/addToList.js";
 import {removeFromList} from "../commandHandlers/lists/removeFromList.js";
 import checkListStatus from "../commandHandlers/lists/checkListStatus.js";
 import showRaidSelect from "../commandHandlers/subscribe/showRaidSelect.js";
+import handleProfileSetStyle from "../commandHandlers/profile/handleProfileSetStyle.js";
 
 dotenv.config();
 /**
@@ -58,11 +59,11 @@ export default async function (interaction) {
         }
 
         if (interaction.commandName === 'last_positive_reviews') {
-            await lastPositiveReviewsCommand(interaction,false, false);
+            await lastPositiveReviewsCommand(interaction, false, false);
         }
 
         if (interaction.commandName === 'last_negative_reviews') {
-            await lastNegativeReviewsCommand(interaction,false, false);
+            await lastNegativeReviewsCommand(interaction, false, false);
         }
 
         if (interaction.commandName === 'last_reviews') {
@@ -149,6 +150,10 @@ export default async function (interaction) {
             if (interaction.options.getSubcommand() === 'fill') {
                 await handleProfileFill(interaction);
             }
+        }
+
+        if (interaction.commandName === 'profile_set_style') {
+            await handleProfileSetStyle(interaction);
         }
 
         if (interaction.commandName === "Просмотреть профиль игрока") {
