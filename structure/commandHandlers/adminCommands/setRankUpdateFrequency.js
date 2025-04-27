@@ -1,5 +1,4 @@
 import {MessageFlags} from 'discord.js';
-import {scheduleRankUpdates} from "../../cron/scheduleUpdates.js";
 import {translatedMessage} from "../../utils.js";
 
 /**
@@ -16,8 +15,6 @@ export default async function setRankUpdateFrequency(interaction) {
         'UPDATE settings SET value = $1 WHERE key = \'rank_update_frequency\'',
         [frequency]
     );
-
-    await scheduleRankUpdates(frequency, interaction.guild);
 
     await interaction.reply({
         content: await translatedMessage(interaction, "info.roleUpdateFrequencySet", {frequency}),
