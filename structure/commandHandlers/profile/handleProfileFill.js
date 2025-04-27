@@ -9,7 +9,7 @@ import {isValidTimeFormat, translatedMessage} from "../../utils.js";
  * @returns {Promise<void>} Resolves when the process is complete, either by saving the profile or responding to the user.
  */
 export default async function handleProfileFill(interaction) {
-    await interaction.deferReply();
+    await interaction.deferReply({flags: MessageFlags.Ephemeral });
 
     const userId = interaction.user.id;
     const name = interaction.options.getString('name') || null;

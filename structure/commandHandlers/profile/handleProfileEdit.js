@@ -10,7 +10,7 @@ import {toCamelCase} from "../../utils.js";
  * @return {Promise<void>} A promise that resolves when the profile update has been successfully processed.
  */
 export default async function handleProfileEdit(interaction) {
-    await interaction.deferReply();
+    await interaction.deferReply({flags: MessageFlags.Ephemeral });
 
     const userId = interaction.user.id;
     const field = interaction.options.getString('field');
