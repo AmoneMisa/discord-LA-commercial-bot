@@ -102,7 +102,7 @@ export async function schedulersList(guild) {
     }
 
     if (process.env.PROFILES_MODULE) {
-        cron.schedule('0 * * * *', async () => {
+        cron.schedule('0 0 * * *', async () => {
             await updateProfileCharacters();
         });
     }
