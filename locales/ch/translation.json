@@ -183,7 +183,8 @@
     "votingCooldown": "✅ 投票冷却 **{{status}}**。",
     "winnings": "奖金",
     "raidsSelectPlaceholder": "可订阅的突袭列表",
-    "selectRaid": "请选择要订阅的突袭"
+    "selectRaid": "请选择要订阅的突袭",
+    "achievementRemovedFromRole": "🗑️ 成就 '{{achievementName}}' 已成功从角色 {{roleName}} 的所有成员中移除！"
   },
   "lists": {
     "whitelist": "白名单",

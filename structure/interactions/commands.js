@@ -35,6 +35,7 @@ import {removeFromList} from "../commandHandlers/lists/removeFromList.js";
 import checkListStatus from "../commandHandlers/lists/checkListStatus.js";
 import showRaidSelect from "../commandHandlers/subscribe/showRaidSelect.js";
 import handleProfileSetStyle from "../commandHandlers/profile/handleProfileSetStyle.js";
+import achievementSelect from "../commandHandlers/achievements/achievementSelect.js";
 
 dotenv.config();
 /**
@@ -193,7 +194,7 @@ export default async function (interaction) {
 
     if (process.env.ACHIEVEMENTS_MODULE) {
         if (interaction.commandName === 'achievement_info') {
-            await getAchievementInfo(interaction);
+            await achievementSelect(interaction, "info");
         }
     }
 

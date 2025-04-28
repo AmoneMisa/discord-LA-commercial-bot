@@ -183,8 +183,11 @@
     "votingCooldown": "✅ Voting cooldown is **{{status}}**.",
     "winnings": "Winnings",
     "raidsSelectPlaceholder": "Available raids for subscription",
-    "selectRaid": "Select a raid to subscribe"
-  },"lists": {
+    "selectRaid": "Select a raid to subscribe",
+    "achievementRemovedFromRole": "🗑️ Achievement '{{achievementName}}' has been successfully removed from all members with the role {{roleName}}!"
+
+  },
+  "lists": {
   "whitelist": "white",
   "blacklist": "black"
 },

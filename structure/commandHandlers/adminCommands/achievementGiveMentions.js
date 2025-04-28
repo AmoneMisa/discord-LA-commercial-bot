@@ -7,12 +7,11 @@ import {translatedMessage} from "../../utils.js";
  * @async
  * @function
  * @param {Object} interaction - The command interaction object.
- * @param {Object} pool - The database connection object for executing queries.
  * @returns {Promise<void>}
  */
 export default async function (interaction) {
-    const messageId = interaction.options.getString("message_id");
-    const achievement = interaction.options.getString("achievement");
+    const messageId = tempInteractionData.getString("message_id");
+    const achievement = interaction.values[0];
     const channel = interaction.channel;
 
     try {

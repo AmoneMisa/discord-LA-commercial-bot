@@ -5,14 +5,15 @@ import achievementSelect from "./achievements/achievementSelect.js";
 
 const adminCommandMap = {
     // Достижения
-    "adm_achievement_give_achievement_to_user": "giveAchievementToUser",
-    "adm_achievement_give_achievement_to_role": "giveAchievementToRole",
-    "adm_achievement_create_achievement": "createAchievement",
-    "adm_achievement_edit_achievement": "editAchievement",
+    "adm_achievement_give_to_user": "giveAchievementToUser",
+    "adm_achievement_give_to_role": "giveAchievementToRole",
+    "adm_achievement_create": "createAchievement",
+    "adm_achievement_edit": "editAchievement",
     "adm_achievement_edit_icon": "editAchievementIcon",
-    "adm_achievement_delete_achievement": "deleteAchievement",
-    "adm_achievement_achievement_give_mentions": "achievementGiveMentions",
-    "adm_achievement_achievement_remove_user": "achievementRemoveUser",
+    "adm_achievement_delete": "deleteAchievement",
+    "adm_achievement_give_mentions": "achievementGiveMentions",
+    "adm_achievement_remove_user": "removeAchievementFromUser",
+    "adm_achievement_remove_role": "removeAchievementFromRole",
 
     // Кодекс
     "adm_codex_add": "codexAdd",
@@ -88,6 +89,10 @@ export default async function (interaction) {
     }
 
     const handlerName = adminCommandMap[interaction.commandName + '_' + subcommand];
+    console.log(handlerName);
+    console.log(interaction.commandName);
+    console.log(subcommand);
+    console.log(subcommandsHandlers[handlerName]);
     if (typeof subcommandsHandlers[handlerName] === "function") {
         if (handlerName.toLowerCase().includes('achievement') && handlerName !== 'createAchievement') {
             await achievementSelect(interaction, handlerName.toString());

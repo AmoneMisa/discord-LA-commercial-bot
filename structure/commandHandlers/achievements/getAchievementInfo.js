@@ -8,7 +8,7 @@ import {translatedMessage} from "../../utils.js";
  * @return {Promise<void>} A promise that resolves when the reply has been sent to the user.
  */
 export default async function getAchievementInfo(interaction) {
-    const achievementName = interaction.options.getString('achievement');
+    const achievementName = interaction.values[0];
 
     const result = await pool.query(`
         SELECT a.name, a.description, a.icon, ua.assigned_at, ua.user_id 

@@ -104,6 +104,8 @@
     "selectAchievement": "🎯 Пожалуйста, выберите достижение:",
     "achievementGrantedToRole": "✅ Достижение **{{achievementName}}** выдано всем с ролью {{roleName}}!",
     "achievementGrantedToUser": "✅ Достижение **{{achievementName}}** выдано **{{username}}**!",
+    "achievementRemovedFromUser": "❌ Достижение {{achievementName}} успешно удалено у пользователя **{{username}}**!",
+    "achievementRemovedFromRole": "❌ Достижение {{achievementName}} успешно удалено у роли **{{roleName}}**!",
     "achievementIssued": "Выдано",
     "achievementNotIssued": "Не выдавалось",
     "achievementTitle": "Достижение: {{achievement}}",
