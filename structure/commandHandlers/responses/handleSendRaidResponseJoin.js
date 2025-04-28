@@ -61,7 +61,10 @@ export default async function (interaction) {
         interaction.reply({content: "Запрос отправлен", flags: MessageFlags.Ephemeral});
         tempMessageStorage.set(interaction.message.id, []);
         tempMessageStorage.get(interaction.message.id).push(interaction.user.id);
-        await givePointsForActivity(pool, interaction.user.id, 3);
+
+        if (process.env.FACTIONS_MODULE) {
+            await givePointsForActivity(interaction.user.id, 3);
+        }
     }
 
     setTimeout(() => tempMessageStorage.delete(interaction.message.id), 5 * 60 * 1000);

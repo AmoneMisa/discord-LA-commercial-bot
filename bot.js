@@ -151,7 +151,7 @@ async interaction => {
         } else if (interaction.isAutocomplete()) {
             await autocomplete(interaction);
         } else if (interaction.isMessageComponent()) {
-            await messageComponent(interaction);
+            await messageComponent(interaction, client.guilds.cache.get(process.env.GUILD_ID));
             // console.log(interaction);
         } else {
             throw new Error(`Unknown type of interaction: ${interaction.type}`);

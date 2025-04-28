@@ -1,6 +1,7 @@
 import {ButtonStyle, MessageFlags} from "discord.js";
 import subcommandsHandlers from './adminCommands/index.js';
 import {translatedMessage} from "../utils.js";
+import achievementSelect from "./achievements/achievementSelect.js";
 
 const adminCommandMap = {
     // Достижения
@@ -88,7 +89,11 @@ export default async function (interaction) {
 
     const handlerName = adminCommandMap[interaction.commandName + '_' + subcommand];
     if (typeof subcommandsHandlers[handlerName] === "function") {
-        await subcommandsHandlers[handlerName](interaction, interaction.guild);
+        if (handlerName.toLowerCase().includes('achievement') && handlerName !== 'createAchievement') {
+            await achievementSelect(interaction, handlerName.toString());
+        } else {
+            await subcommandsHandlers[handlerName](interaction, interaction.guild);
+        }
     } else {
         await interaction.reply({content: await translatedMessage(interaction, "errors.unknownCommand"), flags: MessageFlags.Ephemeral});
     }

@@ -150,7 +150,7 @@ export function getMember(interaction, isContextMenu = false, isMessageContentMe
             }
             return interaction.user;
         } else {
-            if (interaction.options.getUser('member')) {
+            if (interaction?.options?.getUser('member')) {
                 return interaction.options.getUser('member');
             }
             return interaction.member;

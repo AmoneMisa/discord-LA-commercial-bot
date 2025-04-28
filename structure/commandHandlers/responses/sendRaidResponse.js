@@ -55,5 +55,7 @@ export default async function sendRaidResponse(message) {
         flags: MessageFlags.SuppressNotifications
     });
 
-    await givePointsForActivity(message.author.id, 5);
+    if (process.env.FACTIONS_MODULE) {
+        await givePointsForActivity(message.author.id, 5);
+    }
 }

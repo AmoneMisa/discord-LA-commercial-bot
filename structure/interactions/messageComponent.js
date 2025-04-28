@@ -2,8 +2,9 @@ import betTargetHandler from "../commandHandlers/bets/betTargetHandler.js";
 import betServerHandler from "../commandHandlers/bets/betServerHandler.js";
 import subscribeToBuy from "../commandHandlers/subscribe/subscribeToBuy.js";
 import manualSendNotificationsToBuyers from "../commandHandlers/subscribe/manualSendNotificationsToBuyers.js";
+import subcommandsHandlers from "../commandHandlers/adminCommands/index.js";
 
-export default async function (interaction) {
+export default async function (interaction, guild) {
     if (interaction.customId.startsWith("bet_target")) {
         await betTargetHandler(interaction);
     }
@@ -22,5 +23,10 @@ export default async function (interaction) {
         const selectedRaid = interaction.values[0];
 
         await manualSendNotificationsToBuyers(interaction, selectedRaid);
+    }
+
+    if (interaction.customId.includes("_select_achievement")) {
+        const [handler, ,] = interaction.customId.split("_");
+        await subcommandsHandlers[handler](interaction, guild);
     }
 }

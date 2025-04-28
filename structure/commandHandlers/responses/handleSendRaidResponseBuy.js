@@ -23,5 +23,8 @@ export default async function (interaction) {
     }
 
     await createModalBuyResponse(interaction);
-    await givePointsForActivity(interaction.user.id, 2);
+
+    if (process.env.FACTIONS_MODULE) {
+        await givePointsForActivity(interaction.user.id, 2);
+    }
 }

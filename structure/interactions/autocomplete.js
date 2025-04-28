@@ -1,5 +1,4 @@
 import {getItemsList} from "../dbUtils.js";
-import autocompleteAchievements from "../commandHandlers/achievements/autocompleteAchievements.js";
 
 /**
  * Handles interaction events for Discord commands related to `inventory` and achievements.
@@ -37,7 +36,5 @@ export default async function (interaction) {
         await interaction.respond(
             filtered.map(item => ({name: item.label, value: item.value.toString()}))
         );
-    } else if (/^(adm_achievement_|achievement_)/.test(interaction.commandName)) {
-        await autocompleteAchievements(interaction);
     }
 }

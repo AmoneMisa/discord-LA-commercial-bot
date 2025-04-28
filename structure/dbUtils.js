@@ -510,6 +510,11 @@ export async function getUserAchievements(userId) {
     }
 }
 
+export async function getAllAchievements() {
+    const result = await pool.query('SELECT name, description FROM achievements');
+    return result.rows;
+}
+
 /**
  * Determines whether a user can join a specified faction based on the faction's current membership
  * and a predefined threshold of maximum allowed members.
@@ -624,7 +629,7 @@ export async function cleanOldData() {
  * @param {number} points - The number of points to be awarded to the user.
  * @return {Promise<void>} A promise that resolves when the operation is complete.
  */
-export async function givePointsForActivity( userId, points) {
+export async function givePointsForActivity(userId, points) {
     try {
         const isExist = await pool.query(`SELECT * FROM users_factions WHERE user_id = $1`, [userId]);
 
@@ -652,6 +657,10 @@ export async function givePointsForActivity( userId, points) {
  * @return {Promise<void>} Resolves when the leaderboard is successfully updated or if an error occurs.
  */
 export async function updateFactionLeaderboard() {
+    if (!process.env.FACTIONS_MODULE) {
+        return ;
+    }
+
     try {
         // Получаем ID канала для вывода статистики
         const channelRes = await pool.query(`

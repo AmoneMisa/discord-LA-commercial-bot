@@ -31,7 +31,9 @@ export default async function giveAchievementToUser(interaction) {
         [user.id, achievement.rows[0].id, interaction.user.id]
     );
 
-    await givePointsForActivity(pool, user.id, 50);
+    if (process.env.FACTIONS_MODULE) {
+        await givePointsForActivity(user.id, 50);
+    }
 
     await interaction.reply({
         content: await translatedMessage(interaction, "info.achievementGrantedToUser", {

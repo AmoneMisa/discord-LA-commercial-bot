@@ -12,11 +12,6 @@ export default [
                     option.setName("user")
                         .setDescription("Пользователь, которому выдается достижение")
                         .setRequired(true))
-                .addStringOption(option =>
-                    option.setName("achievement")
-                        .setDescription("Название достижения")
-                        .setRequired(true)
-                        .setAutocomplete(true))
         ).addSubcommand(subcommand =>
         subcommand.setName("give_achievement_to_role")
             .setDescription('Выдать достижение роли')
@@ -24,11 +19,6 @@ export default [
                 option.setName("role")
                     .setDescription("Роль, которой выдается достижение")
                     .setRequired(true))
-            .addStringOption(option =>
-                option.setName("achievement")
-                    .setDescription("Название достижения")
-                    .setRequired(true)
-                    .setAutocomplete(true))
     ).addSubcommand(subcommand =>
         subcommand.setName("create_achievement")
             .setDescription('Создать достижение')
@@ -48,11 +38,6 @@ export default [
         subcommand.setName("edit_achievement")
             .setDescription('Редактировать достижение')
             .addStringOption(option =>
-                option.setName("name")
-                    .setDescription("Название достижения")
-                    .setRequired(true)
-                    .setAutocomplete(true))
-            .addStringOption(option =>
                 option.setName("field")
                     .setDescription("Какое поле редактировать")
                     .setRequired(true)
@@ -67,11 +52,6 @@ export default [
     ).addSubcommand(subcommand =>
         subcommand.setName("edit_icon")
             .setDescription('Редактировать иконку достижения')
-            .addStringOption(option =>
-                option.setName("name")
-                    .setDescription("Название достижения")
-                    .setRequired(true)
-                    .setAutocomplete(true))
             .addAttachmentOption(option =>
                 option.setName("icon")
                     .setDescription("Загрузите новую иконку")
@@ -79,11 +59,6 @@ export default [
     ).addSubcommand(subcommand =>
         subcommand.setName("delete_achievement")
             .setDescription('Удалить достижение')
-            .addStringOption(option =>
-                option.setName("name")
-                    .setDescription("Название достижения")
-                    .setRequired(true)
-                    .setAutocomplete(true))
     ).addSubcommand(subcommand =>
         subcommand.setName("achievement_give_mentions")
             .setDescription("Выдать достижение всем, кто упомянут в сообщении")
@@ -92,12 +67,6 @@ export default [
                     .setDescription("ID сообщения с упоминаниями")
                     .setRequired(true)
             )
-            .addStringOption(option =>
-                option.setName("achievement")
-                    .setDescription("Название достижения")
-                    .setRequired(true)
-                    .setAutocomplete(true)
-            )
     ).addSubcommand(subcommand =>
         subcommand.setName("achievement_remove_user")
             .setDescription("Забрать достижение у пользователя")
@@ -105,12 +74,6 @@ export default [
                 option.setName("user")
                     .setDescription("Пользователь")
                     .setRequired(true)
-            )
-            .addStringOption(option =>
-                option.setName("achievement")
-                    .setDescription("Название достижения")
-                    .setRequired(true)
-                    .setAutocomplete(true)
             )
     )
 ];
