@@ -36,7 +36,15 @@ export async function drawCharacterList(characters = [], achievements = []) {
     const canvas = createCanvas(WIDTH, HEIGHT);
     const ctx = canvas.getContext('2d');
 
-    const colorsInt = await getProfileSettings(characters[0].char_name);
+    let colorsInt;
+
+    for (const char of characters) {
+        colorsInt = await getProfileSettings(char.char_name);
+
+        if (colorsInt) {
+            break;
+        }
+    }
 
     for (let [key, color] of Object.entries(colorsInt)) {
         colorsInt[key] = convertIntToHexColor(color);
@@ -173,7 +181,7 @@ export default async function sendCharacterList(interaction, messageText, charac
             files: [filePath],
             flags: MessageFlags.Ephemeral});
     } else {
-        await interaction.reply({
+        await interaction.editReply({
             content: messageText,
             files: [filePath],
             flags: MessageFlags.Ephemeral
@@ -217,7 +225,8 @@ function drawRoundedRect(ctx, x, y, width, height, radius) {
 
 async function getProfileSettings(mainNickname) {
    const result = await pool.query(`
-    SELECT color_background, color_border, color_text, color_secondary, color_separator, color_text_background FROM profiles
+    SELECT color_background, color_border, color_text, color_secondary, color_separator, color_text_background
+    FROM profiles
     WHERE LOWER(main_nickname) = LOWER($1)
     `, [mainNickname]);
 

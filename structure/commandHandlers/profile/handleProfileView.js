@@ -15,23 +15,24 @@ dotenv.config();
  * @return {Promise<void>} Resolves when the interaction has been successfully processed and a response is sent.
  */
 export default async function handleProfileView(interaction, isContextMenu = false, isMessageContentMenuCommand = false) {
+    await interaction.deferReply({flags: MessageFlags.Ephemeral});
+
     let member = getMember(interaction, isContextMenu, isMessageContentMenuCommand, 'user');
 
     if (member.bot) {
-        return await interaction.reply({
+        return await interaction.editReply({
             content: await translatedMessage(interaction, "errors.userIsBot"),
             flags: MessageFlags.Ephemeral
         });
     }
 
     const userId = member.id;
-
     const profile = await pool.query(`SELECT *
                                       FROM profiles
                                       WHERE user_id = $1`, [userId]);
 
     if (!profile.rows.length) {
-        return interaction.reply({
+        return interaction.editReply({
             content: await translatedMessage(interaction, "errors.userDontHaveProfile"),
             flags: MessageFlags.Ephemeral
         });
