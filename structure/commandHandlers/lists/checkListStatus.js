@@ -1,8 +1,8 @@
 import {MessageFlags} from "discord.js";
-import {translatedMessage} from "../../utils.js";
+import {getMember, translatedMessage} from "../../utils.js";
 
 export default async function (interaction) {
-    const target = interaction.options.getUser('target');
+    const target = getMember(interaction, false, false, 'user');
     const targetId = target.id;
     const userId = interaction.user.id;
 

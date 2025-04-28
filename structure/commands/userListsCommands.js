@@ -4,7 +4,7 @@ export default [new SlashCommandBuilder()
     .setName('list_add')
     .setDescription('➕ Добавить пользователя в белый или чёрный список')
     .addUserOption(option =>
-        option.setName('target')
+        option.setName('user')
             .setDescription('Кого добавить в список')
             .setRequired(true)
     )
@@ -30,7 +30,7 @@ export default [new SlashCommandBuilder()
     .setName('list_remove')
     .setDescription('➖ Удалить пользователя из белого или чёрного списка')
     .addUserOption(option =>
-        option.setName('target')
+        option.setName('user')
             .setDescription('Пользователь, которого нужно удалить из списка')
             .setRequired(true)
     ),
@@ -38,8 +38,8 @@ export default [new SlashCommandBuilder()
     .setName('list_check')
     .setDescription('Проверить наличие пользователя в списке')
     .addUserOption(option =>
-        option.setName('target')
-            .setDescription('Пользователь, которого нужно удалить из списка')
+        option.setName('user')
+            .setDescription('Пользователь, которого нужно проверить')
             .setRequired(true)
     )
 ]

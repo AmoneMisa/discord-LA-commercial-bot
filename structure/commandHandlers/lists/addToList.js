@@ -1,8 +1,8 @@
 import {MessageFlags} from "discord.js";
-import {translatedMessage} from "../../utils.js";
+import {getMember, translatedMessage} from "../../utils.js";
 
 export default async function (interaction) {
-    const target = interaction.options.getUser('target');
+    const target = getMember(interaction, false, false, 'user');
     const listType = interaction.options.getString('type'); // whitelist или blacklist
     const role = interaction.options.getString('role'); // driver или buyer
     const userId = interaction.user.id;

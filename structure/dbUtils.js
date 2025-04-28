@@ -1,4 +1,5 @@
 import {saveProfileToDB} from "../scrapping/parser.js";
+import {getMember} from "./utils.js";
 
 /**
  * Retrieves the leaderboard channel ID from the settings table.
@@ -313,10 +314,36 @@ export async function getItemName( id) {
 /**
  * Adds a user to the database if they do not already exist and are not a bot.
  *
- * @param {Object} user - The user object containing details about the user. Must include `id`, `bot`, `username`, and `discriminator` properties.
+ * @param {Object} interaction - The user object containing details about the user. Must include `id`, `bot`, `username`, and `discriminator` properties.
  * @return {Promise<void>} A Promise that resolves when the operation is complete or if the user already exists or is a bot.
  */
-export async function addUserIfNotExists( user) {
+export async function addUserIfNotExists(interaction) {
+    let user = getMember(interaction, false, false, 'user');
+
+    if (!user || user.bot) {
+        return;
+    } // Игнорируем ботов
+
+    const checkUser = await pool.query('SELECT * FROM users WHERE user_id = $1', [user.id]);
+
+    if (checkUser.rowCount === 0) {
+        await pool.query(
+            `INSERT INTO users (user_id, rating, positive_reviews, negative_reviews)
+             VALUES ($1, 0, 0, 0)`,
+            [user.id]
+        );
+        console.log(`✅ Пользователь ${user.username}#${user.discriminator} добавлен в базу.`);
+    }
+}
+
+/**
+ * Adds a member to the database if they do not already exist and are not a bot.
+ *
+ * @param {Object} interaction - The user object containing details about the user. Must include `id`, `bot`, `username`, and `discriminator` properties.
+ * @return {Promise<void>} A Promise that resolves when the operation is complete or if the user already exists or is a bot.
+ */
+export async function addMemberIfNotExists(interaction) {
+    let user = getMember(interaction, false, false, 'member');
     if (!user || user.bot) {
         return;
     } // Игнорируем ботов

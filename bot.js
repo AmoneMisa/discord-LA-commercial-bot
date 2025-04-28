@@ -18,7 +18,12 @@ import {schedulersList} from "./structure/cron/scheduleUpdates.js";
 import buttons from "./structure/interactions/buttons.js";
 import modals from "./structure/interactions/modals.js";
 import commands from "./structure/interactions/commands.js";
-import {addUserIfNotExists, givePointsForActivity, updateProfileCharacters} from "./structure/dbUtils.js";
+import {
+    addMemberIfNotExists,
+    addUserIfNotExists,
+    givePointsForActivity,
+    updateProfileCharacters
+} from "./structure/dbUtils.js";
 import createRoles from "./structure/createRoles.js";
 import errorsHandler from "./errorsHandler.js";
 import messageComponent from "./structure/interactions/messageComponent.js";
@@ -123,7 +128,8 @@ client.on('interactionCreate', /**
 async interaction => {
     try {
         const targetUser = interaction?.options?.getUser('member');
-        await addUserIfNotExists(interaction.user);
+        await addUserIfNotExists(interaction);
+        await addMemberIfNotExists(interaction);
 
         if (interaction.isCommand() && interaction.commandName === 'adm_settings' && interaction.options.getSubcommand() === 'remove_bots') {
             await removeBots(interaction);
