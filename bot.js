@@ -93,7 +93,7 @@ client.once('ready', async () => {
             await createRoles(guild);
         }
 
-        if (process.env.PROFILES_MODULE) {
+        if (process.env.PROFILES_MODULE && process.env.GET_CHARACTERS_ON_RESTART) {
             await updateProfileCharacters();
         }
     } catch (e) {
