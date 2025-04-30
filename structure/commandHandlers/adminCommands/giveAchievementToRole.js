@@ -40,11 +40,12 @@ export default async function giveAchievementToRole(interaction, guild) {
 
     }
 
-    await interaction.reply({
+    await interaction.update({
         content: await translatedMessage(interaction, "info.achievementGrantedToRole", {
             achievementName,
             roleName: role.name
         }),
+        components: [],
         flags: MessageFlags.Ephemeral
     });
 }

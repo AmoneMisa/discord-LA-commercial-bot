@@ -34,11 +34,12 @@ export default async function giveAchievementToUser(interaction) {
         await givePointsForActivity(user.id, 50);
     }
 
-    await interaction.reply({
+    await interaction.update({
         content: await translatedMessage(interaction, "info.achievementGrantedToUser", {
             achievementName,
             username: user.username
         }),
+        components: [],
         flags: MessageFlags.Ephemeral
     });
 }

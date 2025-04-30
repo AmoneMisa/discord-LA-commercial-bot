@@ -89,10 +89,7 @@ export default async function (interaction) {
     }
 
     const handlerName = adminCommandMap[interaction.commandName + '_' + subcommand];
-    console.log(handlerName);
-    console.log(interaction.commandName);
-    console.log(subcommand);
-    console.log(subcommandsHandlers[handlerName]);
+
     if (typeof subcommandsHandlers[handlerName] === "function") {
         if (handlerName.toLowerCase().includes('achievement') && handlerName !== 'createAchievement') {
             await achievementSelect(interaction, handlerName.toString());

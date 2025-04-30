@@ -79,7 +79,7 @@ export default async function handleProfileView(interaction, isContextMenu = fal
         const data = profile.rows[0];
         await sendCharacterList(interaction,
             await translatedMessage(interaction, "profile.full", {
-                username: interaction.options.getUser('user').username,
+                username: getMember(interaction).username,
                 name: data.name || notSpecifiedMessage,
                 role: data.role || notSpecifiedMessage,
                 salesExperience: data.sales_experience || notSpecifiedMessage,

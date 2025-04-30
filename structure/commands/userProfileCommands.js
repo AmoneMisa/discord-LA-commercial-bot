@@ -81,9 +81,4 @@ export default [
     new SlashCommandBuilder()
         .setName("achievement_info")
         .setDescription("🔍 Получить информацию о достижении.")
-        .addStringOption(option =>
-            option.setName("achievement")
-                .setDescription("Название достижения")
-                .setRequired(true)
-                .setAutocomplete(true)),
 ]

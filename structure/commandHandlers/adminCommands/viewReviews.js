@@ -1,5 +1,5 @@
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} from 'discord.js';
-import {formatDate, translatedMessage} from '../../utils.js';
+import {formatDate, getMember, translatedMessage} from '../../utils.js';
 import updateRatings from "../../updateRatings.js";
 
 /**
@@ -9,7 +9,7 @@ import updateRatings from "../../updateRatings.js";
  * @return {Promise<void>} Resolves when the interaction response has been sent, or errors if an issue occurs during execution.
  */
 export default async function viewReviews(interaction) {
-    const member = interaction.options.getUser('user');
+    const member = getMember(interaction, false, false, 'user');
 
     const reviews = await pool.query(
         'SELECT id, reviewer_id, review_text, is_positive, timestamp FROM reviews WHERE target_user = $1 ORDER BY timestamp DESC LIMIT 10',

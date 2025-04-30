@@ -1,5 +1,6 @@
 import {EmbedBuilder, MessageFlags} from "discord.js";
 import {translatedMessage} from "../../utils.js";
+import dayjs from "dayjs";
 
 /**
  * Retrieves information about a specific achievement and sends an embedded response to the user.
@@ -19,7 +20,7 @@ export default async function getAchievementInfo(interaction) {
     );
 
     if (!result.rows.length) {
-        return interaction.reply({ content: await translatedMessage(interaction, "errors.achievementNotFound", {achievement: achievementName}), flags: MessageFlags.Ephemeral });
+        return interaction.update({ content: await translatedMessage(interaction, "errors.achievementNotFound", {achievement: achievementName}), flags: MessageFlags.Ephemeral });
     }
 
     const achievement = result.rows[0];
@@ -31,11 +32,11 @@ export default async function getAchievementInfo(interaction) {
             {
                 name: await translatedMessage(interaction, "info.achievementIssued"),
                 value: achievement.assigned_at
-                    ? `<@${achievement.user_id}> - ${achievement.assigned_at}`
+                    ? `<@${achievement.user_id}> - ${dayjs(new Date(achievement.assigned_at)).format('DD/MM/YYYY HH:mm')}`
                     : await translatedMessage(interaction, "info.achievementNotIssued")
             }
         )
         .setColor("#FFD700");
 
-    await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
+    await interaction.update({ embeds: [embed], flags: MessageFlags.Ephemeral, components: [] });
 }

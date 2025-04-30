@@ -12,6 +12,7 @@ import customParseFormat from "dayjs/plugin/customParseFormat.js";
 import utc from "dayjs/plugin/utc.js";
 import timezone from "dayjs/plugin/timezone.js";
 import i18n from "../locales/i18n.js";
+
 /**
  * Formats a date string into the format "DD/MM/YYYY HH:mm".
  * If the input date string is invalid or not provided, returns "Нет данных".
@@ -123,6 +124,7 @@ export async function sendPaginatedReviews(interaction, page = 1, isPositive, me
 export function toCamelCase(str) {
     return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
 }
+
 /**
  * Retrieves a member or user based on the provided parameters and interaction context.
  *
@@ -132,7 +134,7 @@ export function toCamelCase(str) {
  * @param {string} [getType='member'] - Specifies the type of entity to retrieve ("user" or "member").
  * @return {Object} The retrieved user or member object, determined by the interaction context and parameters.
  */
-export function getMember(interaction, isContextMenu = false, isMessageContentMenuCommand = false, getType = 'member') {
+export function getMember(interaction, isContextMenu = false, isMessageContentMenuCommand = false, getType = 'target') {
     if (isContextMenu) {
         if (isMessageContentMenuCommand) {
             if (getType === 'user') {
@@ -141,20 +143,13 @@ export function getMember(interaction, isContextMenu = false, isMessageContentMe
                 return interaction.targetMessage.author;
             }
         } else {
-           return interaction.targetUser;
+            return interaction.targetUser;
         }
     } else {
-        if (getType === 'user') {
-            if (interaction?.options?.getUser('user')) {
-                return interaction.options.getUser('user');
-            }
-            return interaction.user;
-        } else {
-            if (interaction?.options?.getUser('member')) {
-                return interaction.options.getUser('member');
-            }
-            return interaction.member;
+        if (interaction?.options?.getUser('user')) {
+            return interaction.options.getUser('user');
         }
+        return interaction.user;
     }
 }
 
@@ -345,11 +340,12 @@ export async function translatedMessage(interaction, messageCode, options = {}) 
 }
 
 export async function createLot(lotData, userId) {
-    const { goldAmount, pricePerThousand, method, minOrder, server } = lotData;
+    const {goldAmount, pricePerThousand, method, minOrder, server} = lotData;
     const createdAt = new Date();
 
     await pool.query(`
-        INSERT INTO marketplace_lots (seller_id, gold_amount, price_per_thousand, delivery_method, min_order, server, created_at)
+        INSERT INTO marketplace_lots (seller_id, gold_amount, price_per_thousand, delivery_method, min_order, server,
+                                      created_at)
         VALUES ($1, $2, $3, $4, $5, $6, $7)
     `, [userId, goldAmount, pricePerThousand, method, minOrder, server, createdAt]);
 
@@ -358,7 +354,9 @@ export async function createLot(lotData, userId) {
 
 export async function getMarketLot(lotId) {
     let result = await pool.query(`
-    SELECT * FROM marketplace_lots WHERE id = $1
+        SELECT *
+        FROM marketplace_lots
+        WHERE id = $1
     `, [lotId]);
 
     return result.rows[0];

@@ -343,7 +343,7 @@ export async function addUserIfNotExists(interaction) {
  * @return {Promise<void>} A Promise that resolves when the operation is complete or if the user already exists or is a bot.
  */
 export async function addMemberIfNotExists(interaction) {
-    let user = getMember(interaction, false, false, 'member');
+    let user = getMember(interaction, false, false);
     if (!user || user.bot) {
         return;
     } // Игнорируем ботов
@@ -625,11 +625,15 @@ export async function cleanOldData() {
 /**
  * Awards activity points to a user. Adds points if the user exists in the faction.
  *
- * @param {} userId - The ID of the user to whom points are awarded.
+ * @param {String} userId - The ID of the user to whom points are awarded.
  * @param {number} points - The number of points to be awarded to the user.
  * @return {Promise<void>} A promise that resolves when the operation is complete.
  */
 export async function givePointsForActivity(userId, points) {
+    if (!process.env.FACTIONS_MODULE) {
+        return ;
+    }
+
     try {
         const isExist = await pool.query(`SELECT * FROM users_factions WHERE user_id = $1`, [userId]);
 

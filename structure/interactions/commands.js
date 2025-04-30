@@ -190,6 +190,7 @@ export default async function (interaction) {
     }
 
     if (process.env.ACHIEVEMENTS_MODULE) {
+        console.log(interaction.commandName)
         if (interaction.commandName === 'achievement_info') {
             await achievementSelect(interaction, "info");
         }

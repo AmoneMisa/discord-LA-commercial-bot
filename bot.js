@@ -30,7 +30,7 @@ import messageComponent from "./structure/interactions/messageComponent.js";
 import handleMessageSubscription from "./structure/commandHandlers/subscribe/handleMessageSubscription.js";
 import sendRaidResponse from "./structure/commandHandlers/responses/sendRaidResponse.js";
 import autocomplete from "./structure/interactions/autocomplete.js";
-import {translatedMessage} from "./structure/utils.js";
+import {getMember, translatedMessage} from "./structure/utils.js";
 
 dotenv.config();
 
@@ -127,7 +127,7 @@ client.on('interactionCreate', /**
  */
 async interaction => {
     try {
-        const targetUser = interaction?.options?.getUser('member');
+        const targetUser = getMember(interaction);
         await addUserIfNotExists(interaction);
         await addMemberIfNotExists(interaction);
 
